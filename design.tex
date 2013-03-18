@@ -1,0 +1,130 @@
+\abschnitt{Design Decisions}
+
+\subsubsection*{Proposed Design}
+
+\paragraph*{move-only:}
+Each instance of \coro has its own stack and is moveable-only.\\
+\newline
+If \coro would be copyable then its stack with all the objects allocated on it
+are copied too. This could force undefined behaviour if some of this objects are
+RAII-classes (manage a resource via RAII pattern). If one of the \coro copies
+terminates (unwinds its stack) the RAII-classes releases their managed resources
+at destruction.
+
+\paragraph*{clean-up:}
+On destruction \coro unwinds its stack.\\
+\newline
+The implementer is free to deallocate the stack or cache it for future \coro
+instances.
+
+\paragraph*{context switch:}
+\coro stores and restores registers according to the underlying ABI on each
+context switch.\\
+\newline
+This includes also the floating point environment as required by the ABI. The
+implementer can omit preserving the floating point env if he can predict that
+it's safe.\\
+\newline
+On POSIX systems \coro must not preserve signal masks for performance reasons.\\
+\newline
+A context switch is done via \coroop.
+
+\paragraph*{segmented stack:}
+\coro must support segmented stacks (growing on demand).\\
+\newline
+It is not always possible to estimated the required stack size - in most cases
+too much memory is allocated (wast of virtual address-space).\\
+\newline
+At construction \coro starts with a default (minimal) stack size. This minimal
+stack size is the maximum of page size and the canonical size for signal stack
+(macro SIGSTKSZ on POSIX).\\
+\newline
+At this time of writing only GCC (4.7) is known to support segmented
+stacks. With version 1.54 \boostcoroutine provides support for segmented stacks.\\
+\newline
+The destructor of \coro deallocates the associated stack. The implementer is
+free to deallocated the stack or to cache it for later usage.
+
+\paragraph*{start at construction:}
+\corofunction is entered upon construction of \coro not upon the first call.\\
+\newline
+Because \corofunction is entered upon construction of \coro we can check after
+returning from the constructor if a result was provided or the \corofunction
+has terminated.\\
+\corobool returns true if \coro is still valid (\corofunction has not terminated)
+and data is available.\\
+The iteration stopped if data is no longer generated:
+\cppf{corofn_startup.cpp}
+Otherwise detecting the completeness of \coro would require an extra context
+switch (return from last \coroop and calling return in the \corofunction).\\
+This makes the implementation for iterators very hard and \cpp{std::distance}
+would return 4 instead of 3 in the example above.\\
+\newline
+If parameters are required to be passed at the start of \corofunction then those
+parameters can be passed via the \coro constructor.
+
+\paragraph*{coroutine-function signature:}
+The \corofunction returns \cpp{void} and takes a \coro of inverted signature
+as argument.\\
+\newline
+This design decision makes the code using \coro let look more symmetric.\\
+Both, calling code and coroutine function, use an object of type \coro in order
+to switch the context and to transfer data.\\
+This requires that the template parameter of the coroutine passed as argument
+to the \corofunction has an inverted signature, e.g. return types become
+arguments and vice versa.
+\cppf{corofn_startup.cpp}
+
+\coro in the main code has a signature of \cpp{int(void)} - it returns an
+integer from \corofunction.\\
+The \coro argument of \corofunction \cpp{f} has therefore a signature of
+\cpp{void(int)} - it transfers an integer to caller.\\
+\newline
+\corofunction must return void, otherwise the user would call\\
+\coroop to return values from the \corofunction and \cpp{return} as the
+last call which terminates the \corofunction - with the chosen design we have
+only one path to exit the \corofunction.
+\cppf{corofn_nonvoid.cpp}
+
+\paragraph*{passing parameters:}
+Parameters are passed to the \corofunction via\\\coroop.\\
+\newline
+\coroop accepts arguments as defined in the template arguments in \coro. A
+context switch is executed and the passed parameters will be accessible in in
+the \corofunction.
+
+\paragraph*{accessing parameters:}
+Parameters returned from the \corofunction can be accessed with\\\coroget.\\
+\newline
+In contrast to single argument in coroutine signature multiple arguments are
+returned via \tuple from \coroget.\\
+Splitting-up the access of parameters from context switch function enables to
+check if \coro is valid after return from \coroop, e.g. \coro has values and
+\corofunction has not terminated.
+\cppf{access_params.cpp}
+
+\paragraph*{returning parameters:}
+Results can be returned by a \corofunction via\\\coroop.\\
+\newline
+Like passing parameters to the \corofunction the \corofunction can return
+results to the caller.\\ This is done by calling the \coroop of the \coro given
+as first argument to \corofunction.
+\cppf{return_params.cpp}
+
+\paragraph*{output iterator:}
+\coro with signature \cpp{T(void)} provide output iterators.
+\cppf{output_iterator.cpp}
+
+\paragraph*{input iterator:}
+\coro with signature \cpp{void(T)} provide input iterators.
+
+\paragraph*{exceptions:}
+An exception thrown inside \corofunction will re-thrown by \coro constructor or
+\coroop.
+
+\subsubsection*{Alternative Design}
+\boostcoroutine is a follow-up on \boostcorosum which is unfinished and
+not part of the official boost release (development of this library was
+stopped).\\
+During the boost review process interface of \boostcoroutine was changed and
+differ in some parts to \boostcorosum.

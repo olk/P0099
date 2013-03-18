@@ -1,0 +1,59 @@
+\pdfoutput=1
+\pdfcompresslevel=9
+\pdfinfo
+{
+	/Title (A proposal to add coroutines to the C++ standard)
+	/Author (Oliver Kowalke)
+	/Keywords (C++ coroutine)
+}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\documentclass[10pt,a4paper,english]{proc}
+
+\usepackage{babel}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
+\usepackage[latin1]{inputenc}
+\usepackage{listings}
+\usepackage{rotating}
+\usepackage{xcolor}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\input{commands}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\begin{document}
+\onecolumn
+
+\small
+\begin{tabbing}
+    Document number: \=  \\
+    Date:            \> 2013-03-04 \\
+    Project:         \> Programming Language C++, Library Working Group \\
+    Reply-to:        \> Oliver Kowalke (oliver dot kowalke at gmail dot com)
+\end{tabbing}
+
+\section*{A proposal to add coroutines to the C++ standard}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\tableofcontents
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\input{introduction}
+\input{motivation}
+\input{impact}
+\input{design}
+\input{specification}
+\input{acknowledgements}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\input{references}
+
+\end{document}

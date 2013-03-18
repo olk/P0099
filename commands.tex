@@ -1,0 +1,57 @@
+\setlength{\parindent}{0pt} 
+
+\makeatletter
+    \renewcommand*\l@subsection{\@dottedtocline{2}{0em}{2.3em}}
+    \renewcommand*\l@subsection{\@dottedtocline{3}{0em}{3.2em}}
+    \renewcommand{\tableofcontents}{%
+        \@starttoc{toc}
+    }
+\makeatother
+
+%\renewcommand{\thesubsection}{\Roman{subsection}}
+
+\newcommand{\pdfimg}[1]{\pdfximage{pics/#1}\pdfrefximage\pdflastximage}
+\newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
+\newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
+
+\newcommand{\cpp}[1]{
+    \lstinline[
+        language=C++,
+        basicstyle=\ttfamily\color{black},
+        keywordstyle=\color{blue},
+        commentstyle=\color{green},
+        stringstyle=\color{red}
+    ] {#1}
+}
+\newcommand{\cppf}[1]{
+    \lstinputlisting[
+        language=C++,
+        basicstyle=\ttfamily\color{black},
+        keywordstyle=\color{blue},
+        commentstyle=\color{red},
+        stringstyle=\color{green}
+    ] {code/#1}
+}
+
+\newcommand{\coro}{\cpp{std::coroutine<>}}
+\newcommand{\coroiterator}{\cpp{std::coroutine<>::iterator}}
+\newcommand{\coroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()(ArgTypes...)}}
+\newcommand{\corobool}{\cpp{std::coroutine<>::operator safe_bool()}}
+\newcommand{\coroget}{\cpp{std::coroutine<>::get()}}
+\newcommand{\tuple}{\cpp{std::tuple<>}}
+
+\newcommand{\cblock}{\textit{control-block}}
+\newcommand{\continuation}{\mbox{\textit{continuation}}}
+\newcommand{\coopmultitasking}{\textit{cooperative multitasking}}
+\newcommand{\corofunction}{\textit{coroutine-function}}
+\newcommand{\escreccomps}{\textit{escape-and-reenter recursive computations}}
+\newcommand{\escrecloops}{\textit{escape-and-reenter loops}}
+
+\newcommand{\boostcontext}{boost.context\cite{context153}}
+\newcommand{\boostcoroutine}{boost.coroutine\cite{coroutine153}}
+\newcommand{\boostcorosum}{boost.coroutine (Google Summer of Code 2006)\cite{coroutineSum2006}}
+
+\newcommand{\abschnitt}[1]{
+    \addcontentsline{toc}{subsection}{#1}
+    \subsection*{#1}
+}

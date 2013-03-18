@@ -1,0 +1,17 @@
+\abschnitt{Introduction}
+
+This proposal proposes to add \coro to the C++ standard.\\
+\newline
+In computer science routines are defined as a sequence of operations. The
+execution of routines form a parent-child relationship and the child terminates
+always before the parent. Coroutines are a generalization of routines. The
+principal difference between coroutines and routines is that a coroutine enables
+explicit suspend and resume of their progress via additional operations by
+preserving local state.\\
+\newline
+\coro is a first class \continuation (can be passed as argument, returned
+by procedure and stored in a data structure to be used later).\\
+The context switch is cooperative, e.g. the programmer controls when a switch
+will happen (the kernel is not involved in the switch between coroutines).\\
+\newline
+\imgc{sequence.pdf}
