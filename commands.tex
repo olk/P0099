@@ -34,8 +34,12 @@
 }
 
 \newcommand{\coro}{\cpp{std::coroutine<>}}
+\newcommand{\pushcoro}{\cpp{std::push_coroutine<>}}
+\newcommand{\pullcoro}{\cpp{std::pull_coroutine<>}}
 \newcommand{\coroiterator}{\cpp{std::coroutine<>::iterator}}
 \newcommand{\coroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()(ArgTypes...)}}
+\newcommand{\pushcoroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()(T)}}
+\newcommand{\pullcoroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()()}}
 \newcommand{\corobool}{\cpp{std::coroutine<>::operator safe_bool()}}
 \newcommand{\coroget}{\cpp{std::coroutine<>::get()}}
 \newcommand{\tuple}{\cpp{std::tuple<>}}

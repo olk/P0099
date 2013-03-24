@@ -123,6 +123,35 @@ An exception thrown inside \corofunction will re-thrown by \coro constructor or
 \coroop.
 
 \subsubsection*{Alternative Design}
+\coro provides a bidirectional flow of data (passing data to and returning data
+from \corofunction). An alternative would be to split \coro into two
+unidirectional coroutine types: \pushcoro and \pullcoro.\\
+
+\paragraph*{\pushcoro:}
+With \pushcoro you transfer parameters to the \corofunction. The class has
+only one template parameter defining the parameter type pushed to
+\corofunction.\\
+\newline
+The \corofunction is entered by the first call to \pushcoroop instead of the
+constructor. The interface does not contain \coroget, e.g. you can not
+retrieve return values from this kind of coroutine.
+\cppf{push_coroutine.cpp}
+
+\paragraph*{\pullcoro:}
+With \pullcoro you retrieve parameters from the \corofunction. The class
+has only one template parameter defining the parameter type pulled from
+\corofunction.\\
+\newline
+The \corofunction is entered in the constructor of \corofunction (like \coro).
+The interface contains \coroget to retrieve returned values from the
+\corofunction.  This kind of coroutine provides only \pullcoroop which
+does not transfer parameters to the \corofunction.
+\cppf{pull_coroutine.cpp}
+
+Example:
+\cppf{alternative_fibonacci.cpp}
+
+\subsubsection*{Other libraries}
 \boostcoroutine is a follow-up on \boostcorosum which is unfinished and
 not part of the official boost release (development of this library was
 stopped).\\

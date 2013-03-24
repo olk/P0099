@@ -9,15 +9,13 @@ public:
         c_(c)
     {}
 
-    void visit(branch & b)
-    {
+    void visit(branch & b){
         // traverse tree
         if (b.left) b.left->accept(*this);
         if (b.right) b.right->accept(*this);
     }
 
-    void visit(leaf & l)
-    {
+    void visit(leaf & l){
         // return leaf node to caller
         c_(l);
     }

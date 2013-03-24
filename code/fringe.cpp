@@ -1,23 +1,20 @@
-node::ptr_t create_tree1()
-{
+node::ptr_t create_tree1(){
     return branch::create(
         leaf::create("a"),
         branch::create(
             leaf::create("b"),
-            leaf::create("c") ) );
+            leaf::create("c")));
 }
 
-node::ptr_t create_tree2()
-{
+node::ptr_t create_tree2(){
     return branch::create(
         branch::create(
             leaf::create("a"),
-            leaf::create("b") ),
-        leaf::create("c") );
+            leaf::create("b")),
+        leaf::create("c"));
 }
 
-int main()
-{
+int main() {
     // create tree t1
     node::ptr_t t1=create_tree1();
     // create a coroutine, recursivly iterates trough t1
@@ -46,7 +43,7 @@ int main()
     bool result = std::equal(
             std::begin(c1),
             std::end(c1),
-            std::begin(c2) );
+            std::begin(c2));
 
     std::cout << std::boolalpha << "same fringe == " << result;
     std::cout << "\nDone" << std::endl;
