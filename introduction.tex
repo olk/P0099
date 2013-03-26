@@ -4,10 +4,12 @@ This proposal proposes to add \coro to the C++ standard.\\
 \newline
 In computer science routines are defined as a sequence of operations. The
 execution of routines form a parent-child relationship and the child terminates
-always before the parent. Coroutines are a generalization of routines. The
+always before the parent. Coroutines (the term was introduced by Melvin
+Conway\cite{Conway1963}) are a generalization of routines (Donald Knuth\cite{Knuth1997}). The
 principal difference between coroutines and routines is that a coroutine enables
 explicit suspend and resume of their progress via additional operations by
-preserving local state.\\
+preserving local state. Coroutines support the implementation of components such
+as cooperative tasks, iterators, infinite lists and pipes.\\
 \newline
 \coro is a first class \continuation (can be passed as argument, returned
 by procedure and stored in a data structure to be used later).\\
