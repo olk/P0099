@@ -2,8 +2,14 @@
 
 \subsubsection*{Proposed Design}
 
+\paragraph*{stack-full:}
+Each instance of \coro has its own stack.\\
+\newline
+In contrast to stack-less coroutines allow stack-full coroutines to invoke the
+suspend operation out of arbitrary sub-stackframes enabling \escreops.
+
 \paragraph*{move-only:}
-Each instance of \coro has its own stack and is moveable-only.\\
+\coro is moveable-only.\\
 \newline
 If \coro would be copyable then its stack with all the objects allocated on it
 are copied too. This could force undefined behaviour if some of this objects are
@@ -39,7 +45,7 @@ At construction \coro starts with a default (minimal) stack size. This minimal
 stack size is the maximum of page size and the canonical size for signal stack
 (macro SIGSTKSZ on POSIX).\\
 \newline
-At this time of writing only GCC (4.7) is known to support segmented
+At this time of writing only GCC (4.7)\cite{gccsplit} is known to support segmented
 stacks. With version 1.54 \boostcoroutine provides support for segmented stacks.\\
 \newline
 The destructor of \coro deallocates the associated stack. The implementer is
@@ -126,10 +132,11 @@ An exception thrown inside \corofunction will re-thrown by \coro constructor or
 \coro provides a bidirectional flow of data (passing data to and returning data
 from \corofunction). An alternative would be to split \coro into two
 unidirectional coroutine types: \pushcoro and \pullcoro.\\
+\cppf{alternative_fibonacci.cpp}
 
 \paragraph*{\pushcoro:}
-With \pushcoro you transfer parameters to the \corofunction. The class has
-only one template parameter defining the parameter type pushed to
+With \pushcoro you transfer parameters to the \corofunction (push it to). The
+class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
 The \corofunction is entered by the first call to \pushcoroop instead of the
@@ -138,9 +145,9 @@ retrieve return values from this kind of coroutine.
 \cppf{push_coroutine.cpp}
 
 \paragraph*{\pullcoro:}
-With \pullcoro you retrieve parameters from the \corofunction. The class
-has only one template parameter defining the parameter type pulled from
-\corofunction.\\
+With \pullcoro you retrieve parameters from the \corofunction (pull it from).
+The class has only one template parameter defining the parameter type pulled
+from \corofunction.\\
 \newline
 The \corofunction is entered in the constructor of \corofunction (like \coro).
 The interface contains \coroget to retrieve returned values from the
@@ -148,12 +155,17 @@ The interface contains \coroget to retrieve returned values from the
 does not transfer parameters to the \corofunction.
 \cppf{pull_coroutine.cpp}
 
-Example:
-\cppf{alternative_fibonacci.cpp}
-
 \subsubsection*{Other libraries}
 \boostcoroutine is a follow-up on \boostcorosum which is unfinished and
 not part of the official boost release (development of this library was
 stopped).\\
 During the boost review process interface of \boostcoroutine was changed and
-differ in some parts to \boostcorosum.
+differ in some parts to \boostcorosum.\\
+Mordor\cite{mordor} is another C++ library implementing cooperative multitasking
+in order to achieve high I/O performance. The difference to this design is that
+this proposal focus on enhanced control flow while Mordor\cite{mordor} abstracts
+on the level of tasking (providing a cooperativly scheduled fiber engine).\\
+Another design of a task library was published by AT\&T\cite{atnt1989} describing
+a tasking system with non-preemtive scheduling.\\
+\coro could be used as the basis for such kind of tasking abstractions provinding
+an abstraction to switch between different execution contexts.\\

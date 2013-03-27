@@ -37,9 +37,9 @@
 \newcommand{\pushcoro}{\cpp{std::push_coroutine<>}}
 \newcommand{\pullcoro}{\cpp{std::pull_coroutine<>}}
 \newcommand{\coroiterator}{\cpp{std::coroutine<>::iterator}}
-\newcommand{\coroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()(Args...)}}
-\newcommand{\pushcoroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()(T)}}
-\newcommand{\pullcoroop}{\cpp{std::coroutine<> & std::coroutine<>::operator()()}}
+\newcommand{\coroop}{\cpp{std::coroutine<>::operator()(Args...)}}
+\newcommand{\pushcoroop}{\cpp{std::coroutine<>::operator()(T)}}
+\newcommand{\pullcoroop}{\cpp{std::coroutine<>::operator()()}}
 \newcommand{\corobool}{\cpp{std::coroutine<>::operator safe_bool()}}
 \newcommand{\coroget}{\cpp{std::coroutine<>::get()}}
 \newcommand{\tuple}{\cpp{std::tuple<>}}
@@ -48,8 +48,10 @@
 \newcommand{\continuation}{\mbox{\textit{continuation}}}
 \newcommand{\coopmultitasking}{\textit{cooperative multitasking}}
 \newcommand{\corofunction}{\textit{coroutine-function}}
-\newcommand{\escreccomps}{\textit{escape-and-reenter recursive computations}}
-\newcommand{\escrecloops}{\textit{escape-and-reenter loops}}
+\newcommand{\escre}{\textit{escape-and-reenter}}
+\newcommand{\escreops}{\textit{\escre~operations}}
+\newcommand{\escreccomps}{\textit{\escre~recursive computations}}
+\newcommand{\escrecloops}{\textit{\escre~loops}}
 
 \newcommand{\boostcontext}{boost.context\cite{context153}}
 \newcommand{\boostcoroutine}{boost.coroutine\cite{coroutine153}}

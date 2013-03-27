@@ -1,13 +1,15 @@
-\abschnitt{Motivation and Scope}
+\abschnitt{Motivation}
 
 This proposal referes to \boostcoroutine as reference implementation - providing
 a test suite and examples.\\
 \newline
+In order to support a broad range of execution control behaviour we suggest
+\newline
 \coro can be used to \escrecloops, to \escreccomps~and for \coopmultitasking~helping
 to solve problems in a much simpler and more elegant way than with only a single
 flow of control.\\
-Advantages can be seen particularly clearly with the use of a recursive function,
-such as traversal of binary trees.
+Advantages can be seen particularly clearly with the use of a recursive
+function, such as traversal of binary trees.
 
 \subsubsection*{same fringe problem}
 
@@ -29,8 +31,8 @@ A tree consists of branch and leaf nodes. Each branch node has two children; lea
 nodes have none. Trees t1 and t2 have a different tree structure but the same fringe.\\
 For each tree a \coro is created while in the associated \corofunction \cpp{coro_visitor}
 traverses the tree.\\
-For each tree a \coro is created and \coroiterator steps over the leaf nodes of
-its tree. \cpp{std::equal()} compares the iterator ranges.
+\coroiterator, created from \coro, steps over the leaf nodes of its tree and
+\cpp{std::equal()} compares the iterator ranges.
 \newline
 \cppf{visitor.cpp}
 The visitor inspects recursively the tree - on each leaf node it escapes the recursive
@@ -38,21 +40,3 @@ computation and makes the leaf node available to the iterator. After re-entering
 visitor the recursive traversing of the tree continues.
 \newline
 The complete source code is contained in the examples of \boostcoroutine.
-
-\subsubsection*{Programming languages with native support for coroutines}
-
-\begin{tabular}{ l l l l l }
-    \midrule
-
-    C\# & F\# & Haskell & Perl & Python \\
-
-    \midrule
-
-    D & Factor & Lua & PHP & Ruby \\
-
-    \midrule
-
-    Erlang & Go & Modula-2 & Prolog & Scheme \\
-
-    \midrule
-\end{tabular}
