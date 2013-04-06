@@ -15,9 +15,9 @@ additional operations by preserving execution state and thus provide an
 \paragraph*{characteristics:}
 Characteristics\cite{Moura2009} of a coroutine are:
 \begin{itemize}
-    \item values of local data persist between sucessive calls (context
+    \item values of local data persist between successive calls (context
           switches)
-    \item execution is supended as control leaves coroutine and resumed at
+    \item execution is suspended as control leaves coroutine and resumed at
           certain time later
     \item symmetric or asymmetric control-transfer mechanism
     \item first-class object (can be passed as argument, returned by procedures,
@@ -42,9 +42,9 @@ generators, ...).
     \caption{some programming languages with native support of coroutines}
 \end{table}
 \newline
-Coroutines are useful in simmulation, artifical intelligence, concurrent
+Coroutines are useful in simulation, artificial intelligence, concurrent
 programming, text processing and data manipulation\cite{Moura2009} supporting
-the implementation of components such as cooperative tasks (fibers), iterators/
+the implementation of components such as cooperative tasks (fibers), iterators,
 generators, infinite lists, pipes etc.
 
 \paragraph*{execution-transfer mechanism:}
@@ -67,13 +67,13 @@ In contrast to a stackless coroutine a stackful coroutine allows to suspend
 from nested stackframes. The execution resumes at exact the same point in the
 code as it was suspended before.\\
 Stackless coroutines limits the application for general-purpose multitasking
-\cite{Moura2009} (for instance stackless corourines can not be used to suspend
+\cite{Moura2009} (for instance stackless coroutines can not be used to suspend
 the current task if blocking operations are invoked from within a library).
 
 \paragraph*{first-class continuation:}
 A first-class continuations can be passed as argument, returned by
 function and stored in a data structure to be used later.\\
-In some implementations (for instance C# \textit{yield}) the coroutine can not
+In some implementations (for instance C\# \textit{yield}) the coroutine can not
 directly accessed or directly manipulated.\\
 \newline
 Without stackfulness and first-class semantic some useful execution control

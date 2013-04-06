@@ -1,6 +1,11 @@
 \abschnitt{Design Decisions}
+This section describes two designs - one with a bidirectional and an alternative
+design with undirectionial exchange of data.\\
 
 \subsubsection*{Proposed Design}
+\boostcoroutine implements in its interface (version 1) a coroutine with
+bidirectional flow of data between \corofunction and caller. The template
+argument of \coro is a signature defining passed argument and return types.
 
 \paragraph*{stack-full:}
 Each instance of \coro has its own stack.\\
@@ -23,18 +28,6 @@ On destruction \coro unwinds its stack.\\
 The implementer is free to deallocate the stack or cache it for future \coro
 instances.
 
-\paragraph*{context switch:}
-\coro stores and restores registers according to the underlying ABI on each
-context switch.\\
-\newline
-This includes also the floating point environment as required by the ABI. The
-implementer can omit preserving the floating point env if he can predict that
-it's safe.\\
-\newline
-On POSIX systems \coro must not preserve signal masks for performance reasons.\\
-\newline
-A context switch is done via \coroop.
-
 \paragraph*{segmented stack:}
 \coro must support segmented stacks (growing on demand).\\
 \newline
@@ -50,6 +43,18 @@ stacks. With version 1.54 \boostcoroutine provides support for segmented stacks.
 \newline
 The destructor of \coro deallocates the associated stack. The implementer is
 free to deallocated the stack or to cache it for later usage.
+
+\paragraph*{context switch:}
+\coro stores and restores registers according to the underlying ABI on each
+context switch.\\
+\newline
+This includes also the floating point environment as required by the ABI. The
+implementer can omit preserving the floating point env if he can predict that
+it's safe.\\
+\newline
+On POSIX systems \coro must not preserve signal masks for performance reasons.\\
+\newline
+A context switch is done via \coroop.
 
 \paragraph*{start at construction:}
 \corofunction is entered upon construction of \coro not upon the first call.\\
@@ -128,23 +133,28 @@ as first argument to \corofunction.
 An exception thrown inside \corofunction will re-thrown by \coro constructor or
 \coroop.
 
+
 \subsubsection*{Alternative Design}
-\coro provides a bidirectional flow of data (passing data to and returning data
-from \corofunction). An alternative would be to split \coro into two
-unidirectional coroutine types: \pushcoro and \pullcoro.\\
+An alternative to bidirectional data exchange between coroutine and its invoker
+would be to split \coro into two unidirectional coroutine types: \pushcoro and
+\pullcoro. \boostcoroutine will provide in its interface version 2 \pushcoro and
+\pullcoro (probably in boost-1.54). The advantage regarding to a bidirectional
+coroutine is the simplified template argument; instead of an signature
+\pullcoro and \pushcoro use only one template argument describing the type
+which is exchanged between the context switches.
 \cppf{alternative_fibonacci.cpp}
 
-\paragraph*{\pushcoro:}
+\paragraph*{push\_coroutine:}
 With \pushcoro you transfer parameters to the \corofunction (push it to). The
 class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
-The \corofunction is entered by the first call to \pushcoroop instead of the
-constructor. The interface does not contain \coroget, e.g. you can not
-retrieve return values from this kind of coroutine.
+In contrast to \coro the \corofunction is entered by the first call to
+\pushcoroop instead of the constructor. The interface does not contain
+\coroget, e.g. you can not retrieve return values from this kind of coroutine.
 \cppf{push_coroutine.cpp}
 
-\paragraph*{\pullcoro:}
+\paragraph*{pull\_coroutine:}
 With \pullcoro you retrieve parameters from the \corofunction (pull it from).
 The class has only one template parameter defining the parameter type pulled
 from \corofunction.\\
@@ -164,8 +174,21 @@ differ in some parts to \boostcorosum.\\
 Mordor\cite{mordor} is another C++ library implementing cooperative multitasking
 in order to achieve high I/O performance. The difference to this design is that
 this proposal focus on enhanced control flow while Mordor\cite{mordor} abstracts
-on the level of tasking (providing a cooperativly scheduled fiber engine).\\
+on the level of tasking (providing a cooperatively scheduled fiber engine).\\
 Another design of a task library was published by AT\&T\cite{atnt1989} describing
-a tasking system with non-preemtive scheduling.\\
-\coro could be used as the basis for such kind of tasking abstractions provinding
-an abstraction to switch between different execution contexts.\\
+a tasking system with non-preemptive scheduling.\\
+\coro could be used as the basic mechanism for such kind of tasking abstractions.\\
+
+\paragraph*{resumable functions (N3328\cite{n3328}):}
+This proposal is a library superset of N3328 - the \resumfn can be implemented
+on top of \coro. The proposed coroutine does not require memory allocation for
+the future on a switch and does not require language changes (no keywords like
+\textit{resumable} and \textit{await}).\\
+A working implementation of this proposal is available at \boostcoroutine.\\
+As described in section 3.2.5 'Function Prolog' - the body of a \resumfn is
+transformed in a switch statement. This is similar to the stackless coroutines
+of Python an C\#.\\
+\newline
+Without stackfulness and first-class semantic some useful execution control
+flows cannot be supported (for instance cooperative multitasking,
+checkpointing) and the 'same fringe' example would not be easily implementable.
