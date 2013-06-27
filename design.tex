@@ -1,6 +1,6 @@
 \abschnitt{Design Decisions}
-This section describes two designs - one with a bidirectional and an alternative
-design with undirectionial exchange of data.\\
+This section describes two designs - one with unidirectional and an alternative
+design with bidirectionial exchange of data.\\
 
 \subsubsection*{Proposed Design}
 \boostcoroutine implements in its interface (version 1) a coroutine with
@@ -138,7 +138,7 @@ An exception thrown inside \corofunction will re-thrown by \coro constructor or
 An alternative to bidirectional data exchange between coroutine and its invoker
 would be to split \coro into two unidirectional coroutine types: \pushcoro and
 \pullcoro. \boostcoroutine will provide in its interface version 2 \pushcoro and
-\pullcoro (probably in boost-1.54). The advantage regarding to a bidirectional
+\pullcoro (probably in boost-1.55). The advantage regarding to a bidirectional
 coroutine is the simplified template argument; instead of an signature
 \pullcoro and \pushcoro use only one template argument describing the type
 which is exchanged between the context switches.
