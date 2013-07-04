@@ -2,61 +2,13 @@
 This section describes two designs - one with unidirectional and an alternative
 design with bidirectionial exchange of data.\\
 
-\subsubsection*{Proposed Design}
-\boostcoroutine implements in its interface (version 1) a coroutine with
-bidirectional flow of data between \corofunction and caller. The template
-argument of \coro is a signature defining passed argument and return types.
+\subsubsection*{Alternative Design}
+An alternative to unidirectional data exchange between coroutine and its caller
+would be a interface (BOOST_COROUTINE_BIDIRECT) with bidirectional flow of data.
+The template argument of \coro is a signature defining passed argument and
+return types.
 
-\paragraph*{stack-full:}
-Each instance of \coro has its own stack.\\
-\newline
-In contrast to stack-less coroutines allow stack-full coroutines to invoke the
-suspend operation out of arbitrary sub-stackframes enabling \escreops.
-
-\paragraph*{move-only:}
-\coro is moveable-only.\\
-\newline
-If \coro would be copyable then its stack with all the objects allocated on it
-are copied too. This could force undefined behaviour if some of this objects are
-RAII-classes (manage a resource via RAII pattern). If one of the \coro copies
-terminates (unwinds its stack) the RAII-classes releases their managed resources
-at destruction.
-
-\paragraph*{clean-up:}
-On destruction \coro unwinds its stack.\\
-\newline
-The implementer is free to deallocate the stack or cache it for future \coro
-instances.
-
-\paragraph*{segmented stack:}
-\coro must support segmented stacks (growing on demand).\\
-\newline
-It is not always possible to estimated the required stack size - in most cases
-too much memory is allocated (wast of virtual address-space).\\
-\newline
-At construction \coro starts with a default (minimal) stack size. This minimal
-stack size is the maximum of page size and the canonical size for signal stack
-(macro SIGSTKSZ on POSIX).\\
-\newline
-At this time of writing only GCC (4.7)\cite{gccsplit} is known to support segmented
-stacks. With version 1.54 \boostcoroutine provides support for segmented stacks.\\
-\newline
-The destructor of \coro deallocates the associated stack. The implementer is
-free to deallocated the stack or to cache it for later usage.
-
-\paragraph*{context switch:}
-\coro stores and restores registers according to the underlying ABI on each
-context switch.\\
-\newline
-This includes also the floating point environment as required by the ABI. The
-implementer can omit preserving the floating point env if he can predict that
-it's safe.\\
-\newline
-On POSIX systems \coro must not preserve signal masks for performance reasons.\\
-\newline
-A context switch is done via \coroop.
-
-\paragraph*{start at construction:}
+\paragraph*{enter \corofunction:}
 \corofunction is entered upon construction of \coro not upon the first call.\\
 \newline
 Because \corofunction is entered upon construction of \coro we can check after
@@ -66,6 +18,8 @@ has terminated.\\
 and data is available.\\
 The iteration stopped if data is no longer generated:
 \cppf{corofn_startup.cpp}
+
+\paragraph*{completeness check:}
 Otherwise detecting the completeness of \coro would require an extra context
 switch (return from last \coroop and calling return in the \corofunction).\\
 This makes the implementation for iterators very hard and \cpp{std::distance}
@@ -122,35 +76,104 @@ results to the caller.\\ This is done by calling the \coroop of the \coro given
 as first argument to \corofunction.
 \cppf{return_params.cpp}
 
-\paragraph*{output iterator:}
-\coro with signature \cpp{T(void)} provide output iterators.
-\cppf{output_iterator.cpp}
-
 \paragraph*{input iterator:}
-\coro with signature \cpp{void(T)} provide input iterators.
+\coro with signature \cpp{T(void)} provide input iterators.
+\cppf{alternative_output_iterator.cpp}
+
+\paragraph*{output iterator:}
+\coro with signature \cpp{void(T)} provide output iterators.
+
+
+\subsubsection*{Proposed Design}
+\boostcoroutine provides a interface (BOOST_COROUTINE_UNIDIRECT) with
+unidirectional flow of data between \corofunction and caller.
+The design suggests two unidirectional coroutine types: \pushcoro and
+\pullcoro.
+The advantage regarding to a bidirectional coroutine is the simplified template
+argument; instead of an signature \pullcoro and \pushcoro use only one template
+argument describing the type which is exchanged between the context switches.
+\cppf{alternative_fibonacci.cpp}
+
+\paragraph*{stack-full:}
+Each instance of a coroutine has its own stack.\\
+\newline
+In contrast to stack-less coroutines allow stack-full coroutines to invoke the
+suspend operation out of arbitrary sub-stackframes enabling \escreops.
+
+\paragraph*{move-only:}
+A coroutine is moveable-only.\\
+\newline
+If it would be copyable then its stack with all the objects allocated on it
+are copied too. This could force undefined behaviour if some of this objects are
+RAII-classes (manage a resource via RAII pattern). If one of the copies
+terminates (unwinds its stack) the RAII-classes releases their managed resources
+at destruction.
+
+\paragraph*{clean-up:}
+On destruction the associated stack will unwinded.\\
+\newline
+The implementer is free to deallocate the stack or cache it for future usage
+(new coroutines).
+
+\paragraph*{segmented stack:}
+\pushcoro and \pullcoro must support segmented stacks (growing on demand).\\
+\newline
+It is not always possible to estimated the required stack size - in most cases
+too much memory is allocated (wast of virtual address-space).\\
+\newline
+At construction a coroutine starts with a default (minimal) stack size. This minimal
+stack size is the maximum of page size and the canonical size for signal stack
+(macro SIGSTKSZ on POSIX).\\
+\newline
+At this time of writing only GCC (4.7)\cite{gccsplit} is known to support segmented
+stacks. With version 1.54 \boostcoroutine provides support for segmented stacks.\\
+\newline
+The destructor deallocates the associated stack. The implementer is free to
+deallocated the stack or to cache it for later usage.
+
+\paragraph*{context switch:}
+A coroutine stores and restores registers according to the underlying ABI on each
+context switch.\\
+\newline
+This includes also the floating point environment as required by the ABI. The
+implementer can omit preserving the floating point env if he can predict that
+it's safe.\\
+\newline
+On POSIX systems coroutine must not preserve signal masks for performance reasons.\\
+\newline
+A context switch is done via \pushcoroop and \pullcoroop.
+
+\paragraph*{enter \corofunction:}
+In contrast to \pullcoro the \corofunction is entered by the first call to
+\pushcoroop instead of the constructor.\\
+\newline
+Because \corofunction is entered upon construction of \pullcoro we can check after
+returning from the constructor if a result was provided or the \corofunction
+has terminated via \pullcorobool.\\
+\pullcorobool returns true if the coroutine is still valid (\corofunction has
+not terminated) and data is available.\\
+The iteration stopped if data is no longer generated:
+\cppf{corofn_startup.cpp}
 
 \paragraph*{exceptions:}
-An exception thrown inside \corofunction will re-thrown by \coro constructor or
-\coroop.
+An exception thrown inside \corofunction will re-thrown by \pullcoro constructor,
+\pullcoroop or \pushcoroop.
+
+\paragraph*{input iterator:}
+\pullcoro provide input iterators.
+\cppf{output_iterator.cpp}
+
+\paragraph*{output iterator:}
+\pushcoro provide output iterators.
 
 
-\subsubsection*{Alternative Design}
-An alternative to bidirectional data exchange between coroutine and its invoker
-would be to split \coro into two unidirectional coroutine types: \pushcoro and
-\pullcoro. \boostcoroutine will provide in its interface version 2 \pushcoro and
-\pullcoro (probably in boost-1.55). The advantage regarding to a bidirectional
-coroutine is the simplified template argument; instead of an signature
-\pullcoro and \pushcoro use only one template argument describing the type
-which is exchanged between the context switches.
-\cppf{alternative_fibonacci.cpp}
 
 \paragraph*{push\_coroutine:}
 With \pushcoro you transfer parameters to the \corofunction (push it to). The
 class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
-In contrast to \coro the \corofunction is entered by the first call to
-\pushcoroop instead of the constructor. The interface does not contain
+The interface does not contain
 \coroget, e.g. you can not retrieve return values from this kind of coroutine.
 \cppf{push_coroutine.cpp}
 
@@ -159,11 +182,10 @@ With \pullcoro you retrieve parameters from the \corofunction (pull it from).
 The class has only one template parameter defining the parameter type pulled
 from \corofunction.\\
 \newline
-The \corofunction is entered in the constructor of \corofunction (like \coro).
-The interface contains \coroget to retrieve returned values from the
-\corofunction.  This kind of coroutine provides only \pullcoroop which
+This kind of coroutine provides only \pullcoroop which
 does not transfer parameters to the \corofunction.
 \cppf{pull_coroutine.cpp}
+
 
 \subsubsection*{Other libraries}
 \boostcoroutine is a follow-up on \boostcorosum which is unfinished and
@@ -184,6 +206,9 @@ This proposal is a library superset of N3328 - the \resumfn can be implemented
 on top of \coro. The proposed coroutine does not require memory allocation for
 the future on a switch and does not require language changes (no keywords like
 \textit{resumable} and \textit{await}).\\
+A proof-of-concept how \await could be build upon \boostroroutine was already
+implemented in \awaite.\\
+\newline
 A working implementation of this proposal is available at \boostcoroutine.\\
 As described in section 3.2.5 'Function Prolog' - the body of a \resumfn is
 transformed in a switch statement. This is similar to the stackless coroutines

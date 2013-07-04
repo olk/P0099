@@ -40,3 +40,16 @@ computation and makes the leaf node available to the iteratori (via \pushcoro).
 After re-entering the visitor the recursive traversing of the tree continues.
 \newline
 The complete source code is contained in the examples of \boostcoroutine.
+\newline
+\newline
+In the past the code using asio's \asyncops was scattered by callbacks. \boostasio
+provides with its new feature \asyncres a new way how the code can be simplified and
+made easier to read. One kind of \asyncres uses \boostcoroutine internaly:
+\cppf{asyncres.cpp}
+\newline
+\newline
+Another project, \awaitemu, using \boostcoroutine is a proof-of-concept which provides
+a full emultation of the \csharp feature \await. Because of usage of stackfull coroutines
+\await is \textbf{not limited} by "one level" as in \csharp.
+\cppf{await.cpp}
+Evgeny Panasyuk wrote short comparation of \await and \coro at \channelnine.
