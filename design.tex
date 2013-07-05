@@ -1,88 +1,6 @@
 \abschnitt{Design Decisions}
 This section describes two designs - one with unidirectional and an alternative
-design with bidirectionial exchange of data.\\
-
-\subsubsection*{Alternative Design}
-An alternative to unidirectional data exchange between coroutine and its caller
-would be a interface (BOOST_COROUTINE_BIDIRECT) with bidirectional flow of data.
-The template argument of \coro is a signature defining passed argument and
-return types.
-
-\paragraph*{enter \corofunction:}
-\corofunction is entered upon construction of \coro not upon the first call.\\
-\newline
-Because \corofunction is entered upon construction of \coro we can check after
-returning from the constructor if a result was provided or the \corofunction
-has terminated.\\
-\corobool returns true if \coro is still valid (\corofunction has not terminated)
-and data is available.\\
-The iteration stopped if data is no longer generated:
-\cppf{corofn_startup.cpp}
-
-\paragraph*{completeness check:}
-Otherwise detecting the completeness of \coro would require an extra context
-switch (return from last \coroop and calling return in the \corofunction).\\
-This makes the implementation for iterators very hard and \cpp{std::distance}
-would return 4 instead of 3 in the example above.\\
-\newline
-If parameters are required to be passed at the start of \corofunction then those
-parameters can be passed via the \coro constructor.
-
-\paragraph*{coroutine-function signature:}
-The \corofunction returns \cpp{void} and takes a \coro of inverted signature
-as argument.\\
-\newline
-This design decision makes the code using \coro let look more symmetric.\\
-Both, calling code and coroutine function, use an object of type \coro in order
-to switch the context and to transfer data.\\
-This requires that the template parameter of the coroutine passed as argument
-to the \corofunction has an inverted signature, e.g. return types become
-arguments and vice versa.
-\cppf{corofn_startup.cpp}
-
-\coro in the main code has a signature of \cpp{int(void)} - it returns an
-integer from \corofunction.\\
-The \coro argument of \corofunction \cpp{f} has therefore a signature of
-\cpp{void(int)} - it transfers an integer to caller.\\
-\newline
-\corofunction must return void, otherwise the user would call\\
-\coroop to return values from the \corofunction and \cpp{return} as the
-last call which terminates the \corofunction - with the chosen design we have
-only one path to exit the \corofunction.
-\cppf{corofn_nonvoid.cpp}
-
-\paragraph*{passing parameters:}
-Parameters are passed to the \corofunction via\\\coroop.\\
-\newline
-\coroop accepts arguments as defined in the template arguments in \coro. A
-context switch is executed and the passed parameters will be accessible in in
-the \corofunction.
-
-\paragraph*{accessing parameters:}
-Parameters returned from the \corofunction can be accessed with\\\coroget.\\
-\newline
-In contrast to single argument in coroutine signature multiple arguments are
-returned via \tuple from \coroget.\\
-Splitting-up the access of parameters from context switch function enables to
-check if \coro is valid after return from \coroop, e.g. \coro has values and
-\corofunction has not terminated.
-\cppf{access_params.cpp}
-
-\paragraph*{returning parameters:}
-Results can be returned by a \corofunction via\\\coroop.\\
-\newline
-Like passing parameters to the \corofunction the \corofunction can return
-results to the caller.\\ This is done by calling the \coroop of the \coro given
-as first argument to \corofunction.
-\cppf{return_params.cpp}
-
-\paragraph*{input iterator:}
-\coro with signature \cpp{T(void)} provide input iterators.
-\cppf{alternative_output_iterator.cpp}
-
-\paragraph*{output iterator:}
-\coro with signature \cpp{void(T)} provide output iterators.
-
+design with bidirectionial transfer of data.\\
 
 \subsubsection*{Proposed Design}
 \boostcoroutine provides a interface (BOOST_COROUTINE_UNIDIRECT) with
@@ -92,7 +10,25 @@ The design suggests two unidirectional coroutine types: \pushcoro and
 The advantage regarding to a bidirectional coroutine is the simplified template
 argument; instead of an signature \pullcoro and \pushcoro use only one template
 argument describing the type which is exchanged between the context switches.
-\cppf{alternative_fibonacci.cpp}
+\cppf{fibonacci.cpp}
+
+\paragraph*{push\_coroutine:}
+With \pushcoro you transfer parameters to the \corofunction (push-to). The
+class has only one template parameter defining the parameter type pushed to
+\corofunction.\\
+\newline
+The interface does not contain a \cpp{get()}-function, e.g. you can not retrieve
+return values from this kind of coroutine.
+\cppf{push_coroutine.cpp}
+
+\paragraph*{pull\_coroutine:}
+With \pullcoro you retrieve parameters from the \corofunction (pull-from). The
+class has only one template parameter defining the parameter type pulled from
+\corofunction.\\
+\newline
+This kind of coroutine provides only \pullcoroop which does not transfer
+parameters to the \corofunction.
+\cppf{pull_coroutine.cpp}
 
 \paragraph*{stack-full:}
 Each instance of a coroutine has its own stack.\\
@@ -113,7 +49,7 @@ at destruction.
 On destruction the associated stack will unwinded.\\
 \newline
 The implementer is free to deallocate the stack or cache it for future usage
-(new coroutines).
+(for coroutines created later).
 
 \paragraph*{segmented stack:}
 \pushcoro and \pullcoro must support segmented stacks (growing on demand).\\
@@ -155,6 +91,36 @@ not terminated) and data is available.\\
 The iteration stopped if data is no longer generated:
 \cppf{corofn_startup.cpp}
 
+\paragraph*{completeness check:}
+Otherwise detecting the completeness of a coroutine would require an extra context
+switch (return from last \pullcoroop, \pushcoroop and calling return in the \corofunction).\\
+This makes the implementation for iterators very hard and \cpp{std::distance}
+would return 4 instead of 3 in the example above.
+
+\paragraph*{coroutine-function signature:}
+The \corofunction returns \cpp{void} and takes its counterpart coroutine as argument.
+Both coroutine types take the same template argument.\\
+\cppf{corofn_signature.cpp}
+
+\paragraph*{passing parameters:}
+Parameters are passed from the main-context to the \corofunction via\\\pushcoroop.\\
+\newline
+\pushcoroop accepts an argument as defined in the template argument in \pushcoro. A
+context switch is executed and the passed parameters will be accessible in in
+the \corofunction.
+
+\paragraph*{accessing parameters:}
+Parameters returned from the \corofunction can be accessed with\\\pullcoroget.\\
+\newline
+Splitting-up the access of parameters from context switch function enables to
+check if \pullcoro is valid after return from \pullcoroop, e.g. \pullcoro has values
+and \corofunction has not terminated.
+\cppf{access_params.cpp}
+
+\paragraph*{returning parameters:}
+Results can be returned by a \corofunction via\\\pushcoroop.\\
+\cppf{return_params.cpp}
+
 \paragraph*{exceptions:}
 An exception thrown inside \corofunction will re-thrown by \pullcoro constructor,
 \pullcoroop or \pushcoroop.
@@ -167,24 +133,78 @@ An exception thrown inside \corofunction will re-thrown by \pullcoro constructor
 \pushcoro provide output iterators.
 
 
+\subsubsection*{Alternative Design}
+An alternative to unidirectional data exchange between coroutine and its caller
+would be a interface (BOOST_COROUTINE_BIDIRECT) with bidirectional flow of data.
+The template argument of \coro is a signature defining passed argument and
+return types.
 
-\paragraph*{push\_coroutine:}
-With \pushcoro you transfer parameters to the \corofunction (push it to). The
-class has only one template parameter defining the parameter type pushed to
-\corofunction.\\
+\paragraph*{enter \corofunction:}
+\corofunction is entered upon construction of \coro not upon the first calli of
+\coroop.\\
 \newline
-The interface does not contain
-\coroget, e.g. you can not retrieve return values from this kind of coroutine.
-\cppf{push_coroutine.cpp}
+Because \corofunction is entered upon construction of \coro we can check after
+returning from the constructor if a result was provided or the \corofunction
+has terminated.\\
+\corobool returns true if \coro is still valid (\corofunction has not terminated)
+and data is available.\\
+The iteration stopped if data is no longer generated:
+\cppf{alternative_corofn_startup.cpp}
 
-\paragraph*{pull\_coroutine:}
-With \pullcoro you retrieve parameters from the \corofunction (pull it from).
-The class has only one template parameter defining the parameter type pulled
-from \corofunction.\\
+\paragraph*{coroutine-function signature:}
+The \corofunction returns \cpp{void} and takes a \coro of inverted signature
+as argument.\\
 \newline
-This kind of coroutine provides only \pullcoroop which
-does not transfer parameters to the \corofunction.
-\cppf{pull_coroutine.cpp}
+This design decision makes the code using \coro let look more symmetric.\\
+Both, calling code and coroutine function, use an object of type \coro in order
+to switch the context and to transfer data.\\
+This requires that the template parameter of the coroutine passed as argument
+to the \corofunction has an inverted signature, e.g. return types become
+arguments and vice versa.
+\cppf{corofn_startup.cpp}
+
+\coro, started from the main-context, has a signature of \cpp{int(void)} - it returns an
+integer from \corofunction.\\
+The \coro argument of \corofunction \cpp{f} has therefore a signature of
+\cpp{void(int)} - it transfers an integer to caller.\\
+\newline
+\corofunction must return void, otherwise the user would call\\
+\coroop to return values from the \corofunction and \cpp{return} as the
+last call which terminates the \corofunction - with the chosen design we have
+only one path to exit the \corofunction.
+\cppf{corofn_nonvoid.cpp}
+
+\paragraph*{passing parameters:}
+Parameters are passed to the \corofunction via\\\coroop.\\
+\newline
+\coroop accepts arguments as defined in the template arguments in \coro. A
+context switch is executed and the passed parameters will be accessible in in
+the \corofunction.
+
+\paragraph*{accessing parameters:}
+Parameters returned from the \corofunction can be accessed with\\\coroget.\\
+\newline
+In contrast to single argument in coroutine signature multiple arguments are
+returned via \tuple from \coroget.\\
+Splitting-up the access of parameters from context switch function enables to
+check if \coro is valid after return from \coroop, e.g. \coro has values and
+\corofunction has not terminated.
+\cppf{alternative_access_params.cpp}
+
+\paragraph*{returning parameters:}
+Results can be returned by a \corofunction via\\\coroop.\\
+\newline
+Like passing parameters to the \corofunction the \corofunction can return
+results to the caller.\\ This is done by calling the \coroop of the \coro given
+as first argument to \corofunction.
+\cppf{alternative_return_params.cpp}
+
+\paragraph*{input iterator:}
+\coro with signature \cpp{T(void)} provide input iterators.
+\cppf{alternative_output_iterator.cpp}
+
+\paragraph*{output iterator:}
+\coro with signature \cpp{void(T)} provide output iterators.
 
 
 \subsubsection*{Other libraries}
