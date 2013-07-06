@@ -3,31 +3,31 @@ This section describes two designs - one with unidirectional and an alternative
 design with bidirectionial transfer of data.\\
 
 \subsubsection*{Proposed Design}
-\boostcoroutine provides a interface (BOOST_COROUTINE_UNIDIRECT) with
-unidirectional flow of data between \corofunction and caller.
+\boostcoroutine provides a interface (BOOST\_COROUTINE\_UNIDIRECT) with
+unidirectional flow of data between \corofunction and caller.\\
 The design suggests two unidirectional coroutine types: \pushcoro and
-\pullcoro.
+\pullcoro.\\
 The advantage regarding to a bidirectional coroutine is the simplified template
 argument; instead of an signature \pullcoro and \pushcoro use only one template
 argument describing the type which is exchanged between the context switches.
 \cppf{fibonacci.cpp}
 
 \paragraph*{push\_coroutine:}
-With \pushcoro you transfer parameters to the \corofunction (push-to). The
+With \pushcoro a parameter is transfered to the \corofunction (pushed-to). The
 class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
 The interface does not contain a \cpp{get()}-function, e.g. you can not retrieve
-return values from this kind of coroutine.
+values returned by a \corofunction with this kind of coroutine.
 \cppf{push_coroutine.cpp}
 
 \paragraph*{pull\_coroutine:}
-With \pullcoro you retrieve parameters from the \corofunction (pull-from). The
+With \pullcoro a parameter is transfered from the \corofunction (pulled-from). The
 class has only one template parameter defining the parameter type pulled from
 \corofunction.\\
 \newline
-This kind of coroutine provides only \pullcoroop which does not transfer
-parameters to the \corofunction.
+This kind of coroutine provides only \pullcoroop which does only switch the
+context and transfers no data.
 \cppf{pull_coroutine.cpp}
 
 \paragraph*{stack-full:}
@@ -80,41 +80,42 @@ On POSIX systems coroutine must not preserve signal masks for performance reason
 A context switch is done via \pushcoroop and \pullcoroop.
 
 \paragraph*{enter \corofunction:}
-In contrast to \pullcoro the \corofunction is entered by the first call to
-\pushcoroop instead of the constructor.\\
+\corofunction is entered at \pullcoro construction. In contrast to this the
+\corofunction will entered for the first time if \pushcoroop is called the first
+time.\\
 \newline
 Because \corofunction is entered upon construction of \pullcoro we can check after
 returning from the constructor if a result was provided or the \corofunction
 has terminated via \pullcorobool.\\
 \pullcorobool returns true if the coroutine is still valid (\corofunction has
 not terminated) and data is available.\\
-The iteration stopped if data is no longer generated:
+Calling the coroutine is stopped if data is no longer generated:
 \cppf{corofn_startup.cpp}
 
 \paragraph*{completeness check:}
+TODO!\\
 Otherwise detecting the completeness of a coroutine would require an extra context
 switch (return from last \pullcoroop, \pushcoroop and calling return in the \corofunction).\\
 This makes the implementation for iterators very hard and \cpp{std::distance}
 would return 4 instead of 3 in the example above.
 
 \paragraph*{coroutine-function signature:}
-The \corofunction returns \cpp{void} and takes its counterpart coroutine as argument.
+The \corofunction returns \cpp{void} and takes its counterpart-coroutine as argument.
 Both coroutine types take the same template argument.\\
-\cppf{corofn_signature.cpp}
 
 \paragraph*{passing parameters:}
 Parameters are passed from the main-context to the \corofunction via\\\pushcoroop.\\
 \newline
-\pushcoroop accepts an argument as defined in the template argument in \pushcoro. A
-context switch is executed and the passed parameters will be accessible in in
+\pushcoroop accepts an argument as defined in the template argument in \pushcoro.
+A context switch is executed and the passed parameter will be accessible in in
 the \corofunction.
 
 \paragraph*{accessing parameters:}
 Parameters returned from the \corofunction can be accessed with\\\pullcoroget.\\
 \newline
 Splitting-up the access of parameters from context switch function enables to
-check if \pullcoro is valid after return from \pullcoroop, e.g. \pullcoro has values
-and \corofunction has not terminated.
+check if \pullcoro is valid after return from \pullcoroop, e.g. \pullcoro has
+values and \corofunction has not terminated.
 \cppf{access_params.cpp}
 
 \paragraph*{returning parameters:}
@@ -135,8 +136,8 @@ An exception thrown inside \corofunction will re-thrown by \pullcoro constructor
 
 \subsubsection*{Alternative Design}
 An alternative to unidirectional data exchange between coroutine and its caller
-would be a interface (BOOST_COROUTINE_BIDIRECT) with bidirectional flow of data.
-The template argument of \coro is a signature defining passed argument and
+would be a interface (BOOST\_COROUTINE\_BIDIRECT) with bidirectional flow of
+data. The template argument of \coro is a signature defining passed argument and
 return types.
 
 \paragraph*{enter \corofunction:}
@@ -226,8 +227,8 @@ This proposal is a library superset of N3328 - the \resumfn can be implemented
 on top of \coro. The proposed coroutine does not require memory allocation for
 the future on a switch and does not require language changes (no keywords like
 \textit{resumable} and \textit{await}).\\
-A proof-of-concept how \await could be build upon \boostroroutine was already
-implemented in \awaite.\\
+A proof-of-concept how \await could be build upon \boostcoroutine was already
+implemented in \awaitemu.\\
 \newline
 A working implementation of this proposal is available at \boostcoroutine.\\
 As described in section 3.2.5 'Function Prolog' - the body of a \resumfn is
