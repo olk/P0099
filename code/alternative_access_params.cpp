@@ -1,8 +1,7 @@
-std::push_coroutine<std::tuple<int,int>> c(
-    [&](std::pull_coroutine<std::tuple<int,int>> & c){
+std::coroutine<void(std::tuple<int,int>)> c(
+    [&](std::coroutine<std::tuple<int,int>()> & c){
         // access tuple {7,11}; x==7 y==1
         int x,y;
         std::tie(x,y)=c.get();
-    });
-
-c(std::make_tuple(7,11));
+    },
+    std::make_tuple(7,11)); // tuple passed as argument; coroutine-fn entered

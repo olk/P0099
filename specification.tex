@@ -1,6 +1,219 @@
 \abschnitt{Technical Specification}
 
-\cppf{coroutine.cpp}
+\subsubsection*{pull\_coroutine:}
+\cppf{pull_coroutine.cpp}
+
+\paragraph*{(constructor):}
+constructs new coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{coroutine();} & (1)\\
+
+    \midrule
+
+    \cpp{coroutine(Function&& fn);} & (2)\\
+
+    \midrule
+
+    \cpp{coroutine(Function&& fn, Args... args);} & (3)\\
+
+    \midrule
+
+    \cpp{coroutine(coroutine&& other);} & (4)\\
+
+    \midrule
+
+    \cpp{coroutine(const coroutine& other) = delete;} & (5)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates a \coro which does not represent a context of execution
+    \item[2)] creates a \coro object and associates it with a execution
+              context
+    \item[3)] creates a \coro object and associates it with a context of
+              execution and passes all arguments args to \corofunction fn
+    \item[4)] move constructor, constructs a \coro object to represent a
+              context of execution that was represented by other, after this
+              call other no longer represents a coroutine
+    \item[5)] copy constructor is deleted; coroutine are not copyable
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[other]   another coroutine object to construct this coroutine object with
+    \item[fn]      function to execute in the new coroutine
+    \item[args...] arguments to pass to the new function
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1), 4)] noexcept specification: \cpp{noexcept}
+    \item[2), 3)] \cpp{std::system_error} if the coroutine could not be started
+                  - the exception may represent a implementation-specific error
+                  condition; re-throw user defined exceptions from \corofunction
+\end{description}
+
+{\bf Notes}
+The arguments to the \corofunction are copied by value. If a reference argument
+needs to be passed to the thread function, it has to be wrapped (e.g. with
+\cpp{std::ref} or \cpp{std::ref}).\\
+\newline
+Return values from the \corofunction are accessible via \coroget. If the
+function throws an exception, this exception is re-thrown if the caller returns from
+\coroop.\\
+
+{\bf Example}
+\cppf{fibonacci.cpp}
+
+\paragraph*{(destructor):}
+destructs a coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{\~coroutine();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] destroys a \coro, if associated with a context of execution, then
+              the context of execution is destroyed too (for instance the
+              associated stack)\\
+\end{description}
+
+\paragraph*{operator=:}
+moves the coroutine object\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{coroutine & operator=(coroutine&& other);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] assigns the state of other to *this using move semantics
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[other]   another coroutine object to assign to this coroutine object
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\paragraph*{operator bool:}
+indicates if context of execution is still valid and a return value can be retrieved
+or \corofunction has finished\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{operator bool();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] evaluates to true if coroutine has a return value and is not complete
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\paragraph*{operator():}
+jump context of execution\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{coroutine & operator()(Args... args);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] switches the context of execution and transfers args to
+              \corofunction and makes them accessible by \coroget
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[args...] arguments to pass to the \corofunction
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[coroutine\&] reference to \cpp{*this}
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] \cpp{std::system_error} if the coroutine could not be jumped
+              - the exception may represent a implementation-specific error
+              condition; re-throw user-defined exceptions from \corofunction
+\end{description}
+
+\paragraph*{get:}
+accesses the return value from \corofunction\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{R get();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] access values returned from \corofunction
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[R] return type is defined by coroutines template argument
+\end{description}
+
+
+\paragraph*{swap:}
+swaps two coroutine objects\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(coroutine& other);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine objects
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+
+\subsubsection*{push\_coroutine:}
+\cppf{push_coroutine.cpp}
 
 \paragraph*{(constructor):}
 constructs new coroutine\\
