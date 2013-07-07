@@ -6,11 +6,11 @@ a test suite and examples.\\
 In order to support a broad range of execution control behaviour \pushcoro and
 \pullcoro can be used to \escrecloops, to \escreccomps~and for \coopmultitasking
 helping to solve problems in a much simpler and more elegant way than with only
-a single flow of control.\\ Advantages can be seen particularly clearly with the
-use of a recursive function, such as traversal of binary trees.
+a single flow of control.\\
 
 \subsubsection*{same fringe problem}
-
+Advantages can be seen particularly clearly with the use of a recursive
+function, such as traversal of trees.\\
 If two trees have the same list of leave nodes (== fringe) and traversing the
 trees is defined in a deterministic order, then both trees have the same fringe.\\
 
@@ -36,14 +36,13 @@ For each tree a \pullcoro is created while in the associated \corofunction
 \newline
 \cppf{visitor.cpp}
 The visitor inspects recursively the tree - on each leaf node it escapes the
-recursive computation and makes the leaf node available to the iteratori (via
+recursive computation and makes the leaf node available to the iterator (via
 \pushcoro). After re-entering the visitor the recursive traversing of the tree
 continues.
 \newline
 The complete source code is contained in the examples of \boostcoroutine.
 
 \subsubsection*{asynchronous operations with boost.asio}
-
 In the past the code using asio's \asyncops was scattered by callbacks.
 \boostasio provides with its new feature \asyncres a new way how the code can be
 simplified and made easier to read.\\
@@ -51,7 +50,6 @@ simplified and made easier to read.\\
 \cppf{asyncres.cpp} 
 
 \subsubsection*{\csharp \await}
-
 Another project, \awaitemu, uses \boostcoroutine for a proof-of-concept
 provideing a full emultation of the \csharp feature \await as a library
 extension. Because of stackfull coroutines \await is \textbf{not limited} by

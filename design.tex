@@ -1,6 +1,6 @@
 \abschnitt{Design Decisions}
 This section describes two designs - one with unidirectional and an alternative
-design with bidirectionial transfer of data.\\
+design with bidirectionial transfer of data.
 
 \subsubsection*{Proposed Design}
 \boostcoroutine provides a interface (BOOST\_COROUTINES\_UNIDIRECT) with
@@ -8,27 +8,28 @@ unidirectional flow of data between \corofunction and caller.\\
 The design suggests two unidirectional coroutine types: \pushcoro and
 \pullcoro.\\
 The advantage regarding to a bidirectional coroutine is the simplified template
-argument; instead of an signature \pullcoro and \pushcoro use only one template
-argument describing the type which is exchanged between the context switches.
+argument and a distinc direction of data flow.\\
+Instead of an signature \pullcoro and \pushcoro use only one template argument
+describing the type which is exchanged between the context switches.
 \cppf{fibonacci.cpp}
 
 \paragraph*{push\_coroutine:}
-With \pushcoro a parameter is transfered to the \corofunction (pushed-to). The
-class has only one template parameter defining the parameter type pushed to
+With \pushcoro a parameter is transfered to the other execution context (for
+instance to \corofunction) == pushed-to.\\
+The class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
 The interface does not contain a \cpp{get()}-function, e.g. you can not retrieve
-values returned by a \corofunction with this kind of coroutine.
-\cppf{push_coroutine.cpp}
+values from another execution context with this kind of coroutine.
 
 \paragraph*{pull\_coroutine:}
-With \pullcoro a parameter is transfered from the \corofunction (pulled-from).
+With \pullcoro a parameter is retrieved from the other execution context (for
+instance from \corofunction) == pulled-from.\\
 The class has only one template parameter defining the parameter type pulled
 from \corofunction.\\
 \newline
 This kind of coroutine provides only \pullcoroop which does only switch the
 context and transfers no data.
-\cppf{pull_coroutine.cpp}
 
 \paragraph*{stack-full:}
 Each instance of a coroutine has its own stack.\\
@@ -81,21 +82,19 @@ reasons.\\
 \newline
 A context switch is done via \pushcoroop and \pullcoroop.
 
-\paragraph*{\corofunction:}
+\paragraph*{coroutine-function:}
 The \corofunction returns \cpp{void} and takes its counterpart-coroutine as
-argument (used to switch back to caller), so that using the coroutine passed as
-argument to \corofunction is the only way to transfer data and execution control
-back to the caller.\\
+argument, so that using the coroutine passed as argument to \corofunction is the
+only way to transfer data and execution control back to the caller.\\
 Both coroutine types take the same template argument.\\
 For \pullcoro the \corofunction is entered at \pullcoro construction.\\
 For \pushcoro the \corofunction is not entered at \pushcoro construction but
 entered by the first invocation of \pushcoroop.\\
-After execution control is returned from \corofunction the state of t
-coroutine can be checked via \pullcorobool.\\
-\pullcorobool returns true if the coroutine is still valid (\corofunction has
-not terminated) and data is available.
+After execution control is returned from \corofunction the state of the
+coroutine can be checked via \pullcorobool returning true if the coroutine is
+still valid (\corofunction has not terminated) and data is available.
 \cppf{corofn_startup.cpp}
-Otherwise detecting the completeness of a coroutine would require an extra context
+Otherwise, detecting the completeness of a coroutine would require an extra context
 switch (return from last \pullcoroop, \pushcoroop and calling return in the \corofunction).\\
 This makes the implementation for iterators very hard and \cpp{std::distance}
 would return 4 instead of 3 in the example above.
@@ -140,7 +139,7 @@ would be a interface (BOOST\_COROUTINES\_BIDIRECT) with bidirectional flow of
 data. The template argument of \coro is a signature defining passed argument and
 return types.
 
-\paragraph*{\corofunction:}
+\paragraph*{coroutine-function:}
 The \corofunction returns \cpp{void} and takes its counterpart-coroutine
 (inverted signature) as argument (used to switch back to caller).\\
 The \corofunction is entered upon construction of \coro not upon the first call of
