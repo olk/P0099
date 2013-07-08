@@ -1,6 +1,6 @@
 \abschnitt{Introduction}
 
-This proposal suggests to add a first-class, semi-asymmetric continuation to
+This proposal suggests to add two first-class, semi-asymmetric continuations to
 C++ standard library: \pullcoro and \pushcoro.\\
 \newline
 In computer science routines are defined as a sequence of operations. The
@@ -32,18 +32,18 @@ generators, ...).
     \centering
     \begin{tabular}{ l l l l l l }
         \midrule
-        BCPL    &   Erlang  &   Go      &   Lua         &   PHP     &   Ruby \\
+        BCPL    &   Erlang  &   Go      &   Lua         &   PHP     &   Ruby\\
         \midrule
-        C\#     &   F\#     &   Haskell &   Modula-2    &   Prolog  &   Sather \\
+        C\#     &   F\#     &   Haskell &   Modula-2    &   Prolog  &   Sather\\
         \midrule
-        D       &   Factor  &   Icon    &   Perl        &   Python  &   Scheme \\
+        D       &   Factor  &   Icon    &   Perl        &   Python  &   Scheme\\
         \midrule
     \end{tabular}
     \caption{some programming languages with native support of coroutines}
 \end{table}
 \newline
 Coroutines are useful in simulation, artificial intelligence, concurrent
-programming, text processing and data manipulation\cite{Moura2009} supporting
+programming, text processing and data manipulation\cite{Moura2009}, supporting
 the implementation of components such as cooperative tasks (fibers), iterators,
 generators, infinite lists, pipes etc.
 
@@ -77,5 +77,5 @@ In some implementations (for instance C\# \textit{yield}) the coroutine can not
 directly accessed or directly manipulated.\\
 \newline
 Without stackfulness and first-class semantic some useful execution control
-flows cannot be supported (for instance cooperative multitasking,
+flows cannot be supported (for instance cooperative multitasking or
 checkpointing).

@@ -1,7 +1,7 @@
 \abschnitt{Motivation}
 
 This proposal referes to \boostcoroutine as reference implementation - providing
-a test suite and examples.\\
+a test suite and examples (some are described in this section).\\
 \newline
 In order to support a broad range of execution control behaviour \pushcoro and
 \pullcoro can be used to \escrecloops, to \escreccomps~and for \coopmultitasking
@@ -39,19 +39,16 @@ The visitor inspects recursively the tree - on each leaf node it escapes the
 recursive computation and makes the leaf node available to the iterator (via
 \pushcoro). After re-entering the visitor the recursive traversing of the tree
 continues.
-\newline
-The complete source code is contained in the examples of \boostcoroutine.
-
 \subsubsection*{asynchronous operations with boost.asio}
 In the past the code using asio's \asyncops was scattered by callbacks.
 \boostasio provides with its new feature \asyncres a new way how the code can be
 simplified and made easier to read.\\
-\yieldcontext uses internaly \boostcoroutine:
+\yieldcontext uses internally \boostcoroutine:
 \cppf{asyncres.cpp} 
 
 \subsubsection*{\csharp \await}
 Another project, \awaitemu, uses \boostcoroutine for a proof-of-concept
-provideing a full emultation of the \csharp feature \await as a library
+providing a full emulation of the \csharp feature \await as a library
 extension. Because of stackfull coroutines \await is \textbf{not limited} by
 "one level" as in \csharp.\\
 Evgeny Panasyuk describes the advantages of \boostcoroutine over \await at

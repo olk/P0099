@@ -8,13 +8,13 @@ unidirectional flow of data between \corofunction and caller.\\
 The design suggests two unidirectional coroutine types: \pushcoro and
 \pullcoro.\\
 The advantage regarding to a bidirectional coroutine is the simplified template
-argument and a distinc direction of data flow.\\
+argument and a distinct direction of data flow.\\
 Instead of an signature \pullcoro and \pushcoro use only one template argument
 describing the type which is exchanged between the context switches.
 \cppf{fibonacci.cpp}
 
 \paragraph*{push\_coroutine:}
-With \pushcoro a parameter is transfered to the other execution context (for
+With \pushcoro a parameter is transferred to the other execution context (for
 instance to \corofunction) == pushed-to.\\
 The class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
@@ -47,7 +47,7 @@ terminates (unwinds its stack) the RAII-classes releases their managed resources
 at destruction.
 
 \paragraph*{clean-up:}
-On destruction the associated stack will unwinded.\\
+On destruction the associated stack will be unwind.\\
 \newline
 The implementer is free to deallocate the stack or cache it for future usage
 (for coroutines created later).
