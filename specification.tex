@@ -13,15 +13,19 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{pull_coroutine(Function&& fn);} & (2)\\
+    \cpp{pull_coroutine(Function&& fn,std::size_t ssize=min_ssize);} & (2)\\
 
     \midrule
 
-    \cpp{pull_coroutine(pull_coroutine&& other);} & (3)\\
+    \cpp{pull_coroutine(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
 
     \midrule
 
-    \cpp{pull_coroutine(const pull_coroutine& other) = delete;} & (4)\\
+    \cpp{pull_coroutine(pull_coroutine&& other);} & (4)\\
+
+    \midrule
+
+    \cpp{pull_coroutine(const pull_coroutine& other)=delete;} & (5)\\
 
     \midrule
 \end{tabular}
@@ -30,22 +34,28 @@ constructs new coroutine\\
     \item[1)] creates a \pullcoro which does not represent a context of execution
     \item[2)] creates a \pullcoro object and associates it with a execution
               context
-    \item[3)] move constructor, constructs a \pullcoro object to represent a
+    \item[3)] creates a \pullcoro object and associates it with a execution
+              context
+    \item[4)] move constructor, constructs a \pullcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
-    \item[4)] copy constructor is deleted; coroutine are not copyable
+    \item[5)] copy constructor is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}
 \begin{description}
-    \item[other]   another coroutine object to construct this coroutine object with
-    \item[fn]      function to execute in the new coroutine
+    \item[other]  another coroutine object to construct this coroutine object with
+    \item[fn]     function to execute in the new coroutine
+    \item[ssize]  size of the stack managed by the coroutine (min\_ssize is the
+                  minimal size of a stack, platform depended), might grow on demand
+    \item[salloc] allocator for stack, might use cached stacks for performance
+                  reasons
 \end{description}
 
 {\bf Exceptions}
 \begin{description}
-    \item[1), 3)] noexcept specification: \cpp{noexcept}
-    \item[2)]     \cpp{std::system_error} if the coroutine could not be started
+    \item[1), 4)] noexcept specification: \cpp{noexcept}
+    \item[2), 3)] \cpp{std::system_error} if the coroutine could not be started
                   - the exception may represent a implementation-specific error
                   condition; re-throw user defined exceptions from \corofunction
 \end{description}
@@ -70,8 +80,8 @@ destructs a coroutine\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] destroys a \pullcoro, if associated with a context of execution, then
-              the context of execution is destroyed too (for instance the
+    \item[1)] destroys a \pullcoro, if associated with a context of execution,
+              then the context of execution is destroyed too (for instance the
               associated stack)\\
 \end{description}
 
@@ -83,11 +93,14 @@ moves the coroutine object\\
 
     \cpp{pull_coroutine & operator=(pull_coroutine&& other);} & (1)\\
 
+    \cpp{pull_coroutine & operator=(const pull_coroutine& other)=delete;} & (2)\\
+
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] assigns the state of other to *this using move semantics
+    \item[2)] assignment operator is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}
@@ -211,15 +224,19 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{push_coroutine(Function&& fn);} & (2)\\
+    \cpp{push_coroutine(Function&& fn,ssize_t ssize=min_ssize);} & (2)\\
 
     \midrule
 
-    \cpp{push_coroutine(push_coroutine&& other);} & (3)\\
+    \cpp{push_coroutine(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
 
     \midrule
 
-    \cpp{push_coroutine(const push_coroutine& other) = delete;} & (4)\\
+    \cpp{push_coroutine(push_coroutine&& other);} & (4)\\
+
+    \midrule
+
+    \cpp{push_coroutine(const push_coroutine& other)=delete;} & (5)\\
 
     \midrule
 \end{tabular}
@@ -229,10 +246,12 @@ constructs new coroutine\\
               execution
     \item[2)] creates a \pushcoro object and associates it with a execution
               context
-    \item[3)] move constructor, constructs a \pushcoro object to represent a
+    \item[3)] creates a \pushcoro object and associates it with a execution
+              context
+    \item[4)] move constructor, constructs a \pushcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
-    \item[4)] copy constructor is deleted; coroutine are not copyable
+    \item[5)] copy constructor is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}
@@ -240,6 +259,10 @@ constructs new coroutine\\
     \item[other] another coroutine object to construct this coroutine object
                  with
     \item[fn]    function to execute in the new coroutine
+    \item[ssize]  size of the stack managed by the coroutine (min\_ssize is the
+                  minimal size of a stack, platform depended), might grow on demand
+    \item[salloc] allocator for stack, might use cached stacks for performance
+                  reasons
 \end{description}
 
 {\bf Exceptions}
@@ -282,11 +305,14 @@ moves the coroutine object\\
 
     \cpp{push_coroutine & operator=(push_coroutine&& other);} & (1)\\
 
+    \cpp{push_coroutine & operator=(const push_coroutine& other)=delete;} & (2)\\
+
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] assigns the state of other to *this using move semantics
+    \item[2)] assignment operator is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}

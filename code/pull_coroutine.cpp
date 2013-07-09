@@ -10,9 +10,13 @@ public:
     pull_coroutine(pull_coroutine&& other);
 
     template<class Function>
-    explicit pull_coroutine(Function&& fn);
+    explicit pull_coroutine(Function&& fn,std::size_t ssize=min_ssize);
 
-    pull_coroutine(const pull_coroutine& other) = delete;
+    template<class Function,class StackAllocator>
+    explicit pull_coroutine(Function&& fn,const StackAllocator& salloc,
+                            std::size_t ssize=min_ssize);
+
+    pull_coroutine(const pull_coroutine& other)=delete;
 
     //destruction
     ~pull_coroutine();
@@ -20,7 +24,7 @@ public:
     // assignment
     pull_coroutine& operator=(pull_coroutine&& other);
 
-    pull_coroutine& operator=(const pull_coroutine& other) = delete;
+    pull_coroutine& operator=(const pull_coroutine& other)=delete;
 
     // test
     explicit operator bool() const;
