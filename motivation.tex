@@ -1,4 +1,4 @@
-\abschnitt{Motivation}
+oabschnitt{Motivation}
 
 This proposal referes to \boostcoroutine as reference implementation - providing
 a test suite and examples (some are described in this section).\\
@@ -30,7 +30,7 @@ leaf nodes have none. Trees t1 and t2 have a different tree structure but the
 same fringe.\\
 For each tree a \pullcoro is created while in the associated \corofunction
 \cpp{coro_visitor} traverses the tree.\\
-\coroiterator, created from \pullcoro, steps over the leaf nodes of its tree and
+\pullcoroiterator, created from \pullcoro, steps over the leaf nodes of its tree and
 \cpp{std::equal()} compares the iterator ranges.
 \newline
 \newline
