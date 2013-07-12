@@ -1,6 +1,3 @@
-#include <coroutine>
-#include <iostream>
-
 std::pull_coroutine<int> c(
     [&](std::push_coroutine<int> & c){
         int first=1,second=1;
