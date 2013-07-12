@@ -1,39 +1,39 @@
 #include <coroutine>
 
 template<class R>
-class pull_coroutine
+class coroutine::pull_type
 {
 public:
     //construction
-    pull_coroutine();
+    pull_type();
 
-    pull_coroutine(pull_coroutine&& other);
+    pull_type(pull_type&& other);
 
     template<class Function>
-    explicit pull_coroutine(Function&& fn,std::size_t ssize=min_ssize);
+    explicit pull_type(Function&& fn,std::size_t ssize=min_ssize);
 
     template<class Function,class StackAllocator>
-    explicit pull_coroutine(Function&& fn,const StackAllocator& salloc,
+    explicit pull_type(Function&& fn,const StackAllocator& salloc,
                             std::size_t ssize=min_ssize);
 
-    pull_coroutine(const pull_coroutine& other)=delete;
+    pull_type(const pull_type& other)=delete;
 
     //destruction
-    ~pull_coroutine();
+    ~pull_type();
 
     // assignment
-    pull_coroutine& operator=(pull_coroutine&& other);
+    pull_type& operator=(pull_type&& other);
 
-    pull_coroutine& operator=(const pull_coroutine& other)=delete;
+    pull_type& operator=(const pull_type& other)=delete;
 
     // test
     explicit operator bool() const;
 
     // swap
-    void swap(pull_coroutine& other);
+    void swap(pull_type& other);
 
     // jump function
-    pull_coroutine& operator()();
+    pull_type& operator()();
 
     // access result
     R get() const;

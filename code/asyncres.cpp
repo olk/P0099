@@ -1,4 +1,4 @@
-void echo(boost::asio::ip::tcp::socket & socket,boost::asio::yield_context yield){
+void echo(boost::asio::ip::tcp::socket& socket,boost::asio::yield_context yield){
     char data[128];
     // read asynchronous data from socket
     // execution context will be suspended until

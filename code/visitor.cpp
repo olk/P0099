@@ -2,10 +2,10 @@ class coro_visitor : public visitor
 {
 private:
     // coroutine used to pass leaf node back to caller
-    std::push_coroutine<leaf&> & c_;
+    std::coroutine<leaf&>::push_type & c_;
 
 public:
-    coro_visitor(std::push_coroutine<leaf&> & c) :
+    coro_visitor(std::coroutine<leaf&>::push_type& c) :
         c_(c)
     {}
 

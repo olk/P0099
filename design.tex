@@ -1,17 +1,12 @@
 \abschnitt{Design Decisions}
 
 \subsubsection*{Proposed Design}
-\boostcoroutine provides a interface (BOOST\_COROUTINES\_UNIDIRECT) with
-unidirectional flow of data between \corofunction and caller.\\
 The design suggests two unidirectional coroutine types: \pushcoro and
-\pullcoro.\\
-\pullcoro and \pushcoro use only one template argument describing the type which
-is exchanged between the context switches.
-\cppf{fibonacci.cpp}
+\pullcoro.
 
 \paragraph*{push\_coroutine:}
-With \pushcoro a parameter is transferred to the other execution context (for
-instance to \corofunction) == pushed-to.\\
+With \pushcoro a parameter is transferred to the other execution context
+(running \corofunction) == pushed-to.\\
 The class has only one template parameter defining the parameter type pushed to
 \corofunction.\\
 \newline
@@ -144,16 +139,16 @@ this proposal focus on enhanced control flow while Mordor\cite{mordor} abstracts
 on the level of tasking (providing a cooperatively scheduled fiber engine).
 
 \paragraph*{AT\&T Task Library:}
-Another design of a task library was published by AT\&T\cite{atnt1989} describing
-a tasking system with non-preemptive scheduling.\\
-\coro does not provide scheduling logic but could be used as the basic mechanism
-for such kind of tasking abstractions.
+Another design of a task library was published by AT\&T\cite{atnt1989}
+describing a tasking system with non-preemptive scheduling.\\
+\pushcoro/\pullcoro does not provide scheduling logic but could be used as the
+basic mechanism for such kind of tasking abstractions.
 
 \paragraph*{C++ proposal: resumable functions (N3328\cite{n3328}):}
 This proposal is a library superset of N3328 - the \resumfn can be implemented
-on top of \coro. The proposed coroutine does not require memory allocation for
-the future on a switch and does not require language changes (no keywords like
-\textit{resumable} and \textit{await}).\\
+on top of coroutines. The proposed coroutine does not require memory allocation
+for the future on a switch and does not require language changes (no keywords
+like \textit{resumable} and \textit{await}).\\
 As described in section 3.2.5 'Function Prolog' - the body of a \resumfn is
 transformed in a switch statement. This is similar to the stackless coroutines
 of Python an C\#.\\

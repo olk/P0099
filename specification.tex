@@ -9,23 +9,23 @@ constructs new coroutine\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{pull_coroutine();} & (1)\\
+    \cpp{pull_type();} & (1)\\
 
     \midrule
 
-    \cpp{pull_coroutine(Function&& fn,std::size_t ssize=min_ssize);} & (2)\\
+    \cpp{pull_type(Function&& fn,std::size_t ssize=min_ssize);} & (2)\\
 
     \midrule
 
-    \cpp{pull_coroutine(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
+    \cpp{pull_type(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
 
     \midrule
 
-    \cpp{pull_coroutine(pull_coroutine&& other);} & (4)\\
+    \cpp{pull_type(pull_type&& other);} & (4)\\
 
     \midrule
 
-    \cpp{pull_coroutine(const pull_coroutine& other)=delete;} & (5)\\
+    \cpp{pull_type(const pull_type& other)=delete;} & (5)\\
 
     \midrule
 \end{tabular}
@@ -62,8 +62,8 @@ constructs new coroutine\\
 
 {\bf Notes}
 Return values from the \corofunction are accessible via \pullcoroget. If the
-function throws an exception, this exception is re-thrown if the caller returns from
-\coroop.\\
+function throws an exception, this exception is re-thrown if the caller returns
+from \pullcoroop.\\
 
 {\bf Example}
 \cppf{fibonacci.cpp}
@@ -74,7 +74,7 @@ destructs a coroutine\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{\~pull_coroutine();} & (1)\\
+    \cpp{\~pull_type();} & (1)\\
 
     \midrule
 \end{tabular}
@@ -91,9 +91,9 @@ moves the coroutine object\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{pull_coroutine & operator=(pull_coroutine&& other);} & (1)\\
+    \cpp{pull_type & operator=(pull_type&& other);} & (1)\\
 
-    \cpp{pull_coroutine & operator=(const pull_coroutine& other)=delete;} & (2)\\
+    \cpp{pull_type & operator=(const pull_type& other)=delete;} & (2)\\
 
     \midrule
 \end{tabular}
@@ -146,14 +146,14 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{pull_coroutine & operator()();} & (1)\\
+    \cpp{pull_type & operator()();} & (1)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] transfer control of execution to \corofunction and makes them
-              accessible by \coroget
+              accessible by \pullcoroget
 \end{description}
 
 {\bf Return value}
@@ -196,7 +196,7 @@ swaps two coroutine objects\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{void swap(pull_coroutine& other);} & (1)\\
+    \cpp{void swap(pull_type& other);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -220,23 +220,23 @@ constructs new coroutine\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{push_coroutine();} & (1)\\
+    \cpp{push_type();} & (1)\\
 
     \midrule
 
-    \cpp{push_coroutine(Function&& fn,ssize_t ssize=min_ssize);} & (2)\\
+    \cpp{push_type(Function&& fn,ssize_t ssize=min_ssize);} & (2)\\
 
     \midrule
 
-    \cpp{push_coroutine(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
+    \cpp{push_type(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
 
     \midrule
 
-    \cpp{push_coroutine(push_coroutine&& other);} & (4)\\
+    \cpp{push_type(push_type&& other);} & (4)\\
 
     \midrule
 
-    \cpp{push_coroutine(const push_coroutine& other)=delete;} & (5)\\
+    \cpp{push_type(const push_type& other)=delete;} & (5)\\
 
     \midrule
 \end{tabular}
@@ -286,7 +286,7 @@ destructs a coroutine\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{\~push_coroutine();} & (1)\\
+    \cpp{\~push_type();} & (1)\\
 
     \midrule
 \end{tabular}
@@ -303,9 +303,9 @@ moves the coroutine object\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{push_coroutine & operator=(push_coroutine&& other);} & (1)\\
+    \cpp{push_type & operator=(push_type&& other);} & (1)\\
 
-    \cpp{push_coroutine & operator=(const push_coroutine& other)=delete;} & (2)\\
+    \cpp{push_type & operator=(const push_type& other)=delete;} & (2)\\
 
     \midrule
 \end{tabular}
@@ -358,7 +358,7 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{push_coroutine & operator()(Arg&& arg);} & (1)\\
+    \cpp{push_type & operator()(Arg&& arg);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -392,7 +392,7 @@ swaps two coroutine objects\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{void swap(push_coroutine& other);} & (1)\\
+    \cpp{void swap(push_type& other);} & (1)\\
 
     \midrule
 \end{tabular}

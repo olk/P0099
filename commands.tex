@@ -33,19 +33,14 @@
     ] {code/#1}
 }
 
-\newcommand{\corobool}{\cpp{std::coroutine<>::operator bool()}\xspace}
-\newcommand{\coro}{\cpp{std::coroutine<>}\xspace}
-\newcommand{\coroget}{\cpp{std::coroutine<>::get()}\xspace}
-\newcommand{\coroiterator}{\cpp{std::coroutine<>::iterator}\xspace}
-\newcommand{\coroop}{\cpp{std::coroutine<>::operator()(Args&&...)}\xspace}
-\newcommand{\pullcorobool}{\cpp{std::pull_coroutine<>::operator bool()}\xspace}
-\newcommand{\pullcoro}{\cpp{std::pull_coroutine<>}\xspace}
-\newcommand{\pullcoroget}{\cpp{std::pull_coroutine<>::get()}\xspace}
-\newcommand{\pullcoroiterator}{\cpp{std::pull_coroutine<>::iterator}\xspace}
-\newcommand{\pullcoroop}{\cpp{std::pull_coroutine<>::operator()()}\xspace}
-\newcommand{\pushcorobool}{\cpp{std::push_coroutine<>::operator bool()}\xspace}
-\newcommand{\pushcoro}{\cpp{std::push_coroutine<>}\xspace}
-\newcommand{\pushcoroop}{\cpp{std::push_coroutine<>::operator()(Arg&&)}\xspace}
+\newcommand{\pullcorobool}{\cpp{std::coroutine<T>::pull_type::operator bool()}\xspace}
+\newcommand{\pullcoro}{\cpp{std::coroutine<T>::pull_type}\xspace}
+\newcommand{\pullcoroget}{\cpp{std::coroutine<T>::pull_type::get()}\xspace}
+\newcommand{\pullcoroiterator}{\cpp{std::coroutine<T>::pull_type::iterator}\xspace}
+\newcommand{\pullcoroop}{\cpp{std::coroutine<T>::pull_type::operator()()}\xspace}
+\newcommand{\pushcorobool}{\cpp{std::coroutine<T>::push_type::operator bool()}\xspace}
+\newcommand{\pushcoro}{\cpp{std::coroutine<T>::push_type}\xspace}
+\newcommand{\pushcoroop}{\cpp{std::coroutine<T>::push_type::operator()(Arg&&)}\xspace}
 \newcommand{\tuple}{\cpp{std::tuple<>}\xspace}
 
 \newcommand{\await}{\textit{await}\xspace}

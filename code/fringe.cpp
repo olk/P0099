@@ -18,8 +18,8 @@ node::ptr_t create_tree2(){
 node::ptr_t t1=create_tree1();
 // create a coroutine, recursivly iterates trough t1
 // returning leaf nodes
-std::pull_coroutine<leaf&> c1(
-    [&](std::push_coroutine<leaf&> & c){
+std::coroutine<leaf&>::pull_type c1(
+    [&](std::coroutine<leaf&>::push_type& c){
         // create visitor, attached to coroutine
         coro_visitor v(c);
         // traverse t1 recursivly
@@ -30,8 +30,8 @@ std::pull_coroutine<leaf&> c1(
 node::ptr_t t2=create_tree2();
 // create a coroutine, recursivly iterates trough t2
 // returning leaf nodes
-std::pull_coroutine<leaf&> c2(
-    [&](std::push_coroutine<leaf&> & c){
+std::coroutine<leaf&>::pull_type c2(
+    [&](std::coroutine<leaf&>::push_type& c){
         // create visitor, attached to coroutine
         coro_visitor v(c);
         // traverse t2 recursivly
