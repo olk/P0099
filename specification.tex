@@ -13,11 +13,11 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{pull_type(Function&& fn,std::size_t ssize=min_ssize);} & (2)\\
+    \cpp{pull_type(Function&& fn);} & (2)\\
 
     \midrule
 
-    \cpp{pull_type(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
+    \cpp{pull_type(Function&& fn,const StackAllocator& salloc);} & (3)\\
 
     \midrule
 
@@ -35,7 +35,7 @@ constructs new coroutine\\
     \item[2)] creates a \pullcoro object and associates it with a execution
               context
     \item[3)] creates a \pullcoro object and associates it with a execution
-              context
+              context using the applied stack-allocator
     \item[4)] move constructor, constructs a \pullcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
@@ -46,8 +46,6 @@ constructs new coroutine\\
 \begin{description}
     \item[other]  another coroutine object to construct this coroutine object with
     \item[fn]     function to execute in the new coroutine
-    \item[ssize]  size of the stack managed by the coroutine (min\_ssize is the
-                  minimal size of a stack, platform depended), might grow on demand
     \item[salloc] allocator for stack, might use cached stacks for performance
                   reasons
 \end{description}
@@ -224,11 +222,11 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{push_type(Function&& fn,ssize_t ssize=min_ssize);} & (2)\\
+    \cpp{push_type(Function&& fn);} & (2)\\
 
     \midrule
 
-    \cpp{push_type(Function&& fn,const StackAllocator& salloc,std::size_t ssize=min_ssize);} & (3)\\
+    \cpp{push_type(Function&& fn,const StackAllocator& salloc);} & (3)\\
 
     \midrule
 
@@ -247,7 +245,7 @@ constructs new coroutine\\
     \item[2)] creates a \pushcoro object and associates it with a execution
               context
     \item[3)] creates a \pushcoro object and associates it with a execution
-              context
+              context using the applied stack-allocator
     \item[4)] move constructor, constructs a \pushcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
@@ -259,8 +257,6 @@ constructs new coroutine\\
     \item[other] another coroutine object to construct this coroutine object
                  with
     \item[fn]    function to execute in the new coroutine
-    \item[ssize]  size of the stack managed by the coroutine (min\_ssize is the
-                  minimal size of a stack, platform depended), might grow on demand
     \item[salloc] allocator for stack, might use cached stacks for performance
                   reasons
 \end{description}

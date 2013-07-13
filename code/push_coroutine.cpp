@@ -10,11 +10,10 @@ public:
     push_type(push_type&& other);
 
     template<class Function>
-    explicit push_type(Function&& fn,std::size_t ssize=min_ssize);
+    explicit push_type(Function&& fn);
 
     template<class Function,class StackAllocator>
-    explicit push_type(Function&& fn,const StackAllocator& salloc,
-                            std::size_t ssize=min_ssize);
+    explicit push_type(Function&& fn,const StackAllocator& salloc);
 
     push_type(const push_type& other)=delete;
 

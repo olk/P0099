@@ -10,11 +10,10 @@ public:
     pull_type(pull_type&& other);
 
     template<class Function>
-    explicit pull_type(Function&& fn,std::size_t ssize=min_ssize);
+    explicit pull_type(Function&& fn);
 
     template<class Function,class StackAllocator>
-    explicit pull_type(Function&& fn,const StackAllocator& salloc,
-                            std::size_t ssize=min_ssize);
+    explicit pull_type(Function&& fn,const StackAllocator& salloc);
 
     pull_type(const pull_type& other)=delete;
 
