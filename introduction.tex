@@ -1,15 +1,15 @@
 \abschnitt{Introduction}
 
-This proposal suggests to add two first-class, semi-asymmetric continuations to
-C++ standard library: \pullcoro and \pushcoro.\\
+This proposal suggests adding two first-class, continuations to the C++ standard
+library: \pullcoro and \pushcoro.\\
 \newline
 In computer science routines are defined as a sequence of operations. The
-execution of routines form a parent-child relationship and the child terminates
+execution of routines forms a parent-child relationship and the child terminates
 always before the parent. Coroutines (the term was introduced by Melvin
 Conway\cite{Conway1963}) are a generalization of routines (Donald
 Knuth\cite{Knuth1997}). The principal difference between coroutines and routines
-is that a coroutine enables explicit suspend and resume of their progress via
-additional operations by preserving execution state and thus provide an
+is that a coroutine enables explicit suspend and resume of its progress via
+additional operations by preserving execution state and thus provides an
 {\bf enhanced control flow} (maintaining the execution context).\\
 
 \paragraph*{characteristics:}
@@ -60,23 +60,23 @@ execution context  and the \textit{resume}-operation restores the execution
 context, e.g. re-enters the coroutine at the same point as it was suspended
 before.
 \imgc{sequence.pdf}
-Both concepts are equivalent and a general-purpose coroutine can provide either
+Both concepts are equivalent and a coroutine library can provide either
 symmetric or asymmetric coroutines\cite{Moura2009}.
 
 \paragraph*{stackfulness:}
 In contrast to a stackless coroutine a stackful coroutine allows to suspend
 from nested stackframes. The execution resumes at exact the same point in the
 code as it was suspended before.\\
-Stackless coroutines limits the application for general-purpose multitasking
-\cite{Moura2009} (for instance stackless coroutines can not be used to suspend
-the current task if blocking operations are invoked from within a library).
+With a stackless coroutine, only the top-level routine may be suspended. Any
+routine called by that top-level routine may not itself suspend. This prohibits
+providing suspend/resume operations in routines within a general-purpose library.
 
 \paragraph*{first-class continuation:}
-A first-class continuations can be passed as argument, returned by
+A first-class continuation can be passed as argument, returned by
 function and stored in a data structure to be used later.\\
-In some implementations (for instance C\# \textit{yield}) the coroutine can not
-directly accessed or directly manipulated.\\
+In some implementations (for instance C\# \textit{yield}) the continuation can
+not directly accessed or directly manipulated.\\
 \newline
-Without stackfulness and first-class semantic some useful execution control
+Without stackfulness and first-class semantics some useful execution control
 flows cannot be supported (for instance cooperative multitasking or
 checkpointing).

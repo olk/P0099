@@ -1,6 +1,6 @@
 oabschnitt{Motivation}
 
-This proposal referes to \boostcoroutine as reference implementation - providing
+This proposal refers to \boostcoroutine as reference implementation - providing
 a test suite and examples (some are described in this section).\\
 \newline
 In order to support a broad range of execution control behaviour \pushcoro and
@@ -8,16 +8,16 @@ In order to support a broad range of execution control behaviour \pushcoro and
 helping to solve problems in a much simpler and more elegant way than with only
 a single flow of control.\\
 
-\subsubsection*{same fringe problem}
-Advantages can be seen particularly clearly with the use of a recursive
+\subsubsection*{'same fringe' problem}
+The advantages can be seen particularly clearly with the use of a recursive
 function, such as traversal of trees.\\
-If two trees have the same list of leave nodes (== fringe) and traversing the
-trees is defined in a deterministic order, then both trees have the same fringe.\\
+If traversing two different trees in the same deterministic order produces the
+same list of leaf nodes, then both trees have the same fringe.\\
 
 \imgc{fringe.pdf}
 
-Both trees in the picture have the same fringe even if the structure of the trees
-is different.\\
+Both trees in the picture have the same fringe even though the structure of the
+trees is different.\\
 \newline
 The same fringe problem could be solved using coroutines by iterating over the
 leaf nodes and comparing this sequence via \cpp{std::equal()}. The range of leaf
