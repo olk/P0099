@@ -12,9 +12,6 @@ public:
     template<class Function>
     explicit push_type(Function&& fn);
 
-    template<class Function,class StackAllocator>
-    explicit push_type(Function&& fn,const StackAllocator& salloc);
-
     push_type(const push_type& other)=delete;
 
     //destruction

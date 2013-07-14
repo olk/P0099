@@ -12,9 +12,6 @@ public:
     template<class Function>
     explicit pull_type(Function&& fn);
 
-    template<class Function,class StackAllocator>
-    explicit pull_type(Function&& fn,const StackAllocator& salloc);
-
     pull_type(const pull_type& other)=delete;
 
     //destruction

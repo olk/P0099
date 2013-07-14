@@ -17,15 +17,11 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{pull_type(Function&& fn,const StackAllocator& salloc);} & (3)\\
+    \cpp{pull_type(pull_type&& other);} & (3)\\
 
     \midrule
 
-    \cpp{pull_type(pull_type&& other);} & (4)\\
-
-    \midrule
-
-    \cpp{pull_type(const pull_type& other)=delete;} & (5)\\
+    \cpp{pull_type(const pull_type& other)=delete;} & (4)\\
 
     \midrule
 \end{tabular}
@@ -34,20 +30,16 @@ constructs new coroutine\\
     \item[1)] creates a \pullcoro which does not represent a context of execution
     \item[2)] creates a \pullcoro object and associates it with a execution
               context
-    \item[3)] creates a \pullcoro object and associates it with a execution
-              context using the applied stack-allocator
-    \item[4)] move constructor, constructs a \pullcoro object to represent a
+    \item[3)] move constructor, constructs a \pullcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
-    \item[5)] copy constructor is deleted; coroutine are not copyable
+    \item[4)] copy constructor is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}
 \begin{description}
     \item[other]  another coroutine object to construct this coroutine object with
     \item[fn]     function to execute in the new coroutine
-    \item[salloc] allocator for stack, might use cached stacks for performance
-                  reasons
 \end{description}
 
 {\bf Exceptions}
@@ -226,15 +218,11 @@ constructs new coroutine\\
 
     \midrule
 
-    \cpp{push_type(Function&& fn,const StackAllocator& salloc);} & (3)\\
+    \cpp{push_type(push_type&& other);} & (3)\\
 
     \midrule
 
-    \cpp{push_type(push_type&& other);} & (4)\\
-
-    \midrule
-
-    \cpp{push_type(const push_type& other)=delete;} & (5)\\
+    \cpp{push_type(const push_type& other)=delete;} & (4)\\
 
     \midrule
 \end{tabular}
@@ -244,12 +232,10 @@ constructs new coroutine\\
               execution
     \item[2)] creates a \pushcoro object and associates it with a execution
               context
-    \item[3)] creates a \pushcoro object and associates it with a execution
-              context using the applied stack-allocator
-    \item[4)] move constructor, constructs a \pushcoro object to represent a
+    \item[3)] move constructor, constructs a \pushcoro object to represent a
               context of execution that was represented by other, after this
               call other no longer represents a coroutine
-    \item[5)] copy constructor is deleted; coroutine are not copyable
+    \item[4)] copy constructor is deleted; coroutine are not copyable
 \end{description}
 
 {\bf Parameters}
