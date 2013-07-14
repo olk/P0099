@@ -1,8 +1,8 @@
 std::coroutine<int>::pull_type c(
     [&](std::coroutine<int>::push_type& c){
         int first=1,second=1;
-            c(first);
-            c(second);
+        c(first);
+        c(second);
         for(int i=0;i<8;++i){
             int third=first+second;
             first=second;
