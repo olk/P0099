@@ -182,10 +182,3 @@ implemented in \awaitemu.\\
 Without stackfulness and first-class semantic some useful execution control
 flows cannot be supported (for instance cooperative multitasking,
 checkpointing) and the 'same fringe' example would not be easily implementable.
-
-\subsubsection*{Further Additional Features}
-It might be possible to extend the design for \checkpointing - the execution of
-a coroutine can be rolled back to a certain point (the \checkpoint) in the code.
-\cppf{checkpoint.cpp}
-In the example above the text 'ABC' will be printed again if the coroutine
-is resumed after rolling back the coroutine to the checkpoint.
