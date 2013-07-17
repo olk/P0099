@@ -1,9 +1,9 @@
-oabschnitt{Motivation}
+\abschnitt{Motivation}
 
 This proposal refers to \boostcoroutine as reference implementation - providing
 a test suite and examples (some are described in this section).\\
 \newline
-In order to support a broad range of execution control behaviour \pushcoro and
+In order to support a broad range of execution control behaviour \pushcoro and\\
 \pullcoro can be used to \escrecloops, to \escreccomps~and for \coopmultitasking
 helping to solve problems in a much simpler and more elegant way than with only
 a single flow of control.\\
@@ -30,8 +30,8 @@ leaf nodes have none. Trees t1 and t2 have a different tree structure but the
 same fringe.\\
 For each tree a \pullcoro is created while in the associated \corofunction
 \cpp{coro_visitor} traverses the tree.\\
-\pullcoroiterator, created from \pullcoro, steps over the leaf nodes of its tree and
-\cpp{std::equal()} compares the iterator ranges.
+\pullcoroiterator, created from \pullcoro, steps over the leaf nodes of its tree
+and \cpp{std::equal()} compares the iterator ranges.
 \newline
 \newline
 \cppf{visitor.cpp}
@@ -39,18 +39,24 @@ The visitor inspects recursively the tree - on each leaf node it escapes the
 recursive computation and makes the leaf node available to the iterator (via
 \pushcoro). After re-entering the visitor the recursive traversing of the tree
 continues.
+
 \subsubsection*{asynchronous operations with boost.asio}
 In the past the code using asio's \asyncops was scattered by callbacks.
-\boostasio provides with its new feature \asyncres a new way how the code can be
-simplified and made easier to read.\\
+\boostasio provides with its new \asyncres feature a new way to simplify the
+code and make it easier to read.\\
 \yieldcontext uses internally \boostcoroutine:
 \cppf{asyncres.cpp} 
 
 \subsubsection*{\csharp \await}
-Another project, \awaitemu, uses \boostcoroutine for a proof-of-concept
-providing a full emulation of the \csharp feature \await as a library
-extension. Because of stackfull coroutines \await is \textbf{not limited} by
-"one level" as in \csharp.\\
+\csharp contains the two keywords \async and \await. \async introduces a control
+flow that involves awaiting asynchronous operations. The code will be resembeld
+into a continuation passing style. \await wraps the rest of the function after
+calling \await into a continuation if the asynchronous operation has not yet
+completed.\\
+The project, \awaitemu, uses \boostcoroutine for a proof-of-concept
+demonstrating the implementation of a full emulation of \csharp \await as a
+library extension. Because of stackful coroutines \await is \textbf{not limited}
+by "one level" as in \csharp.\\
 Evgeny Panasyuk describes the advantages of \boostcoroutine over \await at
 \channelnine.
 \cppf{await.cpp}

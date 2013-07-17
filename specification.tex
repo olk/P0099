@@ -51,9 +51,10 @@ constructs new coroutine\\
 \end{description}
 
 {\bf Notes}
-Return values from the \corofunction are accessible via \pullcoroget. If the
-function throws an exception, this exception is re-thrown if the caller returns
-from \pullcoroop.\\
+Return values from the \corofunction are accessible via \pullcoroget.\\
+If the function throws an exception, this exception is re-thrown if the caller
+returns from\\
+\pullcoroop.\\
 
 {\bf Example}
 \cppf{fibonacci.cpp}
@@ -259,7 +260,8 @@ constructs new coroutine\\
 
 {\bf Notes}
 If the function throws an exception, this exception is re-thrown if the caller
-returns from \pushcoroop.\\
+returns from\\
+\pushcoroop.\\
 
 {\bf Example}
 \cppf{access_params.cpp}

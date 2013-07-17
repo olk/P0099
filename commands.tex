@@ -1,4 +1,4 @@
-\setlength{\parindent}{0pt} 
+\renewcommand\sfdefault{phv}
 
 \makeatletter
     \renewcommand*\l@subsection{\@dottedtocline{2}{0em}{2.3em}}
@@ -43,9 +43,11 @@
 \newcommand{\pullcoroop}{\cpp{std::coroutine<T>::pull_type::operator()()}\xspace}
 \newcommand{\pushcorobool}{\cpp{std::coroutine<T>::push_type::operator bool()}\xspace}
 \newcommand{\pushcoro}{\cpp{std::coroutine<T>::push_type}\xspace}
+\newcommand{\pushcoroiterator}{\cpp{std::coroutine<T>::push_type::iterator}\xspace}
 \newcommand{\pushcoroop}{\cpp{std::coroutine<T>::push_type::operator()(Arg&&)}\xspace}
 \newcommand{\tuple}{\cpp{std::tuple<>}\xspace}
 
+\newcommand{\async}{\textit{async}\xspace}
 \newcommand{\await}{\textit{await}\xspace}
 \newcommand{\csharp}{\textit{C\#}\xspace}
 \newcommand{\cblock}{\textit{control-block}\xspace}
@@ -62,13 +64,13 @@
 \newcommand{\asyncops}{\textit{asynchronous-operations}\xspace}
 \newcommand{\asyncres}{\textit{asynchronous-result}\xspace}
 
-\newcommand{\awaitemu}{await\_emu\cite{awaite}\xspace}
-\newcommand{\boostasio}{boost.asio\cite{asio154}\xspace}
-\newcommand{\boostcontext}{boost.context\cite{context154}\xspace}
-\newcommand{\boostcoroutine}{boost.coroutine\cite{coroutine154}\xspace}
-\newcommand{\boostcorosum}{boost.coroutine (Google Summer of Code 2006)\cite{coroutineSum2006}\xspace}
-\newcommand{\channelnine}{Channel 9 - The Future of C++\cite{awaite}\xspace}
-\newcommand{\yieldcontext}{yield\_context\cite{yieldc}\xspace}
+\newcommand{\awaitemu}{await\_emu \cite{awaite}\xspace}
+\newcommand{\boostasio}{boost.asio \cite{asio154}\xspace}
+\newcommand{\boostcontext}{boost.context \cite{context154}\xspace}
+\newcommand{\boostcoroutine}{boost.coroutine \cite{coroutine154}\xspace}
+\newcommand{\boostcorosum}{boost.coroutine (Google Summer of Code 2006) \cite{coroutineSum2006}\xspace}
+\newcommand{\channelnine}{Channel 9 - 'The Future of C++' \cite{awaite}\xspace}
+\newcommand{\yieldcontext}{yield\_context \cite{yieldc}\xspace}
 
 \newcommand{\abschnitt}[1]{
     \addcontentsline{toc}{subsection}{#1}
