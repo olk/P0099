@@ -144,41 +144,42 @@ constructor, \pullcoroop or \pushcoroop.
 
 \subsubsection*{Other libraries}
 \paragraph*{boost.coroutine from 'Google Summer of Code 2006':}
-\boostcoroutine is a follow-up on \boostcorosum which is unfinished and
-not part of the official boost release (development of this library was
-stopped).\\
-During the boost review process interface of \boostcoroutine was changed and
-differ in some parts to \boostcorosum.
+\boostcoroutine is a follow-up to \boostcorosum which is unfinished and
+not part of the official boost release: development of this library was
+stopped.\\
+During the boost review process the interface of \boostcoroutine was changed; it
+differs fairly significantly from \boostcorosum.
 
 \paragraph*{Mordor:}
 Mordor\cite{mordor} is another C++ library implementing cooperative multitasking
-in order to achieve high I/O performance. The difference to this design is that
-this proposal focus on enhanced control flow while Mordor\cite{mordor} abstracts
-on the level of tasking (providing a cooperatively scheduled fiber engine).
+in order to achieve high I/O performance. The difference from this design is that
+this proposal focuses on enhanced control flow, while Mordor\cite{mordor} abstracts
+on the level of tasking: providing a cooperatively scheduled fiber engine.
 
 \paragraph*{AT\&T Task Library:}
 Another design of a task library was published by AT\&T\cite{atnt1989}
 describing a tasking system with non-preemptive scheduling.\\
 \pushcoro/\pullcoro does not provide scheduling logic but could be used as the
-basic mechanism for such kind of tasking abstractions.
+basic mechanism for such a tasking abstraction.
 
 \paragraph*{C++ proposal: resumable functions (N3328\cite{n3328}):}
-This proposal is a library superset of N3328 - the \resumfn can be implemented
-on top of coroutines. The proposed coroutine does not require memory allocation
-for the future on a switch and does not require language changes (no keywords
+This proposal is a library superset of N3328: the \resumfn can be implemented
+on top of coroutines. The proposed coroutine library does not require memory allocation
+for the future on a context switch and does not require language changes (no keywords
 like \textit{resumable} and \textit{await}).\\
-As described in section 3.2.5 'Function Prolog' - the body of a \resumfn is
-transformed in a switch statement. This is similar to the stackless coroutines
-of Python an C\#.\\
-A proof-of-concept how \await could be build upon \boostcoroutine was already
+As described in N3328 section 3.2.5 'Function Prolog' - the body of a \resumfn is
+transformed into a switch statement. This is similar to the stackless coroutines
+of Python and C\#.\\
+A proof-of-concept how \await could be built upon \boostcoroutine has already been
 implemented in \awaitemu.\\
 \newline
-Without stackfulness and first-class semantic some useful execution control
+Without stackfulness and first-class semantics, some useful execution control
 flows cannot be supported (for instance cooperative multitasking,
-checkpointing) and the 'same fringe' example would not be easily implementable.
+checkpointing) and recursive problems such as the 'same fringe' example become
+much more difficult.
 
 \subsubsection*{Further Additional Features}
-It might be possible to extend the design for \checkpointing - the execution of
+It might be possible to extend the design to support \checkpointing: the execution of
 a coroutine can be rolled back to a certain point (the \checkpoint) in the code.
 \cppf{checkpoint.cpp}
 In the example above the text 'ABC' will be printed again if the coroutine
