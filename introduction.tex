@@ -1,19 +1,20 @@
 \abschnitt{Introduction}
 
 This proposal suggests adding two first-class, continuations to the C++ standard
-library: \pullcoro and \pushcoro.\\
+library:\\
+\pullcoro and \pushcoro.\\
 \newline
 In computer science routines are defined as a sequence of operations. The
 execution of routines forms a parent-child relationship and the child terminates
 always before the parent. Coroutines (the term was introduced by Melvin
-Conway\cite{Conway1963}) are a generalization of routines (Donald
-Knuth\cite{Knuth1997}). The principal difference between coroutines and routines
+Conway \cite{Conway1963}) are a generalization of routines (Donald
+Knuth \cite{Knuth1997}). The principal difference between coroutines and routines
 is that a coroutine enables explicit suspend and resume of its progress via
 additional operations by preserving execution state and thus provides an
 {\bf enhanced control flow} (maintaining the execution context).\\
 
 \paragraph*{characteristics:}
-Characteristics\cite{Moura2009} of a coroutine are:
+Characteristics \cite{Moura2009} of a coroutine are:
 \begin{itemize}
     \item values of local data persist between successive calls (context
           switches)
@@ -44,7 +45,7 @@ generators, ...).
 \end{table}
 \newline
 Coroutines are useful in simulation, artificial intelligence, concurrent
-programming, text processing and data manipulation\cite{Moura2009}, supporting
+programming, text processing and data manipulation \cite{Moura2009}, supporting
 the implementation of components such as cooperative tasks (fibers), iterators,
 generators, infinite lists, pipes etc.
 
@@ -61,7 +62,7 @@ context, e.g. re-enters the coroutine at the same point as it was suspended
 before.
 \imgc{sequence.pdf}
 Both concepts are equivalent and a coroutine library can provide either
-symmetric or asymmetric coroutines\cite{Moura2009}.
+symmetric or asymmetric coroutines \cite{Moura2009}.
 
 \paragraph*{stackfulness:}
 In contrast to a stackless coroutine a stackful coroutine allows to suspend

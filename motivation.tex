@@ -3,7 +3,7 @@
 This proposal refers to \boostcoroutine as reference implementation - providing
 a test suite and examples (some are described in this section).\\
 \newline
-In order to support a broad range of execution control behaviour \pushcoro and
+In order to support a broad range of execution control behaviour \pushcoro and\\
 \pullcoro can be used to \escrecloops, to \escreccomps~and for \coopmultitasking
 helping to solve problems in a much simpler and more elegant way than with only
 a single flow of control.\\
@@ -39,6 +39,7 @@ The visitor inspects recursively the tree - on each leaf node it escapes the
 recursive computation and makes the leaf node available to the iterator (via
 \pushcoro). After re-entering the visitor the recursive traversing of the tree
 continues.
+
 \subsubsection*{asynchronous operations with boost.asio}
 In the past the code using asio's \asyncops was scattered by callbacks.
 \boostasio provides with its new \asyncres feature a new way to simplify the
