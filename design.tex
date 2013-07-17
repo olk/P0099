@@ -117,18 +117,21 @@ still valid (\corofunction has not terminated). Unless T is void, true also
 implies that a data value is available.
 \cppf{corofn_startup.cpp}
 
-\paragraph*{passing parameters:}
-Parameters are passed from the main-context to the \corofunction via
-\pushcoroop.\\
-\newline
-\pushcoroop accepts an argument as defined in the template argument in
-\pushcoro.
-A context switch is executed and the passed parameter will be accessible in
-the \corofunction.
+\paragraph*{passing data from \pullcoro to main-context:}
+(describe how the coroutine-function calls \pushcoroop, or equivalently
+assigns through \pushcoroiterator)\\
+(describe how the main-context checks \pullcorobool and then calls
+\pullcoroget, or equivalently iterates using \pullcoroiterator)
+
+\paragraph*{passing data from main-context into \pushcoro:}
+(describe how the main-context calls \pushcoroop, or equivalently
+assigns through \pullcoroiterator)\\
+(describe how the coroutine-function checks \pullcorobool and then calls
+\pullcoroget, or equivalently iterates using \pullcoroiterator)
 
 \paragraph*{accessing parameters:}
-Parameters returned from the \corofunction can be accessed with
-\pullcoroget.\\
+Parameters returned from or transferred to the \corofunction can be accessed
+with \pullcoroget.\\
 \newline
 Splitting-up the access of parameters from context switch function enables to
 check if \pullcoro is valid after return from \pullcoroop, e.g. \pullcoro has
@@ -144,6 +147,7 @@ An exception thrown inside a \pullcoro's \corofunction before its first call to
 \pushcoroop will be re-thrown by the \pullcoro constructor. After a \pullcoro's
 \corofunction's first call to \pushcoroop, any subsequent exception inside that
 \corofunction will be re-thrown by \pullcoroop.\\
+\newline
 An exception thrown inside a \pushcoro's \corofunction will be re-thrown by
 \pushcoroop.
 
