@@ -55,18 +55,17 @@ Two categories of coroutines exist: symmetric and asymmetric coroutines.\\
 A symmetric coroutine transfers the execution control only via one operation.
 The target coroutine must be explicitly specified in the transfer operation.\\
 \newline
-Asymmetric coroutines provide two transfer operations:
-the \textit{suspend}-operation returns to the invoker by preserving the
-execution context  and the \textit{resume}-operation restores the execution
-context, e.g. re-enters the coroutine at the same point as it was suspended
-before.
+Asymmetric coroutines provide two transfer operations.
+The \textit{suspend}-operation returns to the invoker by preserving the
+execution context and the \textit{resume}-operation restores the execution
+context: control re-enters the coroutine at the point at which it was suspended.
 \imgc{sequence.pdf}
 Both concepts are equivalent and a coroutine library can provide either
 symmetric or asymmetric coroutines \cite{Moura2009}.
 
 \paragraph*{stackfulness:}
 In contrast to a stackless coroutine a stackful coroutine allows to suspend
-from nested stackframes. The execution resumes at exact the same point in the
+from nested stackframes. The execution resumes at the exact same point in the
 code as it was suspended before.\\
 With a stackless coroutine, only the top-level routine may be suspended. Any
 routine called by that top-level routine may not itself suspend. This prohibits

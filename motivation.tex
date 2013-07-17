@@ -48,11 +48,11 @@ code and make it easier to read.\\
 \cppf{asyncres.cpp} 
 
 \subsubsection*{\csharp \await}
-\csharp contains the two keywords \async and \await. \async introduces a control
-flow that involves awaiting asynchronous operations. The code will be resembeld
-into a continuation passing style. \await wraps the rest of the function after
-calling \await into a continuation if the asynchronous operation has not yet
-completed.\\
+\csharp contains the two keywords \async and \await. \async introduces a
+control flow that involves awaiting asynchronous operations. The compiler
+reorganizes the code into a continuation-passing style. \await wraps the rest
+of the function after calling \await into a continuation if the asynchronous
+operation has not yet completed.\\
 The project, \awaitemu, uses \boostcoroutine for a proof-of-concept
 demonstrating the implementation of a full emulation of \csharp \await as a
 library extension. Because of stackful coroutines \await is \textbf{not limited}
