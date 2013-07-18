@@ -1,9 +1,37 @@
 \abschnitt{Technical Specification}
 
-\subsubsection*{pull\_type:}
-\cppf{pull_coroutine.cpp}
+\subsubsection*{std::coroutine<>::pull\_type}
+Defined in header \cpp{<coroutine>}.\\
+\begin{tabular}{ l l }
+    \midrule
 
-\paragraph*{(constructor):}
+    \cpp{template<class T> class coroutine<T>::pull_type;} & (1)\\
+
+    \midrule
+
+    \cpp{template<class T> class coroutine<T>::pull_type<T&>;} & (2)\\
+
+    \midrule
+
+    \cpp{template<> class coroutine<T>::pull_type<void>;} & (3)\\
+
+    \midrule
+\end{tabular}
+\newline
+The class \pullcoro provides a mechanism to access data value transferred from
+one execution context to another.
+
+\paragraph*{member types\\}
+\begin{tabular}{ l l l }
+    \midrule
+
+    \cpp{iterator} & std::input\_iterator & (not defined for coroutine<void>::pull\_type template specialization)\\
+
+    \midrule
+\end{tabular}
+
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
 constructs new coroutine\\
 
 \begin{tabular}{ l l }
@@ -59,7 +87,7 @@ returns from\\
 {\bf Example}
 \cppf{fibonacci.cpp}
 
-\paragraph*{(destructor):}
+\subparagraph*{(destructor)}
 destructs a coroutine\\
 
 \begin{tabular}{ l l }
@@ -72,11 +100,10 @@ destructs a coroutine\\
 
 \begin{description}
     \item[1)] destroys a \pullcoro. If that \pullcoro is associated with a context of execution,
-              then the context of execution is destroyed too (for instance the
-              associated stack).\\
+              then the context of execution is destroyed too.\\
 \end{description}
 
-\paragraph*{operator=:}
+\subparagraph*{operator=}
 moves the coroutine object\\
 
 \begin{tabular}{ l l }
@@ -111,7 +138,7 @@ moves the coroutine object\\
     \item[1)] noexcept specification: \cpp{noexcept}
 \end{description}
 
-\paragraph*{operator bool:}
+\subparagraph*{operator bool}
 indicates if context of execution is still valid and a return value can be
 retrieved or \corofunction has finished\\
 
@@ -133,7 +160,7 @@ retrieved or \corofunction has finished\\
     \item[1)] noexcept specification: \cpp{noexcept}
 \end{description}
 
-\paragraph*{operator():}
+\subparagraph*{operator()}
 jump context of execution\\
 
 \begin{tabular}{ l l }
@@ -161,28 +188,38 @@ jump context of execution\\
               user-defined exceptions from \corofunction
 \end{description}
 
-\paragraph*{get:}
+\subparagraph*{get}
 accesses the current value from \corofunction\\
 
-\begin{tabular}{ l l }
+\begin{tabular}{ l l l }
     \midrule
 
-    \cpp{R get();} & (1)\\
+    \cpp{R get();} & (1) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{R& get();} & (2) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{void get()=delete;} & (3) & (only for coroutine<void>::pull\_type template specialization)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] access values returned from \corofunction
+    \item[1)] access values returned from \corofunction (if move-assignable, the
+              value is moved, otherwise copied)
+    \item[2)] access reference returned from \corofunction
 \end{description}
 
 {\bf Return value}
 \begin{description}
     \item[R] return type is defined by coroutine's template argument
+    \item[void] coroutine returns nothing
 \end{description}
 
-
-\paragraph*{swap:}
+\subparagraph*{swap}
 swaps two coroutine objects\\
 
 \begin{tabular}{ l l }
@@ -194,7 +231,8 @@ swaps two coroutine objects\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] exchanges the underlying context of execution of two coroutine objects
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects
 \end{description}
 
 {\bf Exceptions}
@@ -202,11 +240,92 @@ swaps two coroutine objects\\
     \item[1)] noexcept specification: \cpp{noexcept}
 \end{description}
 
+\paragraph*{non-member functions}
+\subparagraph*{std::swap}
+Specializes \cpp{std::swap} for \pullcoro and swaps the underlying context of
+lhs and rhs.
 
-\subsubsection*{push\_type:}
-\cppf{push_coroutine.cpp}
+\begin{tabular}{ l l }
+    \midrule
 
-\paragraph*{(constructor):}
+    \cpp{void swap(pull_type& lhs,pull_type& rhs);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects by calling \cpp{lhs.swap(rhs)}. 
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\subparagraph*{std::begin}
+Specializes \cpp{std::begin} for \pullcoro.
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<class R> coroutine<R>::pull_type::iterator begin(coroutine<R>::pull_type& c);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates and returns an \cpp{std::input_iteror}
+\end{description}
+
+\subparagraph*{std::end}
+Specializes \cpp{std::end} for \pullcoro.
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<class R> coroutine<R>::pull_type::iterator end(coroutine<R>::pull_type& c);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates and returns an \cpp{std::input_iteror} indicating the termination of the coroutine\\\newline
+\end{description}
+
+
+\subsubsection*{std::coroutine<>::push\_type}
+Defined in header \cpp{<coroutine>}.\\
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<class T> class coroutine<T>::push_type;} & (1)\\
+
+    \midrule
+
+    \cpp{template<class T> class coroutine<T>::push_type<T&>;} & (2)\\
+
+    \midrule
+
+    \cpp{template<> class coroutine<T>::push_type<void>;} & (3)\\
+
+    \midrule
+\end{tabular}
+\newline
+The class \pullcoro provides a mechanism to transfer a data value from one
+execution context to another.
+
+\paragraph*{member types\\}
+\begin{tabular}{ l l l }
+    \midrule
+
+    \cpp{iterator} & std::output\_iterator & (not defined for coroutine<void>::push\_type template specialization)\\
+
+    \midrule
+\end{tabular}
+
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
 constructs new coroutine\\
 
 \begin{tabular}{ l l }
@@ -262,7 +381,7 @@ returns from\\
 {\bf Example}
 \cppf{access_params.cpp}
 
-\paragraph*{(destructor):}
+\subparagraph*{(destructor)}
 destructs a coroutine\\
 
 \begin{tabular}{ l l }
@@ -275,11 +394,10 @@ destructs a coroutine\\
 
 \begin{description}
     \item[1)] destroys a \pushcoro. If that \pushcoro is associated with a context of execution,
-              then the context of execution is destroyed too (for instance the
-              associated stack).
+              then the context of execution is destroyed too.
 \end{description}
 
-\paragraph*{operator=:}
+\subparagraph*{operator=}
 moves the coroutine object\\
 
 \begin{tabular}{ l l }
@@ -314,7 +432,7 @@ moves the coroutine object\\
     \item[1)] noexcept specification: \cpp{noexcept}
 \end{description}
 
-\paragraph*{operator bool:}
+\subparagraph*{operator bool}
 indicates if context of execution is still valid, that is, \corofunction has not
 finished\\
 
@@ -335,21 +453,32 @@ finished\\
     \item[1)] noexcept specification: \cpp{noexcept}
 \end{description}
 
-\paragraph*{operator():}
+\subparagraph*{operator()}
 jump context of execution\\
 
-\begin{tabular}{ l l }
+\begin{tabular}{ l l l }
     \midrule
 
-    \cpp{push_type & operator()(Arg&& arg);} & (1)\\
+    \cpp{push_type & operator()(const Arg& arg);} & (1) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{push_type & operator()(Arg&& arg);} & (2) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{push_type & operator()(Arg& arg);} & (3) & (member only of coroutine<Arg\&>::push\_type\\
+                                            &     & template specialization)\\
+
+    \midrule
+
+    \cpp{push_type & operator()();} & (4) & (member only of coroutine<void>::push\_type\\
+                                    &     & template specialization)\\
 
     \midrule
 \end{tabular}
-
-\begin{description}
-    \item[1)] switches the context of execution, transferring arg to
-              \corofunction using move semantics
-\end{description}
+\newline
+Switches the context of execution, transferring arg to \corofunction.
 
 {\bf Parameters}
 \begin{description}
@@ -369,7 +498,7 @@ jump context of execution\\
               user-defined exceptions from \corofunction
 \end{description}
 
-\paragraph*{swap:}
+\subparagraph*{swap}
 swaps two coroutine objects\\
 
 \begin{tabular}{ l l }
@@ -387,4 +516,57 @@ swaps two coroutine objects\\
 {\bf Exceptions}
 \begin{description}
     \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\paragraph*{non-member functions}
+\subparagraph*{std::swap}
+Specializes \cpp{std::swap} for \pushcoro and swaps the underlying context of
+lhs and rhs.
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(push_type& lhs,push_type& rhs);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects by calling \cpp{lhs.swap(rhs)}. 
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\subparagraph*{std::begin}
+Specializes \cpp{std::begin} for \pushcoro.
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<class R> coroutine<R>::push_type::iterator begin(coroutine<R>::push_type& c);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates and returns an \cpp{std::output_iteror}
+\end{description}
+
+\subparagraph*{std::end}
+Specializes \cpp{std::end} for \pushcoro.
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<class R> coroutine<R>::push_type::iterator end(coroutine<R>::push_type& c);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates and returns an \cpp{std::output_iteror} indicating the termination of the coroutine
 \end{description}
