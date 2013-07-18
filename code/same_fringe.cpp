@@ -68,41 +68,7 @@ void traverse(node::ptr_t n,
     if(n->right) traverse(n->right,out);
 }
 
-// construction and evaluation
-{
-    node::ptr_t left_d(create_left_tree_from("d"));
-    boost::coroutines::coroutine<std::string>::pull_type left_d_reader(
-        [&]( boost::coroutines::coroutine<std::string>::push_type & out){
-            traverse(left_d,out);
-        });
-    std::cout << "left tree from d:\n";
-    std::copy(std::begin(left_d_reader),
-              std::end(left_d_reader),
-              std::ostream_iterator<std::string>(std::cout, " "));
-    std::cout << std::endl;
-
-    node::ptr_t right_b(create_right_tree_from("b"));
-    boost::coroutines::coroutine<std::string>::pull_type right_b_reader(
-        [&]( boost::coroutines::coroutine<std::string>::push_type & out){
-            traverse(right_b,out);
-        });
-    std::cout << "right tree from b:\n";
-    std::copy(std::begin(right_b_reader),
-              std::end(right_b_reader),
-              std::ostream_iterator<std::string>(std::cout, " "));
-    std::cout << std::endl;
-
-    node::ptr_t right_x(create_right_tree_from("x"));
-    boost::coroutines::coroutine<std::string>::pull_type right_x_reader(
-        [&]( boost::coroutines::coroutine<std::string>::push_type & out){
-            traverse(right_x,out);
-        });
-    std::cout << "right tree from x:\n";
-    std::copy(std::begin(right_x_reader),
-              std::end(right_x_reader),
-              std::ostream_iterator<std::string>(std::cout, " "));
-    std::cout << std::endl;
-}
+// evaluation
 {
     node::ptr_t left_d(create_left_tree_from("d"));
     boost::coroutines::coroutine<std::string>::pull_type left_d_reader(
@@ -146,12 +112,6 @@ void traverse(node::ptr_t n,
 std::cout << "Done" << std::endl;
 
 output:
-left tree from d:
-a b c d e 
-right tree from b:
-a b c d e 
-right tree from x:
-a x c d e 
 left tree from d == right tree from b? true
 left tree from d == right tree from x? false
 Done

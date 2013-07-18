@@ -4,12 +4,6 @@ struct FinalEOL{
     }
 };
 
-std::vector<std::string> words{
-    "peas", "porridge", "hot", "peas",
-    "porridge", "cold", "peas", "porridge",
-    "in", "the", "pot", "nine",
-    "days", "old" };
-
 int num=5,width=15;
 boost::coroutines::coroutine<std::string>::push_type writer(
     [&](boost::coroutines::coroutine<std::string>::pull_type& in){
@@ -28,6 +22,12 @@ boost::coroutines::coroutine<std::string>::push_type writer(
             std::cout << std::endl;
         }
     });
+
+std::vector<std::string> words{
+    "peas", "porridge", "hot", "peas",
+    "porridge", "cold", "peas", "porridge",
+    "in", "the", "pot", "nine",
+    "days", "old" };
 
 std::copy(std::begin(words),std::end(words),std::begin(writer));
 
