@@ -5,8 +5,8 @@ struct FinalEOL{
 };
 
 int num=5,width=15;
-boost::coroutines::coroutine<std::string>::push_type writer(
-    [&](boost::coroutines::coroutine<std::string>::pull_type& in){
+std::coroutine<std::string>::push_type writer(
+    [&](std::coroutine<std::string>::pull_type& in){
         // finish the last line when we leave by whatever means
         FinalEOL eol;
         // pull values from upstream, lay them out 'num' to a line
