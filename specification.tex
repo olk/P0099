@@ -290,8 +290,18 @@ Specializes \cpp{std::end} for \pullcoro.
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::input_iteror} indicating the termination of the coroutine\\\newline
+    \item[1)] creates and returns an \cpp{std::input_iteror} indicating the termination of the coroutine
 \end{description}
+
+Incrementing the iterator switches the execion context. If
+\cpp{iterator::operator++()} returns, the other context has transferred control
+of execution back and a data value can be accessed via
+\cpp{iterator::operator*()}. Otherwise the \corofunction has terminated and the
+iterator has become invalid.\\
+The iterator is forward-only.\\
+
+{\bf Example}
+\cppf{input_iterator.cpp}
 
 
 \subsubsection*{std::coroutine<>::push\_type}
@@ -570,3 +580,10 @@ Specializes \cpp{std::end} for \pushcoro.
 \begin{description}
     \item[1)] creates and returns an \cpp{std::output_iteror} indicating the termination of the coroutine
 \end{description}
+
+Incrementing the iterator switches the execion context and transferres the data value.\\
+\cpp{iterator::operator++()} returns if other context has transferred control of execution back.\\
+The iterator is forward-only.\\
+
+{\bf Example}
+\cppf{output_iterator.cpp}
