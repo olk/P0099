@@ -599,8 +599,8 @@ Specializes \cpp{std::end} for \pushcoro.
     \item[1)] creates and returns an \cpp{std::output_iterator} indicating the termination of the coroutine
 \end{description}
 
-Incrementing the iterator switches the execution context and transfers the data value.\\
-\cpp{iterator::operator++()} returns if other context has transferred control of execution back.\\
+Calling \cpp{iterator::operator=(Arg&&)} switches the execution context and transfers the given data value.\\
+\cpp{iterator::operator=(Arg&&)} returns if other context has transferred control of execution back.\\
 The iterator is forward-only.\\
 
 {\bf Example}
