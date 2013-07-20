@@ -2,18 +2,18 @@
 
 \subsubsection*{std::coroutine<>::pull\_type}
 Defined in header \cpp{<coroutine>}.\\
-\begin{tabular}{ l l }
+\begin{tabular}{ l }
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::pull_type;} & (1)\\
-
-    \midrule
-
-    \cpp{template<class T> class coroutine<T&>::pull_type;} & (2)\\
+    \cpp{template<class T> class coroutine<T>::pull_type;}\\
 
     \midrule
 
-    \cpp{template<> class coroutine<void>::pull_type;} & (3)\\
+    \cpp{template<class T> class coroutine<T&>::pull_type;}\\
+
+    \midrule
+
+    \cpp{template<> class coroutine<void>::pull_type;}\\
 
     \midrule
 \end{tabular}
@@ -317,18 +317,18 @@ The iterator is forward-only.\\
 
 \subsubsection*{std::coroutine<>::push\_type}
 Defined in header \cpp{<coroutine>}.\\
-\begin{tabular}{ l l }
+\begin{tabular}{ l }
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::push_type;} & (1)\\
-
-    \midrule
-
-    \cpp{template<class T> class coroutine<T&>::push_type;} & (2)\\
+    \cpp{template<class T> class coroutine<T>::push_type;}\\
 
     \midrule
 
-    \cpp{template<> class coroutine<void>::push_type;} & (3)\\
+    \cpp{template<class T> class coroutine<T&>::push_type;}\\
+
+    \midrule
+
+    \cpp{template<> class coroutine<void>::push_type;}\\
 
     \midrule
 \end{tabular}
