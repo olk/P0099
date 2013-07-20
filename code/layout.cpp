@@ -4,7 +4,7 @@ struct FinalEOL{
     }
 };
 
-int num=5,width=15;
+const int num=5, width=15;
 std::coroutine<std::string>::push_type writer(
     [&](std::coroutine<std::string>::pull_type& in){
         // finish the last line when we leave by whatever means

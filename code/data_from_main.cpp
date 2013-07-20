@@ -1,8 +1,7 @@
 std::coroutine<int>::push_type c( // constructor does NOT enter coroutine-function
     [&](std::coroutine<int>::pull_type& c){
-        while(c){                         // test if pull-coroutine is valid
-            std::cout << c.get() <<  " "; // access data value
-            c();                          // context switch back to main-context
+        for (int i: c) {
+            std::cout << i <<  " ";
         }
     });
 

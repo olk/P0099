@@ -9,16 +9,16 @@ Defined in header \cpp{<coroutine>}.\\
 
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::pull_type<T&>;} & (2)\\
+    \cpp{template<class T> class coroutine<T&>::pull_type;} & (2)\\
 
     \midrule
 
-    \cpp{template<> class coroutine<T>::pull_type<void>;} & (3)\\
+    \cpp{template<> class coroutine<void>::pull_type;} & (3)\\
 
     \midrule
 \end{tabular}
 \newline
-The class \pullcoro provides a mechanism to access data value transferred from
+The class \pullcoro provides a mechanism to access data values transferred from
 one execution context to another.
 
 \paragraph*{member types\\}
@@ -72,8 +72,8 @@ constructs new coroutine\\
 
 {\bf Exceptions}
 \begin{description}
-    \item[1), 4)] noexcept specification: \cpp{noexcept}
-    \item[2), 3)] \cpp{std::system_error} if the coroutine could not be started
+    \item[1), 3)] noexcept specification: \cpp{noexcept}
+    \item[2)] \cpp{std::system_error} if the coroutine could not be started
                   - the exception may represent a implementation-specific error
                   condition; re-throw user defined exceptions from \corofunction
 \end{description}
@@ -100,7 +100,8 @@ destructs a coroutine\\
 
 \begin{description}
     \item[1)] destroys a \pullcoro. If that \pullcoro is associated with a context of execution,
-              then the context of execution is destroyed too.\\
+              then the context of execution is destroyed too. Specifically,
+              its stack is unwound.\\
 \end{description}
 
 \subparagraph*{operator=}
@@ -139,8 +140,8 @@ moves the coroutine object\\
 \end{description}
 
 \subparagraph*{operator bool}
-indicates if context of execution is still valid and a return value can be
-retrieved or \corofunction has finished\\
+indicates whether context of execution is still valid and a return value can be
+retrieved, or \corofunction has finished\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -275,7 +276,7 @@ Specializes \cpp{std::begin} for \pullcoro.
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::input_iteror}
+    \item[1)] creates and returns a \cpp{std::input_iterator}
 \end{description}
 
 \subparagraph*{std::end}
@@ -290,14 +291,24 @@ Specializes \cpp{std::end} for \pullcoro.
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::input_iteror} indicating the termination of the coroutine
+    \item[1)] creates and returns an \cpp{std::input_iterator} indicating the termination of the \corofunction
 \end{description}
 
-Incrementing the iterator switches the execion context. If
-\cpp{iterator::operator++()} returns, the other context has transferred control
-of execution back and a data value can be accessed via
+Incrementing the iterator switches the execution context.
+\newline
+When a main-context calls \cpp{iterator::operator++()} on an iterator obtained
+from an explicitly-instantiated\\
+\pullcoro, it must compare the incremented
+value with the iterator returned by \cpp{std::end()}. If they are unequal, the
+\corofunction has passed a new data value, which can be accessed via
 \cpp{iterator::operator*()}. Otherwise the \corofunction has terminated and the
-iterator has become invalid.\\
+incremented iterator has become invalid.\\
+When a \pushcoro's \corofunction calls \cpp{iterator::operator++()} on an iterator
+obtained from the \pullcoro passed by the library, control is transferred back
+to the main-context. The main-context may never pass another data value. From
+the \corofunction's point of view, the \cpp{iterator::operator++()} call may
+never return. If it does return, the main-context has passed a new data value,
+which can be accessed via \cpp{iterator::operator*()}.\\
 The iterator is forward-only.\\
 
 {\bf Example}
@@ -313,16 +324,16 @@ Defined in header \cpp{<coroutine>}.\\
 
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::push_type<T&>;} & (2)\\
+    \cpp{template<class T> class coroutine<T&>::push_type;} & (2)\\
 
     \midrule
 
-    \cpp{template<> class coroutine<T>::push_type<void>;} & (3)\\
+    \cpp{template<> class coroutine<void>::push_type;} & (3)\\
 
     \midrule
 \end{tabular}
 \newline
-The class \pullcoro provides a mechanism to transfer a data value from one
+The class \pushcoro provides a mechanism to transfer a data value from one
 execution context to another.
 
 \paragraph*{member types\\}
@@ -380,7 +391,7 @@ constructs new coroutine\\
     \item[1), 3)] noexcept specification: \cpp{noexcept}
     \item[2)]    \cpp{std::system_error} if the coroutine could not be started
                   - the exception may represent a implementation-specific error
-                  condition; re-throw user defined exceptions from \corofunction
+                  condition
 \end{description}
 
 {\bf Notes}
@@ -404,7 +415,8 @@ destructs a coroutine\\
 
 \begin{description}
     \item[1)] destroys a \pushcoro. If that \pushcoro is associated with a context of execution,
-              then the context of execution is destroyed too.
+              then the context of execution is destroyed too. Specifically,
+              its stack is unwound.
 \end{description}
 
 \subparagraph*{operator=}
@@ -563,7 +575,7 @@ Specializes \cpp{std::begin} for \pushcoro.
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::output_iteror}
+    \item[1)] creates and returns an \cpp{std::output_iterator}
 \end{description}
 
 \subparagraph*{std::end}
@@ -578,10 +590,10 @@ Specializes \cpp{std::end} for \pushcoro.
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::output_iteror} indicating the termination of the coroutine
+    \item[1)] creates and returns an \cpp{std::output_iterator} indicating the termination of the coroutine
 \end{description}
 
-Incrementing the iterator switches the execion context and transferres the data value.\\
+Incrementing the iterator switches the execution context and transfers the data value.\\
 \cpp{iterator::operator++()} returns if other context has transferred control of execution back.\\
 The iterator is forward-only.\\
 
