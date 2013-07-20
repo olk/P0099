@@ -175,8 +175,8 @@ jump context of execution\\
 \begin{description}
     \item[1)] transfer control of execution to \corofunction
 \end{description}
-It is important that the coroutine is valid (using \cpp{operator bool()}) befor
-calling this function.\\
+Note: it is important that the coroutine is valid (using \cpp{operator bool()})
+befor calling this function otherwise it results in undefined behaviour.\\
 
 {\bf Return value}
 \begin{description}
@@ -215,8 +215,8 @@ accesses the current value from \corofunction\\
               value is moved, otherwise copied)
     \item[2)] access reference returned from \corofunction
 \end{description}
-It is important that the coroutine is valid (using \cpp{operator bool()}) befor
-calling this function.\\
+Note: it is important that the coroutine is valid (using \cpp{operator bool()})
+befor calling this function otherwise it results in undefined behaviour.\\
 
 {\bf Return value}
 \begin{description}
@@ -504,9 +504,9 @@ jump context of execution\\
     \midrule
 \end{tabular}
 \newline
-Switches the context of execution, transferring arg to \corofunction. It is
-important that the coroutine is valid (using \cpp{operator bool()}) befor
-calling this function.
+Switches the context of execution, transferring arg to \corofunction.\\
+Note: it is important that the coroutine is valid (using \cpp{operator bool()})
+befor calling this function.
 
 {\bf Parameters}
 \begin{description}
