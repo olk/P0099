@@ -18,8 +18,8 @@ Defined in header \cpp{<coroutine>}.\\
     \midrule
 \end{tabular}
 \newline
-The class \pullcoro provides a mechanism to access data values transferred from
-one execution context to another.\\
+The class \pullcoro provides a mechanism to receive data values from
+another execution context.\\
 
 \paragraph*{member types\\}
 \begin{tabular}{ l l l }
@@ -59,8 +59,8 @@ constructs new coroutine\\
     \item[2)] creates a \pullcoro object and associates it with a execution
               context
     \item[3)] move constructor, constructs a \pullcoro object to represent a
-              context of execution that was represented by other, after this
-              call other no longer represents a coroutine
+              context of execution that was represented by \textit{other}, after this
+              call \textit{other} no longer represents a coroutine
     \item[4)] copy constructor is deleted; coroutines are not copyable\\
 \end{description}
 
@@ -121,7 +121,7 @@ moves the coroutine object\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] assigns the state of other to *this using move semantics
+    \item[1)] assigns the state of \textit{other} to *this using move semantics
     \item[2)] copy assignment is deleted; coroutines are not copyable\\
 \end{description}
 
@@ -179,8 +179,9 @@ jump context of execution\\
 
 {\bf Notes}
 \newline
-It is important that the coroutine is valid (using \cpp{operator bool()})
-befor calling this function otherwise it results in undefined behaviour.\\
+It is important that the coroutine is still valid (\cpp{operator bool()}
+returns \cpp{true}) before calling this function, otherwise it results in
+undefined behaviour.\\
 
 {\bf Return value}
 \begin{description}
@@ -222,19 +223,24 @@ accesses the current value from \corofunction\\
 
 {\bf Notes}
 \newline
-It is important that the coroutine is valid (using \cpp{operator bool()})
-befor calling this function otherwise the behaviour is undefined.\\
+It is important that the coroutine is still valid (\cpp{operator bool()}
+returns \cpp{true}) before calling this function, otherwise it results in
+undefined behaviour.\\
+If type T is move-assignable, it will be returned using move semantics. With
+such a type, if you call \get a second time before calling
+\cpp{operator()()}, \get will throw an exception -- see below.\\
 
 {\bf Return value}
 \begin{description}
     \item[R] return type is defined by coroutine's template argument
-    \item[void] coroutine returns nothing\\
+    \item[void] coroutine does not support \get\\
 \end{description}
 
 {\bf Exceptions}
 \begin{description}
-    \item[1)] The move-assignable value was already accessed any successive call
-        throws a \cpp{std::coroutine_error} until \cpp{operator()()} is called.\\
+    \item[1)] Once a particular move-assignable value has already been
+        retrieved by \get, any subsequent \get call throws
+        \cpp{std::coroutine_error} until \cpp{operator()()} is called.\\
 \end{description}
 
 \subparagraph*{swap}
@@ -308,7 +314,7 @@ Specializes \cpp{std::end} for \pullcoro.\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::input_iterator} indicating the termination of the \corofunction\\
+    \item[1)] creates and returns a \cpp{std::input_iterator} indicating the termination of the \corofunction\\
 \end{description}
 
 Incrementing the iterator switches the execution context.
@@ -326,9 +332,11 @@ to the main-context. The main-context may never pass another data value. From
 the \corofunction's point of view, the \cpp{iterator::operator++()} call may
 never return. If it does return, the main-context has passed a new data value,
 which can be accessed via \cpp{iterator::operator*()}.\\
+A function written to compare the incremented iterator with the iterator
+returned by \cpp{std::end()} can be used in either situation.\\
 If the return-type is move-assignable the first call to \cpp{iterator::operator*()}
-moves the value. Any successive call of \cpp{iterator::operator*()} throws an
-exception (\cpp{std::coroutine_error}) until \cpp{iterator::operator++()} is called.
+moves the value. After that, any subsequent call to \cpp{iterator::operator*()} throws an
+exception (\cpp{std::coroutine_error}) until \cpp{iterator::operator++()} is called.\\
 The iterator is forward-only.\\
 
 {\bf Example}
@@ -353,7 +361,7 @@ Defined in header \cpp{<coroutine>}.\\
     \midrule
 \end{tabular}
 \newline
-The class \pushcoro provides a mechanism to transfer a data value from one
+The class \pushcoro provides a mechanism to send a data value from one
 execution context to another.\\
 
 \paragraph*{member types\\}
@@ -395,8 +403,8 @@ constructs new coroutine\\
     \item[2)] creates a \pushcoro object and associates it with a execution
               context
     \item[3)] move constructor, constructs a \pushcoro object to represent a
-              context of execution that was represented by other, after this
-              call other no longer represents a coroutine
+              context of execution that was represented by \textit{other}, after this
+              call \textit{other} no longer represents a coroutine
     \item[4)] copy constructor is deleted; coroutines are not copyable\\
 \end{description}
 
@@ -456,7 +464,7 @@ moves the coroutine object\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] assigns the state of other to *this using move semantics
+    \item[1)] assigns the state of \textit{other} to *this using move semantics
     \item[2)] copy assignment operator is deleted; coroutines are not copyable\\
 \end{description}
 
@@ -489,7 +497,7 @@ finished\\
 
 \begin{description}
     \item[1)] evaluates to true if coroutine is not complete (\corofunction has
-        not termianted)\\
+        not terminated)\\
 \end{description}
 
 {\bf Exceptions}
@@ -521,13 +529,19 @@ jump context of execution\\
 
     \midrule
 \end{tabular}
-\newline
-Switches the context of execution, transferring arg to \corofunction.\\
+
+\begin{description}
+    \item[1),2)] If \textit{Arg} is move-assignable, it will be passed using
+        move semantics. Otherwise it will be copied.\\
+\end{description}
+
+Switches the context of execution, transferring \textit{arg} to \corofunction.\\
 
 {\bf Note}
 \newline
-It is important that the coroutine is valid (using \cpp{operator bool()})
-befor calling this function otherwise the behaviour is undefined.\\
+It is important that the coroutine is still valid (\cpp{operator bool()}
+returns \cpp{true}) before calling this function, otherwise it results in
+undefined behaviour.\\
 
 {\bf Parameters}
 \begin{description}
@@ -602,7 +616,7 @@ Specializes \cpp{std::begin} for \pushcoro.\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::output_iterator}\\
+    \item[1)] creates and returns a \cpp{std::output_iterator}\\
 \end{description}
 
 \subparagraph*{std::end}
@@ -617,11 +631,11 @@ Specializes \cpp{std::end} for \pushcoro.\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates and returns an \cpp{std::output_iterator} indicating the termination of the coroutine\\
+    \item[1)] creates and returns a \cpp{std::output_iterator} indicating the termination of the coroutine\\
 \end{description}
 
-Calling \cpp{iterator::operator=(Arg&&)} switches the execution context and transfers the given data value.\\
-\cpp{iterator::operator=(Arg&&)} returns if other context has transferred control of execution back.\\
+Calling \cpp{iterator::operator*(Arg&&)} switches the execution context and transfers the given data value.\\
+\cpp{iterator::operator*(Arg&&)} returns if other context has transferred control of execution back.\\
 The iterator is forward-only.\\
 
 {\bf Example}

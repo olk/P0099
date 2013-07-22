@@ -1,7 +1,7 @@
-std::coroutine<std::tuple<int,int>>::pull_type c(
-    [&](std::coroutine<std::tuple<int,int>>::push_type& c){
-        c(std::make_tuple(7,11)); // return tuple {7,11}
+std::coroutine<std::tuple<int,int>>::pull_type source(
+    [&](std::coroutine<std::tuple<int,int>>::push_type& sink){
+        sink(std::make_tuple(7,11)); // return tuple {7,11}
     });
 
 int x,y;
-std::tie(x,y)=c.get();
+std::tie(x,y)=source.get();
