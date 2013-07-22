@@ -240,7 +240,8 @@ such a type, if you call \get a second time before calling
 \begin{description}
     \item[1)] Once a particular move-assignable value has already been
         retrieved by \get, any subsequent \get call throws
-        \cpp{std::coroutine_error} until \cpp{operator()()} is called.\\
+        \cpp{std::coroutine_error} with an error-code
+        \cpp{std::coroutine_errc::no_data} until \cpp{operator()()} is called.\\
 \end{description}
 
 \subparagraph*{swap}
@@ -640,3 +641,117 @@ The iterator is forward-only.\\
 
 {\bf Example}
 \cppf{output_iterator.cpp}
+
+
+\subsubsection*{std::coroutine\_errc}
+Defined in header \cpp{<coroutine>}.\\
+
+\begin{tabular}{ l }
+    \midrule
+
+    \cpp{enum class coroutine_errc \{ no_data \};}\\
+
+    \midrule
+\end{tabular}
+
+Enumeration \cpp{std::coroutine_errc} defines the error codes reported by
+\pullcoro in\\
+\cpp{std::coroutine_error} exception object.
+
+\paragraph*{member constants}
+Determines error code.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{no_data} & \pullcoro has no vailid data (maybe moved by prior access)\\
+
+    \midrule
+\end{tabular}
+\newline
+
+
+\subsubsection*{std::coroutine\_error}
+Defined in header \cpp{<coroutine>}.\\
+
+\begin{tabular}{ l }
+    \midrule
+
+    \cpp{class coroutine_error;}\\
+
+    \midrule
+\end{tabular}
+
+The class \cpp{std::coroutine_error} defines an exception class that is derived
+from \cpp{std::logic_error}.
+
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
+constructs new coroutine error object.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{coroutine_error( std::error_code ec);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates a \cpp{std::coroutine_error} error object from an error-code.\\
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[ec] error-code
+\end{description}
+
+\subparagraph*{code}
+Returns the error-code.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{const std::error_code& code() const;} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns the stored error code.\\
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[std::error\_code] stored error code\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{what}
+Returns a error-description.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{virtual const char* what() const;} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns a description of the error.\\
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[char*] null-terminated stringi with error description\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
