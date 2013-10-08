@@ -84,32 +84,33 @@ checkpointing).
 \paragraph*{What coroutines actually do:}
 Coroutines are generalized routines.\\
 \newline
-A routine has a parent-child relationship to its invoked sub-routine.\\
-Before a routine enters the sub-routine it adjust the stack-pointer, in order to
-pass some parameters to the sub-routine a routine stores those values to general
-purpose registers defined by the \cv of the underlying \ABI and set the
-instruction-pointer to the first instruction of the sub-routine.\\
-The sub-routine itself creates a new stack frame (adjusting the stack-pointer),
-preserves some non-volatile general purpose registers (as defined by the \cv)
-and continues executing its instructions.\\
-If a sub-routine  finishes, it removes the stackframe (e.g. reset stack-pointer
-to address before the sub-routine was entered), restores preserved non-volatile
-general purpose registers and stores a value in a general purpose register in
-order to return a value to the calling routine. The instruction-pointer continues
-with the instruction after invoking the sub-routine.\\
+A routine has a parent-child relationship to its sub-routines.\\
+The routine processes (push to stack or store in registers) the arguments which
+have to be paased as parameters to the sub-routine as it is defined in the \cv
+of the underlying \ABI. A \textit{branch-and-link} instruction transfers
+execution control to the code of the sub-routine.\\
+If the sub-routine is entered the \textit{prolog} creates a new stack frame
+(adjusting the stack-pointer and/or frame-pointer), preserves some
+non-volatile general purpose registers (as defined by the \cv) and return
+address. Space for local variables is allocated by modifying the
+stack-pointer.\\
+If a sub-routine  finishes, it runs the \textit{epilog} which undoes the steps
+from the \textit{prolog}, e.g. it restore preserved registers, remove the
+stack-frame (stack-pointer is set to address before the sub-routine was entered),
+and branch to the instruction at the return address.\\
+A return value might be returned in a register defined by the \cv.\\
 \newline
 Coroutines execute the same steps as ordinary routines. The main difference is 
 that each coroutine owns its own stack, e.g. if a coroutine is suspended its
-stackframe is not removed. This fact is the reason why coroutines might 
+stackframe is not removed. This fact is the reason why coroutines allow to
 re-enter the same stackframe several times.\\
 A coroutine contains a control-block which is used as a storage for
-stack-pointer, instruction-pointer and some general purpose registers. A
-coroutine allows to manipulate those registers directly (calling
+stack-pointer, instruction-pointer and some general purpose registers.
+Coroutines manipulate those registers directly (done by calling
 \textit{suspend}/\textit{resume}).\\
-Annex A describes this in detail for x86\_64.\\
 \newline
 Oridinary routines are a subset of coroutines in the case of a coroutine which
 does not suspend and runs straight to its end (finishes execution).\\
 \newline
-In fact entering a coroutines is equivalent to entering an ordinary routine, e.g.
-they provide a generalized control flow.
+In fact entering a coroutines is equivalent to entering an ordinary routine, but
+they provide a enhanced control flow.
