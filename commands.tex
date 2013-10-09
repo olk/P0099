@@ -19,8 +19,15 @@
    [x64]{Assembler}     % add a "x64" dialect of Assembler
    [x86masm]{Assembler} % based on the "x86masm" dialect
    % with these extra keywords:
-   {morekeywords={rax,rdx,rcx,rbx,rsi,rdi,rsp,rbp,r8,r9,r10,r11,r12,r13,r14,popq,pushq,movq,subq,addq}}
-\lstset{language=[x64]Assembler}
+   {morekeywords={rax,rdx,rcx,rbx,rsi,rdi,rsp,rbp,r8,r9,r10,r11,r12,r13,r14,r15,popq,pushq,movq,subq,addq,xorq,leaq}}
+\lstset{
+        language=[x64]Assembler,
+        numbers=none,
+        numberstyle=\tiny,
+        numberblanklines=false,
+        stepnumber=1,
+        numbersep=10pt
+}
 
 \newcommand{\cpp}[1]{
     \lstinline[
@@ -28,7 +35,7 @@
         basicstyle=\ttfamily\color{black},
         keywordstyle=\color{blue},
         commentstyle=\color{green},
-        stringstyle=\color{red}
+        stringstyle=\color{red},
     ] {#1}
 }
 \newcommand{\cppf}[1]{
@@ -37,7 +44,7 @@
         basicstyle=\ttfamily\color{black},
         keywordstyle=\color{blue},
         commentstyle=\color{red},
-        stringstyle=\color{green}
+        stringstyle=\color{green},
     ] {code/#1}
 }
 
@@ -51,6 +58,7 @@
 }
 \newcommand{\asmf}[1]{
     \lstinputlisting[
+        numbers=left,
         basicstyle=\ttfamily\color{black},
         keywordstyle=\color{blue},
         commentstyle=\color{red},
