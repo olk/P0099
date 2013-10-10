@@ -86,7 +86,7 @@ Coroutines are generalized routines.\\
 \newline
 A routine has a parent-child relationship to its sub-routines.\\
 The routine processes (push to stack or store in registers) the arguments which
-have to be paased as parameters to the sub-routine as it is defined in the \cv
+have to be pased as parameters to the sub-routine as it is defined in the \cv
 of the underlying \ABI. A \textit{branch-and-link} instruction transfers
 execution control to the code of the sub-routine.\\
 If the sub-routine is entered the \textit{prolog} creates a new stack frame
@@ -100,14 +100,16 @@ stack-frame (stack-pointer is set to address before the sub-routine was entered)
 and branch to the instruction at the return address.\\
 A return value might be returned in a register defined by the \cv.\\
 \newline
-Coroutines execute the same steps as ordinary routines. The main difference is 
-that each coroutine owns its own stack, e.g. if a coroutine is suspended its
-stackframe is not removed. This fact is the reason why coroutines allow to
-re-enter the same stackframe several times.\\
-A coroutine contains a control-block which is used as a storage for
-stack-pointer, instruction-pointer and some general purpose registers.
-Coroutines manipulate those registers directly (done by calling
-\textit{suspend}/\textit{resume}).\\
+If a coroutine jumps the execution context it executes the same as
+ordinary routines - storing and restoring some CPU registers. The main
+difference is that each coroutine owns its own stack, e.g. if a coroutine is
+suspended its stackframe is not removed. This fact is the reason why coroutines
+allow to re-enter the same stackframe several times.\\ A coroutine contains a
+\cblock which is used as a storage for stack-pointer, instruction-pointer and
+some general purpose registers.\\ Coroutines manipulate those registers directly
+(done by calling \textit{suspend}/\textit{resume}).\\
+Appendix \nameref{appendix} shows for x86\_64/SYSV ABI how a
+\textit{jump}-operation could be implemented.
 \newline
 Oridinary routines are a subset of coroutines in the case of a coroutine which
 does not suspend and runs straight to its end (finishes execution).\\
