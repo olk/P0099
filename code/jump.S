@@ -1,27 +1,31 @@
 jump:
-    movq  %rbx,      (%rdi)    
-    movq  %r12,      0x8(%rdi) 
-    movq  %r13,      0x10(%rdi)
-    movq  %r14,      0x18(%rdi)
-    movq  %r15,      0x20(%rdi)
-    movq  %rbp,      0x28(%rdi)
+    /* first argument, RDI, points to control-block (X) from which we jump from */
+    /* second argument, RSI, points to control-block (Y) to which we jump to */
+    /* thrid argument, RDX, parameter we want to pass to jumped context */
 
-    leaq  0x8(%rsp), %rax
-    movq  %rax,      0x30(%rdi)
-    movq  (%rsp),    %rax
-    movq  %rax,      0x38(%rdi)
+    movq  %rbx,  OFF_RBX(%rdi)  /* save RBX */    
+    movq  %r12,  OFF_R12(%rdi)  /* save R12 */ 
+    movq  %r13,  OFF_R13(%rdi)  /* save R13 */
+    movq  %r14,  OFF_R14(%rdi)  /* save R14 */
+    movq  %r15,  OFF_R15(%rdi)  /* save R15 */
+    movq  %rbp,  OFF_RBP(%rdi)  /* save RBP */
 
-    movq  (%rsi),     %rbx
-    movq  0x8(%rsi),  %r12
-    movq  0x10(%rsi), %r13
-    movq  0x18(%rsi), %r14
-    movq  0x20(%rsi), %r15
-    movq  0x28(%rsi), %rbp
+    leaq  0x8(%rsp), %rax  /* extract stack pointer */
+    movq  %rax,      OFF_RSP(%rdi)  /* save stack pointer */
+    movq  (%rsp),    %rax  /* extract return address */
+    movq  %rax,      OFF_RIP(%rdi)  /* save return address */
 
-    movq  0x30(%rsi), %rsp
-    movq  0x38(%rsi), %rcx
+    movq  OFF_RBX(%rsi), %rbx   /* restore RBX */
+    movq  OFF_R12(%rsi), %r12   /* restore R12 */
+    movq  OFF_R13(%rsi), %r13   /* restore R13 */
+    movq  OFF_R14(%rsi), %r14   /* restore R14 */
+    movq  OFF_R15(%rsi), %r15   /* restore R15 */
+    movq  OFF_RBP(%rsi), %rbp   /* restore RBP */
 
-    movq  %rdx,       %rax
-    movq  %rdx,       %rdi
+    movq  OFF_RSP(%rsi), %rsp  /* restore stack pointer */
+    movq  OFF_RIP(%rsi), %rcx  /* restore return address */
 
-    jmp   *%rcx
+    movq  %rdx,  %rax  /* use third arg as return value after jump */
+    movq  %rdx,  %rdi  /* use third arg as first arg in context function */
+
+    jmp   *%rcx  /* indirect jump to context via return restored address */

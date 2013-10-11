@@ -7,19 +7,19 @@ Register \asm{rdi} contains a reference to the \cblock of the current execution
 context \textit{X} and register \asm{rsi} points to the \cblock of the execution
 context \textit{Y} which has to be resumed.\\
 \newline
-In lines 2-7 the content of the current non-volatile registers are stored in the
+In lines 6-11 the content of the current non-volatile registers are stored in the
 \cblock of \textit{X}.\\
-Line 9 calculates the stack-pointer writes it to the \cblock in line 10.\\
-Lines 11 and 12 do the same for the return address (will be assigned to the
+Line 13 calculates the stack-pointer writes it to the \cblock in line 14.\\
+Lines 15 and 16 do the same for the return address (will be assigned to the
 instruction-pointer \asm{rip}).\\
 \newline
-The next block (lines 14-19) restore the content of non-volatile register for
+The next block (lines 18-23) restore the content of non-volatile register for
 the execution context \textit{Y}.\\
-The stack-pointer is restored in line 21.\\
-Line 22 moves the address of the instruction which should be executed in
+The stack-pointer is restored in line 25.\\
+Line 26 moves the address of the instruction which should be executed in
 \textit{Y} to register \asm{rcx}.\\
 \newline
-Lines 24 and 25 allow to transfer data (as return value in \textit{Y}) between
+Lines 28 and 29 allow to transfer data (as return value in \textit{Y}) between
 context jumps.\\
 \newline
 The next line transfers execution control (\textit{branch-and-link}) to
