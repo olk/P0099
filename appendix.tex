@@ -3,24 +3,33 @@
 The assembler code (from \boostcontext) shows what the \textit{jump}-operation
 might look like for SYSV ABI on x86\_64.
 \asmf{jump.S}
+
 Register \asm{rdi} contains a reference to the \cblock of the current execution
 context \textit{X} and register \asm{rsi} points to the \cblock of the target execution
 context \textit{Y} to be resumed.\\
 \newline
-In lines 6-11 the contents of the current non-volatile registers are stored in the
+Register \asm{rdi} contains a reference to the \cblock of the current execution
+In lines 20-25 the contents of the current non-volatile registers are stored in the
 \cblock of \textit{X}.\\
-Line 13 calculates the stack-pointer writes it to the \cblock in line 14.\\
-Lines 15 and 16 do the same for the return address (will be assigned to the
+\newline
+Register \asm{rdi} contains a reference to the \cblock of the current execution
+Line 29 calculates the stack-pointer writes it to the \cblock in line 30.\\
+Lines 31 and 32 do the same for the return address (will be assigned to the
 instruction-pointer \asm{rip}).\\
 \newline
-The next block (lines 18-23) restores the contents of non-volatile registers for
+Register \asm{rdi} contains a reference to the \cblock of the current execution
+The next block (lines 35-40) restores the contents of non-volatile registers for
 the execution context \textit{Y}.\\
-The stack-pointer is restored in line 25.\\
-Line 26 moves the address of the instruction which should be executed in
+\newline
+Register \asm{rdi} contains a reference to the \cblock of the current execution
+The stack-pointer is restored in line 43.\\
+Line 44 moves the address of the instruction which should be executed in
 \textit{Y} to register \asm{rcx}.\\
 \newline
-Lines 28 and 29 allow to transfer data (as return value in \textit{Y}) between
+Register \asm{rdi} contains a reference to the \cblock of the current execution
+Lines 47 and 48 allow to transfer data (as return value in \textit{Y}) between
 context jumps.\\
 \newline
+Register \asm{rdi} contains a reference to the \cblock of the current execution
 The next line transfers execution control (\textit{branch-and-link}) to
 \textit{Y} by executing the instruction to which \asm{rcx} points.

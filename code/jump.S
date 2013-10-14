@@ -9,6 +9,8 @@ OFF_RSP: .quad 0
 OFF_RIP: .quad 0
 
 .text
+.globl jump
+.type jump,@function
 jump:
     /* first argument, RDI, points to control-block (X) from which we jump */
     /* second argument, RSI, points to control-block (Y) to which we jump */
@@ -47,3 +49,4 @@ jump:
 
     /* context switch */
     jmp   *%rcx  /* indirect jump to context via restored return address */
+.size jump,.-jump
