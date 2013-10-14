@@ -1,15 +1,14 @@
-control_block struct
-OFF_RBX qword
-OFF_R12 qword
-OFF_R13 qword
-OFF_R14 qword
-OFF_R15 qword
-OFF_RBP qword
-OFF_RSP qword
-OFF_RIP qword
-control_block ends
+.struct 0
+OFF_RBX: .quad 0
+OFF_R12: .quad 0
+OFF_R13: .quad 0
+OFF_R14: .quad 0
+OFF_R15: .quad 0
+OFF_RBP: .quad 0
+OFF_RSP: .quad 0
+OFF_RIP: .quad 0
 
-
+.text
 jump:
     /* first argument, RDI, points to control-block (X) from which we jump */
     /* second argument, RSI, points to control-block (Y) to which we jump */
