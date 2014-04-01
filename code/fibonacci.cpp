@@ -1,5 +1,5 @@
-std::coroutine<int>::pull_type source(
-    [&](std::coroutine<int>::push_type& sink){
+std::asymmetric_coroutine<int>::pull_type source(
+    [&](std::asymmetric_coroutine<int>::push_type& sink){
         int first=1,second=1;
         sink(first);
         sink(second);

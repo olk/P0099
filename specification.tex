@@ -1,6 +1,6 @@
 \abschnitt{Technical Specification}
 
-\subsubsection*{std::coroutine<>::pull\_type}
+\subsubsection*{std::asymmetric\_coroutine<>::pull\_type}
 Defined in header \cpp{<coroutine>}.\\
 \begin{tabular}{ l }
     \midrule
@@ -340,11 +340,16 @@ moves the value. After that, any subsequent call to \cpp{iterator::operator*()} 
 exception (\cpp{std::coroutine_error}) until \cpp{iterator::operator++()} is called.\\
 The iterator is forward-only.\\
 
+{\bf Notes}
+\newline
+Because coroutine is moveable only copying the iterator would not give the expected
+result as known by ordinary iterators.\\
+
 {\bf Example}
 \cppf{input_iterator.cpp}
 
 
-\subsubsection*{std::coroutine<>::push\_type}
+\subsubsection*{std::asymmetric\_coroutine<>::push\_type}
 Defined in header \cpp{<coroutine>}.\\
 \begin{tabular}{ l }
     \midrule
@@ -638,6 +643,11 @@ Specializes \cpp{std::end} for \pushcoro.\\
 Calling \cpp{iterator::operator*(Arg&&)} switches the execution context and transfers the given data value.\\
 \cpp{iterator::operator*(Arg&&)} returns if other context has transferred control of execution back.\\
 The iterator is forward-only.\\
+
+{\bf Notes}
+\newline
+Because coroutine is moveable only copying the iterator would not give the expected
+result as known by ordinary iterators.\\
 
 {\bf Example}
 \cppf{output_iterator.cpp}

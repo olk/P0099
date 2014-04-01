@@ -1,5 +1,5 @@
-std::coroutine<int>::push_type sink( // constructor does NOT enter coroutine-function
-    [&](std::coroutine<int>::pull_type& source){
+std::asymmetric_coroutine<int>::push_type sink( // constructor does NOT enter coroutine-function
+    [&](std::asymmetric_coroutine<int>::pull_type& source){
         for (int i:source){
             std::cout << i <<  " ";
         }

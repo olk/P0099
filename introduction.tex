@@ -2,7 +2,7 @@
 
 This proposal suggests adding two first-class continuations to the C++ standard
 library:\\
-\pullcoro and \pushcoro.\\
+\acoro and \scoro.\\
 \newline
 In computer science routines are defined as a sequence of operations. The
 execution of routines forms a parent-child relationship and the child terminates
@@ -60,8 +60,6 @@ The \textit{suspend}-operation returns to the invoker by preserving the
 execution context and the \textit{resume}-operation restores the execution
 context: control re-enters the coroutine at the point at which it was suspended.
 \imgc{sequence.pdf}
-Both concepts are equivalent and a coroutine library can provide either
-symmetric or asymmetric coroutines \cite{Moura2009}.
 
 \paragraph*{stackfulness:}
 In contrast to a stackless coroutine a stackful coroutine allows to suspend
@@ -111,7 +109,7 @@ some general purpose registers.\\ Coroutines manipulate those registers directly
 Appendix \nameref{appendix} shows for x86\_64/SYSV ABI how a
 \textit{jump}-operation could be implemented.
 \newline
-Oridinary routines are a subset of coroutines in the case of a coroutine which
+Ordinary routines are a subset of coroutines in the case of a coroutine which
 does not suspend and runs straight to its end (finishes execution).\\
 \newline
 In fact entering a coroutine is equivalent to entering an ordinary routine, but

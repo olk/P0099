@@ -66,36 +66,40 @@
     ] {code/#1}
 }
 
+\newcommand{\acoro}{\cpp{std::asymmetric_coroutine<T>}\xspace}
+\newcommand{\asyncread}{\cpp{async_read}\xspace}
+\newcommand{\asyncwrite}{\cpp{async_write}\xspace}
 \newcommand{\bgin}{\cpp{std::begin()}\xspace}
 \newcommand{\ed}{\cpp{std::end()}\xspace}
 \newcommand{\get}{\cpp{get()}\xspace}
-\newcommand{\pullcorobool}{\cpp{std::coroutine<T>::pull_type::operator bool()}\xspace}
-\newcommand{\pullcoro}{\cpp{std::coroutine<T>::pull_type}\xspace}
-\newcommand{\pullcoroget}{\cpp{std::coroutine<T>::pull_type::get()}\xspace}
-\newcommand{\pullcoroiterator}{\cpp{std::coroutine<T>::pull_type::iterator}\xspace}
-\newcommand{\pullcoroop}{\cpp{std::coroutine<T>::pull_type::operator()()}\xspace}
-\newcommand{\pushcorobool}{\cpp{std::coroutine<T>::push_type::operator bool()}\xspace}
-\newcommand{\pushcoro}{\cpp{std::coroutine<T>::push_type}\xspace}
-\newcommand{\pushcoroiterator}{\cpp{std::coroutine<T>::push_type::iterator}\xspace}
-\newcommand{\pushcoroop}{\cpp{std::coroutine<T>::push_type::operator()(Arg&&)}\xspace}
+\newcommand{\pullcorobool}{\cpp{std::asymmetric_coroutine<T>::pull_type::operator bool()}\xspace}
+\newcommand{\pullcoro}{\cpp{std::asymmetric_coroutine<T>::pull_type}\xspace}
+\newcommand{\pullcoroget}{\cpp{std::asymmetric_coroutine<T>::pull_type::get()}\xspace}
+\newcommand{\pullcoroiterator}{\cpp{std::asymmetric_coroutine<T>::pull_type::iterator}\xspace}
+\newcommand{\pullcoroop}{\cpp{std::asymmetric_coroutine<T>::pull_type::operator()()}\xspace}
+\newcommand{\pushcorobool}{\cpp{std::asymmetric_coroutine<T>::push_type::operator bool()}\xspace}
+\newcommand{\pushcoro}{\cpp{std::asymmetric_coroutine<T>::push_type}\xspace}
+\newcommand{\pushcoroiterator}{\cpp{std::asymmetric_coroutine<T>::push_type::iterator}\xspace}
+\newcommand{\pushcoroop}{\cpp{std::asymmetric_coroutine<T>::push_type::operator()(Arg&&)}\xspace}
+\newcommand{\scoro}{\cpp{std::symmetric_coroutine<T>}\xspace}
 \newcommand{\tuple}{\cpp{std::tuple<>}\xspace}
 
+\newcommand{\asyncops}{\textit{asynchronous-operations}\xspace}
+\newcommand{\asyncres}{\textit{asynchronous-result}\xspace}
 \newcommand{\async}{\textit{async}\xspace}
 \newcommand{\await}{\textit{await}\xspace}
-\newcommand{\csharp}{\textit{C\#}\xspace}
 \newcommand{\cblock}{\textit{control-block}\xspace}
-\newcommand{\checkpoint}{\textit{checkpoint}\xspace}
 \newcommand{\checkpointing}{\textit{checkpointing}\xspace}
+\newcommand{\checkpoint}{\textit{checkpoint}\xspace}
 \newcommand{\continuation}{\textit{continuation}\xspace}
 \newcommand{\coopmultitasking}{\textit{cooperative multitasking}\xspace}
 \newcommand{\corofunction}{\textit{coroutine-function}\xspace}
-\newcommand{\escre}{\textit{escape-and-reenter}\xspace}
-\newcommand{\escreops}{\textit{\escre~operations}\xspace}
+\newcommand{\csharp}{\textit{C\#}\xspace}
 \newcommand{\escreccomps}{\textit{\escre~recursive computations}\xspace}
 \newcommand{\escrecloops}{\textit{\escre~loops}\xspace}
+\newcommand{\escreops}{\textit{\escre~operations}\xspace}
+\newcommand{\escre}{\textit{escape-and-reenter}\xspace}
 \newcommand{\resumfn}{\textit{resumable function}\xspace}
-\newcommand{\asyncops}{\textit{asynchronous-operations}\xspace}
-\newcommand{\asyncres}{\textit{asynchronous-result}\xspace}
 
 \newcommand{\ABI}{ABI \cite{abi}\xspace}
 \newcommand{\awaitemu}{await\_emu \cite{awaite}\xspace}
@@ -103,7 +107,7 @@
 \newcommand{\boostcontext}{boost.context \cite{context154}\xspace}
 \newcommand{\boostcoroutine}{boost.coroutine \cite{coroutine154}\xspace}
 \newcommand{\boostcorosum}{boost.coroutine (Google Summer of Code 2006) \cite{coroutineSum2006}\xspace}
-\newcommand{\cv}{calling convention \cite{callingconvetion}\xspace}
+\newcommand{\cv}{calling convention \cite{callingconvention}\xspace}
 \newcommand{\channelnine}{Channel 9 - 'The Future of C++' \cite{awaite}\xspace}
 \newcommand{\yieldcontext}{yield\_context \cite{yieldc}\xspace}
 

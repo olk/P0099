@@ -1,6 +1,6 @@
 int j=10;
-std::coroutine<int>::pull_type source(
-    [&](std::coroutine<int>::push_type& sink){
+std::asymmetric_coroutine<int>::pull_type source(
+    [&](std::asymmetric_coroutine<int>::push_type& sink){
         for(int i=0;i<j;++i){
             sink(i);
         }

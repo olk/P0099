@@ -1,5 +1,5 @@
-std::coroutine<int>::pull_type source( // constructor enters coroutine-function
-    [&](std::coroutine<int>::push_type& sink){
+std::asymmetric_coroutine<int>::pull_type source( // constructor enters coroutine-function
+    [&](std::asymmetric_coroutine<int>::push_type& sink){
         sink(1); // push {1} back to main-context
         sink(1); // push {1} back to main-context
         sink(2); // push {2} back to main-context

@@ -8,7 +8,7 @@
 #include <boost/coroutine/all.hpp>
 #include <boost/foreach.hpp>
 
-typedef std::coroutine<std::string> coro_t;
+typedef std::asymmetric_coroutine<std::string> coro_t;
 
 // deliver each line of input stream to sink as a separate string
 void readlines(coro_t::push_type& sink, std::istream& in)

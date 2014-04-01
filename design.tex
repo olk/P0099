@@ -1,10 +1,9 @@
 \abschnitt{Design Decisions}
 
 \subsubsection*{Proposed Design}
-The design suggests two coroutine types - \pushcoro and \pullcoro - providing a
-unidirectional transfer of data.
+The design suggests two coroutine types - \acoro and \scoro.
 
-\paragraph*{std::coroutine<>::pull\_type:}
+\paragraph*{std::asymmetric\_coroutine<>::pull\_type:}
 transfers data from another execution context (== pulled-from).\\
 The class has only one template parameter defining the transferred parameter
 type.\\
@@ -36,7 +35,7 @@ Because \pullcoro provides input iterators and \bgin/\ed are overloaded, a
 \textit{range-based for}-loop can be used to iterate over the generated
 Fibonacci numbers.
 
-\paragraph*{std::coroutine<>::push\_type:}
+\paragraph*{std::asymmetric\_coroutine<>::push\_type:}
 transfers data to the other execution context (== pushed-to).\\
 The class has only one template parameter defining the transferred parameter
 type.\\
