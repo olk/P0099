@@ -1,5 +1,7 @@
 // Represent a subset of interesting SAX events
-struct BaseEvent: public boost::noncopyable{
+struct BaseEvent{
+   BaseEvent(const BaseEvent&)=delete;
+   BaseEvent& operator=(const BaseEvent&)=delete;
    virtual ~BaseEvent() {}
    virtual std::ostream& stream(std::ostream&) const=0;
 };
@@ -57,7 +59,7 @@ struct TextEvent: public BaseEvent{
 // The parsing coroutine instantiates BaseEvent subclass instances and
 // successively shows them to the main program. It passes a reference so we
 // don't slice the BaseEvent subclass.
-typedef boost::coroutines::asymmetric_coroutine<const BaseEvent&> coro_t;
+typedef std::asymmetric_coroutine<const BaseEvent&> coro_t;
 
 void parser(coro_t::push_type& sink,std::istream& in){
    xml::sax::Parser xparser;
@@ -99,20 +101,20 @@ const CloseEvent& process(coro_t::pull_type& events,const OpenEvent& context,
    // so the first thing we have to do is pass control to 'events' to let it
    // deliver the next event. Of course, each time we come back we must
    // check for the end of the results stream.
-   while (events(),events){
+   while(events(),events){
        const BaseEvent& event=events.get();
        // std::cout << event;
        const OpenEvent* oe;
        const CloseEvent* ce;
        const TextEvent* te;
-       if ((oe=dynamic_cast<const OpenEvent*>(&event))){
+       if((oe=dynamic_cast<const OpenEvent*>(&event))){
            process(events,*oe,indent+"    ");
        }
-       else if ((ce=dynamic_cast<const CloseEvent*>(&event))){
+       else if((ce=dynamic_cast<const CloseEvent*>(&event))){
            assert(ce->mName == tagName);
            return *ce;
        }
-       else if ((te=dynamic_cast<const TextEvent*>(&event))){
+       else if((te=dynamic_cast<const TextEvent*>(&event))){
            std::cout<<indent<<"'"<<te->mText.getText()<<"'\n";
        }
    }
