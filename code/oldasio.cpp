@@ -1,5 +1,4 @@
-class session
-{
+class session{
 public:
     session(boost::asio::io_service& io_service) :
           socket_(io_service) // construct a TCP-socket from io_service
