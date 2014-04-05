@@ -1,52 +1,40 @@
-.struct 0
-OFF_RBX: .quad 0
-OFF_R12: .quad 0
-OFF_R13: .quad 0
-OFF_R14: .quad 0
-OFF_R15: .quad 0
-OFF_RBP: .quad 0
-OFF_RSP: .quad 0
-OFF_RIP: .quad 0
-
 .text
 .globl jump
 .type jump,@function
 jump:
-    /* first argument, RDI, points to control-block (X) from which we jump */
-    /* second argument, RSI, points to control-block (Y) to which we jump */
+    /* first argument, RDI, points to stack (X) from which we jump */
+    /* second argument, RSI, points to stack (Y) to which we jump */
     /* third argument, RDX, parameter we want to pass to jumped context */
 
-    /* save current non-volatile registers into X */
-    movq  %rbx,  OFF_RBX(%rdi)  /* save RBX */    
-    movq  %r12,  OFF_R12(%rdi)  /* save R12 */ 
-    movq  %r13,  OFF_R13(%rdi)  /* save R13 */
-    movq  %r14,  OFF_R14(%rdi)  /* save R14 */
-    movq  %r15,  OFF_R15(%rdi)  /* save R15 */
-    movq  %rbp,  OFF_RBP(%rdi)  /* save RBP */
-
-    /* save stack pointer and return address */
-    /* (offset saved stack pointer by 8 to skip return address) */
-    leaq  0x8(%rsp), %rax  /* extract stack pointer */
-    movq  %rax,      OFF_RSP(%rdi)  /* save stack pointer */
-    movq  (%rsp),    %rax  /* extract return address */
-    movq  %rax,      OFF_RIP(%rdi)  /* save return address */
-
-    /* restore non-volatile registers from Y */
-    movq  OFF_RBX(%rsi), %rbx   /* restore RBX */
-    movq  OFF_R12(%rsi), %r12   /* restore R12 */
-    movq  OFF_R13(%rsi), %r13   /* restore R13 */
-    movq  OFF_R14(%rsi), %r14   /* restore R14 */
-    movq  OFF_R15(%rsi), %r15   /* restore R15 */
-    movq  OFF_RBP(%rsi), %rbp   /* restore RBP */
+    /* save current non-volatile registers to stack X */
+    pushq  %rbp  /* save RBP */
+    pushq  %rbx  /* save RBX */
+    pushq  %r15  /* save R15 */
+    pushq  %r14  /* save R14 */
+    pushq  %r13  /* save R13 */
+    pushq  %r12  /* save R12 */
 
     /* switch stacks, prepare to jump */
-    movq  OFF_RSP(%rsi), %rsp  /* restore stack pointer */
-    movq  OFF_RIP(%rsi), %rcx  /* restore return address */
+    /* store RSP (pointing to context-data) in RDI */
+    movq  %rsp, (%rdi)
+    /* restore RSP (pointing to context-data) from RSI */
+    movq  %rsi, %rsp
+
+    /* restore non-volatile registers from stack Y */
+    popq  %r12  /* restrore R12 */
+    popq  %r13  /* restrore R13 */
+    popq  %r14  /* restrore R14 */
+    popq  %r15  /* restrore R15 */
+    popq  %rbx  /* restrore RBX */
+    popq  %rbp  /* restrore RBP */
+
+    /* restore return-address */
+    popq  %r8
 
     /* data passing */
     movq  %rdx,  %rax  /* use third arg as return value after jump */
     movq  %rdx,  %rdi  /* use third arg as first arg in context function */
 
     /* context switch */
-    jmp   *%rcx  /* indirect jump to context via restored return address */
+    jmp   *%r8  /* indirect jump to context via restored return address */
 .size jump,.-jump

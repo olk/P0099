@@ -4,32 +4,27 @@ The assembler code (from \boostcontext) shows what the \textit{jump}-operation
 might look like for SYSV ABI on x86\_64.
 \asmf{jump.S}
 
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-context \textit{X} and register \asm{rsi} points to the \cblock of the target execution
-context \textit{Y} to be resumed.\\
+Register \asm{rdi} takes the stack-address of to the current execution context
+\textit{X} (containing the \cblock) and register \asm{rsi} contains the
+stack-address of the target execution context \textit{Y} (containing the
+\cblock) to be resumed.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-In lines 20-25 the contents of the current non-volatile registers are stored in the
-\cblock of \textit{X}.\\
+In lines 10-15 the contents of the current non-volatile registers are pushed on
+the \stack of \textit{X}.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-Line 29 calculates the stack-pointer writes it to the \cblock in line 30.\\
-Lines 31 and 32 do the same for the return address (will be assigned to the
-instruction-pointer \asm{rip}).\\
+Lines 19 and 21 exchange the stack-pointers - the current stack-pointer is
+stored in and returned via the first argument (\asm{rdi}). The address of the
+other context, contained in \asm{rsi}, is assigned to the stack-pointer
+\asm{rsp}.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-The next block (lines 35-40) restores the contents of non-volatile registers for
+The next block (lines 24-29) restores the contents of non-volatile registers for
 the execution context \textit{Y}.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-The stack-pointer is restored in line 43.\\
-Line 44 moves the address of the instruction which should be executed in
-\textit{Y} to register \asm{rcx}.\\
+Line 32 pops the address of the instruction which should be executed in
+\textit{Y} to register \asm{r8}.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
-Lines 47 and 48 allow to transfer data (as return value in \textit{Y}) between
+Lines 35 and 36 allow to transfer data (as return value in \textit{Y}) between
 context jumps.\\
 \newline
-Register \asm{rdi} contains a reference to the \cblock of the current execution
 The next line transfers execution control (\textit{branch-and-link}) to
-\textit{Y} by executing the instruction to which \asm{rcx} points.
+\textit{Y} by executing the instruction to which \asm{r8} points.
