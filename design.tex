@@ -78,6 +78,10 @@ Because \pushcoro provides output iterators and \bgin/\ed are overloaded, the
 \cpp{std::copy} algorithm can be used to iterate over the vector containing the
 strings and pass them one by one to the coroutine.
 
+\paragraph*{std::symmetric\_coroutine<>::call\_type:}
+
+\paragraph*{std::symmetric\_coroutine<>::yield\_type:}
+
 \paragraph*{stackful:}
 Each instance of a coroutine has its own stack.\\
 \newline
@@ -102,7 +106,7 @@ The implementer is free to deallocate the stack or cache it for future usage
 (for coroutines created later).
 
 \paragraph*{segmented stack:}
-\pushcoro and \pullcoro must support segmented stacks (growing on demand).\\
+\acoro and \scoro must support segmented stacks (growing on demand).\\
 \newline
 It is not always possible to estimated the required stack size - in most cases
 too much memory is allocated (waste of virtual address-space).\\
