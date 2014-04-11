@@ -70,6 +70,9 @@
 \newcommand{\asyncread}{\cpp{async_read}\xspace}
 \newcommand{\asyncwrite}{\cpp{async_write}\xspace}
 \newcommand{\bgin}{\cpp{std::begin()}\xspace}
+\newcommand{\callcoro}{\cpp{std::symmetric_coroutine<T>::call_type}\xspace}
+\newcommand{\callcorobool}{\cpp{std::symmetric_coroutine<T>::call_type::operator bool()}\xspace}
+\newcommand{\callcoroop}{\cpp{std::symmetric_coroutine<T>::call_type::operator()()}\xspace}
 \newcommand{\ed}{\cpp{std::end()}\xspace}
 \newcommand{\get}{\cpp{get()}\xspace}
 \newcommand{\pullcorobool}{\cpp{std::asymmetric_coroutine<T>::pull_type::operator bool()}\xspace}
@@ -83,6 +86,9 @@
 \newcommand{\pushcoroop}{\cpp{std::asymmetric_coroutine<T>::push_type::operator()(Arg&&)}\xspace}
 \newcommand{\scoro}{\cpp{std::symmetric_coroutine<T>}\xspace}
 \newcommand{\tuple}{\cpp{std::tuple<>}\xspace}
+\newcommand{\yieldcoro}{\cpp{std::symmetric_coroutine<T>::yield_type}\xspace}
+\newcommand{\yieldcoroop}{\cpp{std::symmetric_coroutine<T>::yield_type::operator()()}\xspace}
+\newcommand{\yieldcoroget}{\cpp{std::symmetric_coroutine<T>::yield_type::get()}\xspace}
 
 \newcommand{\asyncops}{\textit{asynchronous-operations}\xspace}
 \newcommand{\asyncres}{\textit{asynchronous-result}\xspace}
