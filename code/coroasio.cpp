@@ -1,6 +1,5 @@
-void session(boost::asio::io_service& io_service){
-    // construct TCP-socket from io_service
-    boost::asio::ip::tcp::socket socket(io_service);
+void session(boost::asio::io_service& io_service,
+             boost::asio::ip::tcp::socket& socket){
 
     try{
         for(;;){

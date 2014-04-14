@@ -5,15 +5,15 @@ Defined in header \cpp{<coroutine>}.\\
 \begin{tabular}{ l }
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::pull_type;}\\
+    \cpp{template<class T> class asymmetric_coroutine<T>::pull_type;}\\
 
     \midrule
 
-    \cpp{template<class T> class coroutine<T&>::pull_type;}\\
+    \cpp{template<class T> class asymmetric_coroutine<T&>::pull_type;}\\
 
     \midrule
 
-    \cpp{template<> class coroutine<void>::pull_type;}\\
+    \cpp{template<> class asymmetric_coroutine<void>::pull_type;}\\
 
     \midrule
 \end{tabular}
@@ -25,7 +25,7 @@ another execution context.\\
 \begin{tabular}{ l l l }
     \midrule
 
-    \cpp{iterator} & std::input\_iterator & (not defined for coroutine<void>::pull\_type template specialization)\\
+    \cpp{iterator} & std::input\_iterator & (not defined for asymmetric\_coroutine<void>::pull\_type template specialization)\\
 
     \midrule
 \end{tabular}
@@ -210,7 +210,7 @@ accesses the current value from \corofunction\\
 
     \midrule
 
-    \cpp{void get()=delete;} & (3) & (only for coroutine<void>::pull\_type template specialization)\\
+    \cpp{void get()=delete;} & (3) & (only for asymmetric\_coroutine<void>::pull\_type template specialization)\\
 
     \midrule
 \end{tabular}
@@ -294,7 +294,7 @@ Specializes \cpp{std::begin} for \pullcoro.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{template<class R> coroutine<R>::pull_type::iterator begin(coroutine<R>::pull_type& c);} & (1)\\
+    \cpp{template<class R> asymmetric_coroutine<R>::pull_type::iterator begin(coroutine<R>::pull_type& c);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -309,7 +309,7 @@ Specializes \cpp{std::end} for \pullcoro.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{template<class R> coroutine<R>::pull_type::iterator end(coroutine<R>::pull_type& c);} & (1)\\
+    \cpp{template<class R> asymmetric_coroutine<R>::pull_type::iterator end(coroutine<R>::pull_type& c);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -354,15 +354,15 @@ Defined in header \cpp{<coroutine>}.\\
 \begin{tabular}{ l }
     \midrule
 
-    \cpp{template<class T> class coroutine<T>::push_type;}\\
+    \cpp{template<class T> class asymmetric_coroutine<T>::push_type;}\\
 
     \midrule
 
-    \cpp{template<class T> class coroutine<T&>::push_type;}\\
+    \cpp{template<class T> class asymmetric_coroutine<T&>::push_type;}\\
 
     \midrule
 
-    \cpp{template<> class coroutine<void>::push_type;}\\
+    \cpp{template<> class asymmetric_coroutine<void>::push_type;}\\
 
     \midrule
 \end{tabular}
@@ -374,7 +374,7 @@ execution context to another.\\
 \begin{tabular}{ l l l }
     \midrule
 
-    \cpp{iterator} & std::output\_iterator & (not defined for coroutine<void>::push\_type template specialization)\\
+    \cpp{iterator} & std::output\_iterator & (not defined for asymmetric\_coroutine<void>::push\_type template specialization)\\
 
     \midrule
 \end{tabular}
@@ -435,7 +435,7 @@ returns from\\
 \pushcoroop.\\
 
 {\bf Example}
-\cppf{access_params.cpp}
+\cppf{access_params_asym.cpp}
 
 \subparagraph*{(destructor)}
 destructs a coroutine\\
@@ -525,12 +525,12 @@ jump context of execution\\
 
     \midrule
 
-    \cpp{push_type & operator()(Arg& arg);} & (3) & (member only of coroutine<Arg\&>::push\_type\\
+    \cpp{push_type & operator()(Arg& arg);} & (3) & (member only of asymmetric\_coroutine<Arg\&>::push\_type\\
                                             &     & template specialization)\\
 
     \midrule
 
-    \cpp{push_type & operator()();} & (4) & (member only of coroutine<void>::push\_type\\
+    \cpp{push_type & operator()();} & (4) & (member only of asymmetric\_coroutine<void>::push\_type\\
                                     &     & template specialization)\\
 
     \midrule
@@ -616,7 +616,7 @@ Specializes \cpp{std::begin} for \pushcoro.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{template<class R> coroutine<R>::push_type::iterator begin(coroutine<R>::push_type& c);} & (1)\\
+    \cpp{template<class R> asymmetric_coroutine<R>::push_type::iterator begin(coroutine<R>::push_type& c);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -631,7 +631,7 @@ Specializes \cpp{std::end} for \pushcoro.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{template<class R> coroutine<R>::push_type::iterator end(coroutine<R>::push_type& c);} & (1)\\
+    \cpp{template<class R> asymmetric_coroutine<R>::push_type::iterator end(coroutine<R>::push_type& c);} & (1)\\
 
     \midrule
 \end{tabular}
@@ -651,6 +651,549 @@ result as known by ordinary iterators.\\
 
 {\bf Example}
 \cppf{output_iterator.cpp}
+
+
+\subsubsection*{std::symmetric\_coroutine<>::call\_type}
+Defined in header \cpp{<coroutine>}.\\
+\begin{tabular}{ l }
+    \midrule
+
+    \cpp{template<class T> class symmetric_coroutine<T>::call_type;}\\
+
+    \midrule
+
+    \cpp{template<class T> class symmetric_coroutine<T&>::call_type;}\\
+
+    \midrule
+
+    \cpp{template<> class symmetric_coroutine<void>::call_type;}\\
+
+    \midrule
+\end{tabular}
+\newline
+The class \callcoro provides a mechanism to send a data value from one
+execution context to another.\\
+
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
+constructs new coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{call_type();} & (1)\\
+
+    \midrule
+
+    \cpp{call_type(Function&& fn);} & (2)\\
+
+    \midrule
+
+    \cpp{call_type(call_type&& other);} & (3)\\
+
+    \midrule
+
+    \cpp{call_type(const call_type& other)=delete;} & (4)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates a \callcoro which does not represent a context of execution
+    \item[2)] creates a \callcoro object and associates it with a execution
+              context
+    \item[3)] move constructor, constructs a \callcoro object to represent a
+              context of execution that was represented by \textit{other}, after this
+              call \textit{other} no longer represents a coroutine
+    \item[4)] copy constructor is deleted; coroutines are not copyable\\
+\end{description}
+
+{\bf Notes}
+\newline
+If the \corofunction throws an exception and this exception is uncatched, 
+\cpp{std::terminate()} is called.\\
+
+{\bf Parameters}
+\begin{description}
+    \item[other]  another coroutine object with which to construct this coroutine object
+    \item[fn]     function to execute in the new coroutine\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1), 3)] noexcept specification: \cpp{noexcept}
+    \item[2)] \cpp{std::system_error} if the coroutine could not be started
+                  - the exception may represent a implementation-specific error
+                  condition; re-throw user defined exceptions from \corofunction\\
+\end{description}
+
+{\bf Example}
+\cppf{access_params_sym.cpp}
+
+\subparagraph*{(destructor)}
+destructs a coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{\~call_type();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] destroys a \callcoro. If that \callcoro is associated with a context of execution,
+              then the context of execution is destroyed too. Specifically,
+              its stack is unwound.\\
+\end{description}
+
+\subparagraph*{operator=}
+moves the coroutine object\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{call_type & operator=(call_type&& other);} & (1)\\
+
+    \midrule
+
+    \cpp{call_type & operator=(const call_type& other)=delete;} & (2)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] assigns the state of \textit{other} to *this using move semantics
+    \item[2)] copy assignment is deleted; coroutines are not copyable\\
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[other]   another coroutine object to assign to this coroutine object\\
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator bool}
+indicates whether context of execution is still valid or \corofunction has finished\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{operator bool();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] evaluates to true if coroutine is not complete (\corofunction has
+        not terminated)\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator()}
+jump context of execution\\
+
+\begin{tabular}{ l l l }
+    \midrule
+
+    \cpp{call_type & operator()(const Arg& arg);} & (1) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{call_type & operator()(Arg&& arg);} & (2) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{call_type & operator()(Arg& arg);} & (3) & (member only of symmetric\_coroutine<Arg\&>::call\_type\\
+                                            &     & template specialization)\\
+
+    \midrule
+
+    \cpp{call_type & operator()();} & (4) & (member only of symmetric\_coroutine<void>::call\_type\\
+                                    &     & template specialization)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1),2)] If \textit{Arg} is move-assignable, it will be passed using
+        move semantics. Otherwise it will be copied.\\
+\end{description}
+
+Switches the context of execution, transferring \textit{arg} to \corofunction.\\
+
+{\bf Notes}
+\newline
+It is important that the coroutine is still valid (\cpp{operator bool()}
+returns \cpp{true}) before calling this function, otherwise it results in
+undefined behaviour.\\
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{swap}
+swaps two coroutine objects\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(call_type& other);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\paragraph*{non-member functions}
+\subparagraph*{std::swap}
+Specializes \cpp{std::swap} for \callcoro and swaps the underlying context of
+lhs and rhs.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(call_type& lhs,call_type& rhs);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects by calling \cpp{lhs.swap(rhs)}.\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+
+\subsubsection*{std::symmetric\_coroutine<>::yield\_type}
+Defined in header \cpp{<coroutine>}.\\
+\begin{tabular}{ l }
+    \midrule
+
+    \cpp{template<class T> class symmetric_coroutine<T>::yield_type;}\\
+
+    \midrule
+
+    \cpp{template<class T> class symmetric_coroutine<T&>::yield_type;}\\
+
+    \midrule
+
+    \cpp{template<> class symmetric_coroutine<void>::yield_type;}\\
+
+    \midrule
+\end{tabular}
+\newline
+The class \yieldcoro provides a mechanism to receive data values from
+another execution context and to transfer the execution control to another
+coroutine.\\
+
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
+constructs new coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{yield_type();} & (1)\\
+
+    \midrule
+
+    \cpp{yield_type(yield_type&& other);} & (2)\\
+
+    \midrule
+
+    \cpp{yield_type(const yield_type& other)=delete;} & (3)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates a \yieldcoro which does not represent a context of execution
+    \item[2)] move constructor, constructs a \yieldcoro object to represent a
+              context of execution that was represented by \textit{other}, after this
+              call \textit{other} no longer represents a coroutine
+    \item[3)] copy constructor is deleted; coroutines are not copyable\\
+\end{description}
+
+{\bf Notes}
+\newline
+Values to the \corofunction are accessible via \yieldcoroget.\\
+\yieldcoro can be synthesized by the runtime only.\\
+
+{\bf Parameters}
+\begin{description}
+    \item[other]  another coroutine object with which to construct this coroutine object
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1) - 3)] noexcept specification: \cpp{noexcept}
+\end{description}
+
+\subparagraph*{(destructor)}
+destructs a coroutine\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{\~yield_type();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] destroys a \yieldcoro
+\end{description}
+
+\subparagraph*{operator=}
+moves the coroutine object\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{yield_type & operator=(yield_type&& other);} & (1)\\
+
+    \midrule
+
+    \cpp{yield_type & operator=(const yield_type& other)=delete;} & (2)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] assigns the state of \textit{other} to *this using move semantics
+    \item[2)] copy assignment is deleted; coroutines are not copyable\\
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[other]   another coroutine object to assign to this coroutine object\\
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator bool}
+indicates whether the coroutine is still a valid instance\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{operator bool();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] evaluates to true if the instance is a valid coroutine\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator()}
+jump context of execution\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{yield_type & operator()();} & (1)\\
+
+    \midrule
+
+    \cpp{template< typename X > yield_type & operator()( symmetric_coroutine< T >::call_type & other, X & x);} & (2)\\
+
+    \midrule
+
+    \cpp{template<> yield_type & operator()( symmetric_coroutine< void >::call_type & other);} & (3)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] transfer control of execution to the starting point, e.g invocation of\\\callcoroop
+    \item[2)] transfer control of execution to another symmetric coroutine, parameter \cpp{x} is passed as value into other's context
+    \item[3)] transfer control of execution to another symmetric coroutine\\
+\end{description}
+
+{\bf Notes}
+\newline
+It is important that the coroutine is still valid (\cpp{operator bool()}
+returns \cpp{true}) before calling this function, otherwise it results in
+undefined behaviour.\\
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] \cpp{std::system_error} if control of execution could not be
+              transferred to other execution context - the exception may
+              represent a implementation-specific error condition; re-throw
+              user-defined exceptions from \corofunction\\
+\end{description}
+
+{\bf Example}
+\cppf{jump_sym.cpp}
+
+\subparagraph*{get}
+accesses the current value passed to \corofunction\\
+
+\begin{tabular}{ l l l }
+    \midrule
+
+    \cpp{R get();} & (1) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{R& get();} & (2) & (member of generic template)\\
+
+    \midrule
+
+    \cpp{void get()=delete;} & (3) & (only for symmetric\_coroutine<void>::yield\_type template specialization)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] access values passed to \corofunction (if move-assignable, the
+              value is moved, otherwise copied)
+    \item[2)] access reference passed to \corofunction\\
+\end{description}
+
+{\bf Notes}
+\newline
+If type T is move-assignable, it will be returned using move semantics. With
+such a type, if you call \get a second time before calling
+\cpp{operator()()}, \get will throw an exception -- see below.\\
+
+{\bf Return value}
+\begin{description}
+    \item[R] return type is defined by coroutine's template argument
+    \item[void] coroutine does not support \get\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] Once a particular move-assignable value has already been
+        retrieved by \get, any subsequent \get call throws
+        \cpp{std::coroutine_error} with an error-code
+        \cpp{std::coroutine_errc::no_data} until \cpp{operator()()} is called.\\
+\end{description}
+
+\subparagraph*{swap}
+swaps two coroutine objects\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(yield_type& other);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\paragraph*{non-member functions}
+\subparagraph*{std::swap}
+Specializes \cpp{std::swap} for \yieldcoro and swaps the underlying context of
+lhs and rhs.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(yield_type& lhs,yield_type& rhs);} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] exchanges the underlying context of execution of two coroutine
+              objects by calling \cpp{lhs.swap(rhs)}.\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+
+\subsubsection*{std::coroutine\_errc}
+Defined in header \cpp{<coroutine>}.\\
+
+\begin{tabular}{ l }
+    \midrule
+
+    \cpp{enum class coroutine_errc \{ no_data \};}\\
+
+    \midrule
+\end{tabular}
+
+Enumeration \cpp{std::coroutine_errc} defines the error codes reported by
+\pullcoro in\\
+\cpp{std::coroutine_error} exception object.
+
+\paragraph*{member constants}
+Determines error code.\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{no_data} & \pullcoro has no valid data (maybe moved by prior access)\\
+
+    \midrule
+\end{tabular}
+\newline
 
 
 \subsubsection*{std::coroutine\_errc}
