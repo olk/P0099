@@ -1180,8 +1180,7 @@ Defined in header \cpp{<coroutine>}.\\
 \end{tabular}
 
 Enumeration \cpp{std::coroutine_errc} defines the error codes reported by
-\pullcoro or \yieldcoro in\\
-\cpp{std::coroutine_error} exception object.
+\pullcoro or \yieldcoro in \cpp{std::coroutine_error} exception object.
 
 \paragraph*{member constants}
 Determines error code.\\
@@ -1189,7 +1188,7 @@ Determines error code.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{no_data} & \pullcoro or \yieldcoro has no valid data (maybe moved by prior access)\\
+    \cpp{no_data} & \pullcoro or \yieldcoro has no\\ & valid data (maybe moved by prior access)\\
 
     \midrule
 \end{tabular}

@@ -156,9 +156,9 @@ tree and passes each node's data value to its \pushcoro.\\
 \pushcoro suspends the recursive computation and transfers the data value to
 the main execution context.\\
 \pullcoroiterator, created from \pullcoro, steps over those data values and
-delivers them to \cpp{std::equal()} for comparison. Each increment of
- \pullcoroiterator resumes \cpp{traverse()}. Upon return
-from \cpp{iterator::operator++()}, either a new data value is available, or
+delivers them to \cpp{std::equal()} for comparison. Each increment of\\
+\pullcoroiterator resumes \cpp{traverse()}. Upon return from\\
+\cpp{iterator::operator++()}, either a new data value is available, or
 tree traversal is finished (iterator is invalidated).
 
 In effect, the coroutine iterator presents a flattened view of the recursive

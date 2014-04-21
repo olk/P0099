@@ -202,7 +202,8 @@ For \callcoro the \corofunction is not entered at\\
 \yieldcoro are always synthesized by the framework.\\
 After execution control is returned from \corofunction the state of the
 coroutine can be checked via\\
-\pullcorobool, \pushcorobool and\\
+\pullcorobool,\\
+\pushcorobool and\\
 \callcorobool returning \cpp{true} if the coroutine is still valid (\corofunction has
 not terminated).
 \newline
@@ -210,8 +211,8 @@ Unless \cpp{T} is \cpp{void}, \pullcorobool returning \cpp{true} also implies
 that a data value is available.\\
 \newline
 Unless \cpp{T} is void, the \corofunction of a \callcoro
-can assume that (a) upon initial entry and (b) after every \yieldcoroop call,
-\yieldcoroget has a new value available.\\
+can assume that (a) upon initial entry and (b) after every\\
+\yieldcoroop call, \yieldcoroget has a new value available.\\
 However, if \cpp{T} is a move-only type, \yieldcoroget may
 only be called once before the next \yieldcoroop call.
 
@@ -283,14 +284,15 @@ Returning from a \pullcoro's \corofunction jumps back to the main-context that
 invoked it. If the \corofunction did not execute \pushcoroop, control resumes
 after the \pullcoro's constructor. If the \corofunction has
 executed \pushcoroop, control resumes after the most recent \pullcoroop. From
-that point on, \pullcorobool will return \cpp{false}.
+that point on,\\
+\pullcorobool will return \cpp{false}.
 \newline
 Returning from a \pushcoro's \corofunction jumps back to the main-context that
 invoked it. Control resumes after the most recent \pushcoroop. From that point
 on, \pushcorobool will return \cpp{false}.
 \newline
-Returning from a \callcoro's \corofunction jumps back to the
-calling \callcoroop at the start of symmetric coroutine chain. That is,
+Returning from a \callcoro's \corofunction jumps back to the calling\\
+\callcoroop at the start of symmetric coroutine chain. That is,
 symmetric coroutines do not have a strong, fixed relationship to the caller as
 asymmetric coroutines do. From that point on, \callcorobool will
 return \cpp{false}.
