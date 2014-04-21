@@ -2,7 +2,6 @@
 struct BaseEvent{
    BaseEvent(const BaseEvent&)=delete;
    BaseEvent& operator=(const BaseEvent&)=delete;
-   virtual ~BaseEvent() {}
 };
 
 // End of document or element
@@ -98,7 +97,7 @@ const CloseEvent& process(coro_t::pull_type& events,const OpenEvent& context,
    // Since the OpenEvent is still the current value from 'events', pass
    // control back to 'events' until the next event. Of course, each time we
    // come back we must check for the end of the results stream.
-   while(events(),events){
+   while(events()){
        // Another event is pending; retrieve it.
        const BaseEvent& event=events.get();
        const OpenEvent* oe;
@@ -127,7 +126,7 @@ const CloseEvent& process(coro_t::pull_type& events,const OpenEvent& context,
 std::istringstream in(doc);
 try
 {
-   coro_t::pull_type events(boost::bind(parser,_1,boost::ref(in)));
+   coro_t::pull_type events(std::bind(parser,_1,std::ref(in)));
    // We fully expect at least ONE event.
    assert(events);
    // This dynamic_cast<&> is itself an assertion that the first event is an

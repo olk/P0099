@@ -1,6 +1,6 @@
 // constructor does NOT enter coroutine-function
-boost::coroutines::symmetric_coroutine<int>::call_type coro(
-    [&](boost::coroutines::symmetric_coroutine<int>::yield_type& yield){
+std::symmetric_coroutine<int>::call_type coro(
+    [&](std::symmetric_coroutine<int>::yield_type& yield){
         for (;;) {
             std::cout << yield.get() <<  " ";
             yield(); // jump back to starting context

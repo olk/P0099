@@ -89,7 +89,7 @@ caller returns from\\
 \cppf{fibonacci.cpp}
 
 \subparagraph*{(destructor)}
-destructs a coroutine\\
+destroys a coroutine\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -216,7 +216,7 @@ accesses the current value from \corofunction\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] access values returned from \corofunction (if move-assignable, the
+    \item[1)] access values returned from \corofunction (if move-only, the
               value is moved, otherwise copied)
     \item[2)] access reference returned from \corofunction\\
 \end{description}
@@ -226,7 +226,7 @@ accesses the current value from \corofunction\\
 It is important that the coroutine is still valid (\cpp{operator bool()}
 returns \cpp{true}) before calling this function, otherwise it results in
 undefined behaviour.\\
-If type T is move-assignable, it will be returned using move semantics. With
+If type T is move-only, it will be returned using move semantics. With
 such a type, if you call \get a second time before calling
 \cpp{operator()()}, \get will throw an exception -- see below.\\
 
@@ -238,7 +238,7 @@ such a type, if you call \get a second time before calling
 
 {\bf Exceptions}
 \begin{description}
-    \item[1)] Once a particular move-assignable value has already been
+    \item[1)] Once a particular move-only value has already been
         retrieved by \get, any subsequent \get call throws
         \cpp{std::coroutine_error} with an error-code
         \cpp{std::coroutine_errc::no_data} until \cpp{operator()()} is called.\\
@@ -329,13 +329,13 @@ value with the iterator returned by \cpp{std::end()}. If they are unequal, the
 incremented iterator has become invalid.\\
 When a \pushcoro's \corofunction calls \cpp{iterator::operator++()} on an iterator
 obtained from the \pullcoro passed by the library, control is transferred back
-to the main-context. The main-context may never pass another data value. From
-the \corofunction's point of view, the \cpp{iterator::operator++()} call may
+to the main-context. The main-context might never pass another data value. From
+the \corofunction's point of view, the \cpp{iterator::operator++()} call might
 never return. If it does return, the main-context has passed a new data value,
 which can be accessed via \cpp{iterator::operator*()}.\\
 A function written to compare the incremented iterator with the iterator
 returned by \cpp{std::end()} can be used in either situation.\\
-If the return-type is move-assignable the first call to \cpp{iterator::operator*()}
+If the return-type is move-only the first call to \cpp{iterator::operator*()}
 moves the value. After that, any subsequent call to \cpp{iterator::operator*()} throws an
 exception (\cpp{std::coroutine_error}) until \cpp{iterator::operator++()} is called.\\
 The iterator is forward-only.\\
@@ -438,7 +438,7 @@ returns from\\
 \cppf{access_params_asym.cpp}
 
 \subparagraph*{(destructor)}
-destructs a coroutine\\
+destroys a coroutine\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -537,7 +537,7 @@ jump context of execution\\
 \end{tabular}
 
 \begin{description}
-    \item[1),2)] If \textit{Arg} is move-assignable, it will be passed using
+    \item[1),2)] If \textit{Arg} is move-only, it will be passed using
         move semantics. Otherwise it will be copied.\\
 \end{description}
 
@@ -731,7 +731,7 @@ If the \corofunction throws an exception and this exception is uncatched,
 \cppf{access_params_sym.cpp}
 
 \subparagraph*{(destructor)}
-destructs a coroutine\\
+destroys a coroutine\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -829,7 +829,7 @@ jump context of execution\\
 \end{tabular}
 
 \begin{description}
-    \item[1),2)] If \textit{Arg} is move-assignable, it will be passed using
+    \item[1),2)] If \textit{Arg} is move-only, it will be passed using
         move semantics. Otherwise it will be copied.\\
 \end{description}
 
@@ -949,7 +949,7 @@ constructs new coroutine\\
 {\bf Notes}
 \newline
 Values to the \corofunction are accessible via \yieldcoroget.\\
-\yieldcoro can be synthesized by the runtime only.\\
+\yieldcoro can be synthesized by the library only.\\
 
 {\bf Parameters}
 \begin{description}
@@ -962,7 +962,7 @@ Values to the \corofunction are accessible via \yieldcoroget.\\
 \end{description}
 
 \subparagraph*{(destructor)}
-destructs a coroutine\\
+destroys a coroutine\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -1098,14 +1098,14 @@ accesses the current value passed to \corofunction\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] access values passed to \corofunction (if move-assignable, the
+    \item[1)] access values passed to \corofunction (if move-only, the
               value is moved, otherwise copied)
     \item[2)] access reference passed to \corofunction\\
 \end{description}
 
 {\bf Notes}
 \newline
-If type T is move-assignable, it will be returned using move semantics. With
+If type T is move-only, it will be returned using move semantics. With
 such a type, if you call \get a second time before calling
 \cpp{operator()()}, \get will throw an exception -- see below.\\
 
@@ -1117,7 +1117,7 @@ such a type, if you call \get a second time before calling
 
 {\bf Exceptions}
 \begin{description}
-    \item[1)] Once a particular move-assignable value has already been
+    \item[1)] Once a particular move-only value has already been
         retrieved by \get, any subsequent \get call throws
         \cpp{std::coroutine_error} with an error-code
         \cpp{std::coroutine_errc::no_data} until \cpp{operator()()} is called.\\
@@ -1180,7 +1180,7 @@ Defined in header \cpp{<coroutine>}.\\
 \end{tabular}
 
 Enumeration \cpp{std::coroutine_errc} defines the error codes reported by
-\pullcoro in\\
+\pullcoro or \yieldcoro in\\
 \cpp{std::coroutine_error} exception object.
 
 \paragraph*{member constants}
@@ -1189,35 +1189,7 @@ Determines error code.\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{no_data} & \pullcoro has no valid data (maybe moved by prior access)\\
-
-    \midrule
-\end{tabular}
-\newline
-
-
-\subsubsection*{std::coroutine\_errc}
-Defined in header \cpp{<coroutine>}.\\
-
-\begin{tabular}{ l }
-    \midrule
-
-    \cpp{enum class coroutine_errc \{ no_data \};}\\
-
-    \midrule
-\end{tabular}
-
-Enumeration \cpp{std::coroutine_errc} defines the error codes reported by
-\pullcoro in\\
-\cpp{std::coroutine_error} exception object.
-
-\paragraph*{member constants}
-Determines error code.\\
-
-\begin{tabular}{ l l }
-    \midrule
-
-    \cpp{no_data} & \pullcoro has no valid data (maybe moved by prior access)\\
+    \cpp{no_data} & \pullcoro or \yieldcoro has no valid data (maybe moved by prior access)\\
 
     \midrule
 \end{tabular}
