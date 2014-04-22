@@ -20,7 +20,7 @@ Characteristics \cite{Moura2009} of a coroutine are:
           switches)
     \item execution is suspended as control leaves coroutine and resumed at
           certain time later
-    \item symmetric or asymmetric control-transfer mechanism
+    \item symmetric or asymmetric control-transfer mechanism; see below
     \item first-class object (can be passed as argument, returned by procedures,
           stored in a data structure to be used later or freely manipulated by
           the developer)
@@ -52,19 +52,17 @@ generators, infinite lists, pipes etc.
 \paragraph*{execution-transfer mechanism:}
 Two categories of coroutines exist: symmetric and asymmetric coroutines.\\
 \newline
-A symmetric coroutine transfers the execution control only via one operation.
-The target coroutine must be explicitly specified in the transfer operation.\\
-\newline
-Asymmetric coroutines provide two transfer operations.
-The \textit{suspend}-operation returns to the invoker by preserving the
-execution context and the \textit{resume}-operation restores the execution
-context: control re-enters the coroutine at the point at which it was suspended.
+An asymmetric coroutine knows its invoker, using a special operation to
+implicitly yield control specifically to its invoker. By contrast, all symmetric
+coroutines are equivalent; one symmetric coroutine may pass control to any
+other symmetric coroutine. Because of this, a symmetric coroutine \textit{must}
+specify the coroutine to which it intends to yield control.
 \imgc{sequence.pdf}
 
 \paragraph*{stackfulness:}
-In contrast to a stackless coroutine a stackful coroutine allows to suspend
-from nested stackframes. The execution resumes at the exact same point in the
-code as it was suspended before.\\
+In contrast to a stackless coroutine a stackful coroutine can be suspended
+from within a nested stackframe. The execution resumes at the exact same point
+in the code where it was suspended before.\\
 With a stackless coroutine, only the top-level routine may be suspended. Any
 routine called by that top-level routine may not itself suspend. This prohibits
 providing suspend/resume operations in routines within a general-purpose library.
@@ -102,15 +100,15 @@ When a coroutine switches execution context it executes the same as
 ordinary routines: saving and restoring some CPU registers. The main
 difference is that each coroutine owns its own stack, that is, when a coroutine is
 suspended its stackframe is not removed. This fact is the reason why a coroutine
-allows you to re-enter the same stackframe several times.\\ A coroutine contains a
+allows you to resume from the suspend point.\\ A coroutine contains a
 \cblock which is used as a storage for the stack-pointer, instruction-pointer and
 some general purpose registers.\\ Coroutines manipulate those registers directly
-(done by calling \textit{suspend}/\textit{resume}).\\
+(by calling \textit{suspend}/\textit{resume}).\\
 Appendix \nameref{appendix} shows for x86\_64/SYSV ABI how a
 \textit{jump}-operation could be implemented.
 \newline
-Ordinary routines are a subset of coroutines in the case of a coroutine which
+An ordinary routine can be regarded as a degenerate coroutine that
 does not suspend and runs straight to its end (finishes execution).\\
 \newline
 In fact entering a coroutine is equivalent to entering an ordinary routine, but
-it provides enhanced control flow.
+it also supports suspend and resume.

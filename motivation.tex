@@ -54,7 +54,7 @@ The event-based asynchronous model avoids those issues:
 \end{itemize}
 
 The downside of this paradigm consists in a sub-optimal program
-structure. A event-driven program is required to split its code into
+structure. An event-driven program is required to split its code into
 multiple small callback functions, i.e. the code is organized in a sequence of
 small steps that execute intermittently. An algorithm that would usually be
 expressed as a hierarchy of functions and loops must be transformed into
@@ -156,17 +156,20 @@ tree and passes each node's data value to its \pushcoro.\\
 \pushcoro suspends the recursive computation and transfers the data value to
 the main execution context.\\
 \pullcoroiterator, created from \pullcoro, steps over those data values and
-delivers them to \cpp{std::equal()} for comparison. Each increment of \pullcoroiterator
-resumes \cpp{traverse()}. Upon return from \cpp{iterator::operator++()}, either
-a new data value is available, or tree traversal is finished (iterator is
-invalidated).
+delivers them to \cpp{std::equal()} for comparison. Each increment of\\
+\pullcoroiterator resumes \cpp{traverse()}. Upon return from\\
+\cpp{iterator::operator++()}, either a new data value is available, or
+tree traversal is finished (iterator is invalidated).
+
+In effect, the coroutine iterator presents a flattened view of the recursive
+data structure.
 \cppf{same_fringe.cpp}
 
 \subsubsection*{\csharp \await}
 \csharp contains the two keywords \async and \await. \async introduces a
 control flow that involves awaiting asynchronous operations. The compiler
 reorganizes the code into a continuation-passing style. \await wraps the rest
-of the function after calling \await into a continuation if the asynchronous
+of the function after \await into a continuation if the asynchronous
 operation has not yet completed.\\
 The project \awaitemu uses \boostcoroutine for a proof-of-concept
 demonstrating the implementation of a full emulation of \csharp \await as a
