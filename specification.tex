@@ -342,8 +342,8 @@ The iterator is forward-only.\\
 
 {\bf Notes}
 \newline
-Because coroutine is moveable only copying the iterator would not give the expected
-result as known by ordinary iterators.\\
+Because \pullcoroiterator is an \cpp{InputIterator}, you cannot expect to copy
+an iterator and increment it independently of the original.\\
 
 {\bf Example}
 \cppf{input_iterator.cpp}
@@ -646,8 +646,8 @@ The iterator is forward-only.\\
 
 {\bf Notes}
 \newline
-Because coroutine is moveable only copying the iterator would not give the expected
-result as known by ordinary iterators.\\
+Because \pushcoroiterator is an \cpp{OutputIterator}, you cannot expect to
+copy an iterator and increment it independently of the original.\\
 
 {\bf Example}
 \cppf{output_iterator.cpp}
