@@ -15,20 +15,6 @@
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
 
-\lstdefinelanguage
-   [x64]{Assembler}     % add a "x64" dialect of Assembler
-   [x86masm]{Assembler} % based on the "x86masm" dialect
-   % with these extra keywords:
-   {morekeywords={rax,rdx,rcx,rbx,rsi,rdi,rsp,rbp,rip,r8,r9,r10,r11,r12,r13,r14,r15,popq,pushq,movq,subq,addq,xorq,leaq}}
-\lstset{
-        language=[x64]Assembler,
-        numbers=none,
-        numberstyle=\tiny,
-        numberblanklines=false,
-        stepnumber=1,
-        numbersep=10pt
-}
-
 \newcommand{\cpp}[1]{
     \lstinline[
         language=C++,
@@ -48,82 +34,28 @@
     ] {code/#1}
 }
 
-\newcommand{\asm}[1]{
-    \lstinline[
-        basicstyle=\ttfamily\color{black},
-        keywordstyle=\color{blue},
-        commentstyle=\color{red},
-        stringstyle=\color{green}
-    ] {#1}
-}
-\newcommand{\asmf}[1]{
-    \lstinputlisting[
-        numbers=left,
-        basicstyle=\ttfamily\color{black},
-        keywordstyle=\color{blue},
-        commentstyle=\color{red},
-        stringstyle=\color{green}
-    ] {code/#1}
-}
-
-\newcommand{\acoro}{\cpp{std::asymmetric_coroutine<T>}\xspace}
-\newcommand{\asyncread}{\cpp{async_read}\xspace}
-\newcommand{\asyncwrite}{\cpp{async_write}\xspace}
-\newcommand{\bgin}{\cpp{std::begin()}\xspace}
-\newcommand{\callcoro}{\cpp{std::symmetric_coroutine<T>::call_type}\xspace}
-\newcommand{\callcorobool}{\cpp{std::symmetric_coroutine<T>::call_type::operator bool()}\xspace}
-\newcommand{\callcoroop}{\cpp{std::symmetric_coroutine<T>::call_type::operator()()}\xspace}
-\newcommand{\ed}{\cpp{std::end()}\xspace}
-\newcommand{\get}{\cpp{get()}\xspace}
-\newcommand{\pullcorobool}{\cpp{std::asymmetric_coroutine<T>::pull_type::operator bool()}\xspace}
-\newcommand{\pullcoro}{\cpp{std::asymmetric_coroutine<T>::pull_type}\xspace}
-\newcommand{\pullcoroget}{\cpp{std::asymmetric_coroutine<T>::pull_type::get()}\xspace}
-\newcommand{\pullcoroiterator}{\cpp{std::asymmetric_coroutine<T>::pull_type::iterator}\xspace}
-\newcommand{\pullcoroop}{\cpp{std::asymmetric_coroutine<T>::pull_type::operator()()}\xspace}
-\newcommand{\pushcorobool}{\cpp{std::asymmetric_coroutine<T>::push_type::operator bool()}\xspace}
-\newcommand{\pushcoro}{\cpp{std::asymmetric_coroutine<T>::push_type}\xspace}
-\newcommand{\pushcoroiterator}{\cpp{std::asymmetric_coroutine<T>::push_type::iterator}\xspace}
-\newcommand{\pushcoroop}{\cpp{std::asymmetric_coroutine<T>::push_type::operator()(Arg&&)}\xspace}
-\newcommand{\scoro}{\cpp{std::symmetric_coroutine<T>}\xspace}
-\newcommand{\tuple}{\cpp{std::tuple<>}\xspace}
-\newcommand{\yieldcoro}{\cpp{std::symmetric_coroutine<T>::yield_type}\xspace}
-\newcommand{\yieldcoroop}{\cpp{std::symmetric_coroutine<T>::yield_type::operator()()}\xspace}
-\newcommand{\yieldcoroget}{\cpp{std::symmetric_coroutine<T>::yield_type::get()}\xspace}
-
-\newcommand{\asyncops}{\textit{asynchronous-operations}\xspace}
-\newcommand{\asyncres}{\textit{asynchronous-result}\xspace}
-\newcommand{\async}{\textit{async}\xspace}
 \newcommand{\await}{\textit{await}\xspace}
 \newcommand{\cblock}{\textit{control-block}\xspace}
-\newcommand{\checkpointing}{\textit{checkpointing}\xspace}
-\newcommand{\checkpoint}{\textit{checkpoint}\xspace}
-\newcommand{\continuation}{\textit{continuation}\xspace}
 \newcommand{\coopmultitasking}{\textit{cooperative multitasking}\xspace}
 \newcommand{\corofunction}{\textit{coroutine-function}\xspace}
-\newcommand{\csharp}{\textit{C\#}\xspace}
-\newcommand{\escreccomps}{\textit{\escre~recursive computations}\xspace}
-\newcommand{\escrecloops}{\textit{\escre~loops}\xspace}
-\newcommand{\escreops}{\textit{\escre~operations}\xspace}
-\newcommand{\escre}{\textit{escape-and-reenter}\xspace}
+\newcommand{\resumable}{\textit{resumable}\xspace}
 \newcommand{\resumfn}{\textit{resumable function}\xspace}
+\newcommand{\resumld}{\textit{resumable lambda}\xspace}
+\newcommand{\sfull}{\textit{stackful}\xspace}
+\newcommand{\sfcoro}{\textit{stackful} coroutine\xspace}
+\newcommand{\sfcoros}{\textit{stackful} coroutines\xspace}
+\newcommand{\sless}{\textit{stackless}\xspace}
+\newcommand{\slcoro}{\textit{stackless} coroutine\xspace}
+\newcommand{\slcoros}{\textit{stackless} coroutines\xspace}
 \newcommand{\stack}{\textit{stack}\xspace}
-
-\newcommand{\ABI}{ABI \cite{abi}\xspace}
-\newcommand{\awaitemu}{await\_emu \cite{awaite}\xspace}
-\newcommand{\boostasio}{boost.asio \cite{asio155}\xspace}
-\newcommand{\boostcontext}{boost.context \cite{context155}\xspace}
-\newcommand{\boostcoroutine}{boost.coroutine \cite{coroutine155}\xspace}
-\newcommand{\boostfiber}{boost.fiber \cite{fiber}\xspace}
-\newcommand{\cv}{calling convention \cite{callingconvention}\xspace}
-\newcommand{\channelnine}{Channel 9 - 'The Future of C++' \cite{awaite}\xspace}
-\newcommand{\yieldcontext}{yield\_context \cite{yieldc}\xspace}
+\newcommand{\yield}{\textit{yield}\xspace}
 
 \newcommand{\abschnitt}[1]{
     \addcontentsline{toc}{subsection}{#1}
     \subsection*{#1}
 }
 
-\newcommand{\anhang}[1]{
-    \addcontentsline{toc}{subsection}{#1}
-    \subsection*{#1}
+\newcommand{\uabschnitt}[1]{
+    \addcontentsline{toc}{paragraph}{#1}
+    \paragraph*{#1}
 }
