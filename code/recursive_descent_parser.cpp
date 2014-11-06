@@ -76,15 +76,15 @@ private:
    }
 };
 
-void parse(istream& is) stackfull[segmented(64*1024)] {
+void parse(istream& is) {
 	Parser p(is,[](char ch){ yield ch; });
         p.run();
 }
 
-int main() {
+void main() {
     istringstream is("1+1");
     // invert control flow
-    auto seq = await parse(is);
+    auto seq = await stackfull[segmented(64*1024)] parse(is);
     // user-code pulls parsed data from parser
     for(char c: seq){
         printf("Parsed: %c\n",c);

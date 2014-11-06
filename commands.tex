@@ -22,6 +22,7 @@
         keywordstyle=\color{blue},
         commentstyle=\color{green},
         stringstyle=\color{red},
+        morekeywords={await,yield,stackfull}
     ] {#1}
 }
 \newcommand{\cppf}[1]{
@@ -31,24 +32,35 @@
         keywordstyle=\color{blue},
         commentstyle=\color{red},
         stringstyle=\color{green},
+        morekeywords={await,yield,stackfull}
     ] {code/#1}
 }
 
-\newcommand{\await}{\textit{await}\xspace}
+\newcommand{\ascoro}{\textit{asymmetric} coroutine\xspace}
+\newcommand{\ascoros}{\textit{asymmetric} coroutines\xspace}
+\newcommand{\await}{\textit{\cpp{await}}\xspace}
 \newcommand{\cblock}{\textit{control-block}\xspace}
 \newcommand{\coopmultitasking}{\textit{cooperative multitasking}\xspace}
 \newcommand{\corofunction}{\textit{coroutine-function}\xspace}
+\newcommand{\cstack}{\textit{call stack}\xspace}
+\newcommand{\fiber}{\textit{fiber}\xspace}
+\newcommand{\fibers}{\textit{fibers}\xspace}
 \newcommand{\resumable}{\textit{resumable}\xspace}
 \newcommand{\resumfn}{\textit{resumable function}\xspace}
 \newcommand{\resumld}{\textit{resumable lambda}\xspace}
-\newcommand{\sfull}{\textit{stackful}\xspace}
-\newcommand{\sfcoro}{\textit{stackful} coroutine\xspace}
-\newcommand{\sfcoros}{\textit{stackful} coroutines\xspace}
+\newcommand{\sfanno}{\textit{stackfull[]}\xspace}
+\newcommand{\sfull}{\textit{stackfull}\xspace}
+\newcommand{\sfcoro}{\textit{stackfull} coroutine\xspace}
+\newcommand{\sfcoros}{\textit{stackfull} coroutines\xspace}
 \newcommand{\sless}{\textit{stackless}\xspace}
 \newcommand{\slcoro}{\textit{stackless} coroutine\xspace}
 \newcommand{\slcoros}{\textit{stackless} coroutines\xspace}
 \newcommand{\stack}{\textit{stack}\xspace}
-\newcommand{\yield}{\textit{yield}\xspace}
+\newcommand{\sycoro}{\textit{symmetric} coroutine\xspace}
+\newcommand{\sycoros}{\textit{symmetric} coroutines\xspace}
+\newcommand{\uthread}{\textit{user-land} thread\xspace}
+\newcommand{\uthreads}{\textit{user-land} threads\xspace}
+\newcommand{\yield}{\textit{\cpp{yield}}\xspace}
 
 \newcommand{\abschnitt}[1]{
     \addcontentsline{toc}{subsection}{#1}

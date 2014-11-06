@@ -1,0 +1,40 @@
+\abschnitt{Discussion}
+two distinc use-cases for \sfcoros:
+\begin{itemize}
+    \item replacement of \slcoros if suspention from within nested \cstack is
+          required
+    \item in context of cooperativly scheduled tasks
+\end{itemize}
+
+Creating \fibers/\uthreads requires first-class objects and \sycoros in order
+to execute tasks cooperativly (topic of another proposal).\\
+For the first use-case the author suggest to use an N4134-like syntax for
+\sfcoros\ref{appendix}.\\
+The similarities between \sfcoros and \slcoros are that both have to
+preserve/restore callee-saved registers as well as to preserve/restore
+the instruction pointer (return address).\\
+Unlike \sless, \sfcoro are required to preserve/restore the stack pointer.
+
+\uabschnitt{Unified syntax:}
+In the context of clean code a \sfull N4134-syntax would be preferable - the
+characteristics for \sfcoros based on N4134-syntax require:
+\begin{itemize}
+    \item stackfull
+    \item asymmetric: two operations - \await and \yield - for context switch
+    \item no first-class objects (coroutine structure/object is hidden by the
+          compiler)
+\end{itemize}
+
+\uabschnitt{Indicator:}
+Compiler needs indicator to know if s\sless or \sfull context switch is desired.\\
+Introduction of new annotation \sfanno similar to \resumable as in previous versions
+of N4134 proposal. The new annotation tells the compiler to execute the function in
+an \sfcoro if it was invoked with \await. Otherwise it is called as ordinary function.\\
+\cppf{annotation.cpp}
+
+\uabschnitt{Stack type/size:}
+Using \sfcoros requires to estimate the required stacksize. The annotation could accept
+an type indicating which type iand size of stack should be created.\\
+\cppf{fixed.cpp}
+\cppf{segmented.cpp}
+\cppf{configured.cpp}
