@@ -33,6 +33,9 @@ an \sfcoro if it was invoked with \await. Otherwise it is called as ordinary fun
 \cppf{annotation.cpp}
 
 \uabschnitt{Stack type/size:}
+Often the limited stack size is raised as argument against \sfcoros. But if you use
+\slcoros in a thread, you are faced to the problem too. Especially if the \slcoros
+does call some ordinary functions consuming enought stack space to reack the limit.\\
 Using \sfcoros requires to estimate the required stacksize. The annotation could accept
 an type indicating which type iand size of stack should be created.\\
 \cppf{fixed.cpp}
