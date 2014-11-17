@@ -1,9 +1,7 @@
-\abschnitt{Characteristics}
-The author agrees with the definitions made in N4134 (not repeated here) -
-except the definition of a \fiber/\uthread.\\
-Short: a coroutine is a language level construct providing an enhanced
-control flow.\\
-\newline
+\abschnitt{Definitions}
+\uabschnitt{coroutine:}
+enables explicit suspend and resume of its progress via additional operations by
+preserving execution state and thus provides an enhanced control flow.\\
 Coroutines have following characteristics\cite{N3985}:
 \begin{itemize}
     \item values of local data persist between successive context switches
@@ -16,39 +14,32 @@ Coroutines have following characteristics\cite{N3985}:
 
 \uabschnitt{\ascoro:}
 provides two disting operations for contexts switch - one operation to
-resume (\textit{await}) and one operation to suspend (\textit{yield}) the
-coroutine.\\
-A \ascoro is tightly coupled with its caller, e.g. on suspendtion the
-coroutine transferes the execution cotnrol back to its invoker.
+resume and one operation to suspend the coroutine.\\
+A \ascoro is tightly coupled with its caller, e.g. on suspending the
+coroutine transferes the execution control back to its invoker.
 
 \uabschnitt{\sycoro:}
-only one operation (\textit{jump}) to resume/suspend the context is
-available.\\
+only one operation to resume/suspend the context is available.\\
 A \sycoro does not know its caller, e.g. the execution control can passed to
 any other \sycoro.
 
-\uabschnitt{\sfcoros of N3985:}
-was intendet to be a library-only extension without requiring changes to the C++
-language itself (no additional keyword).\\
-Characteristics of N9885 \sfcoros:
-\begin{itemize}
-    \item stackfull
-    \item symmetric: only one operation (\cpp{coroutine<>::operator()}) for
-          context switch
-    \item first-class objects (accessible in user-code; could be stored in
-          container)
-\end{itemize}
-\sfcoros can be used in any use-cases but at performance cost.
+\uabschnitt{fiber/user-mode thread:}
+fibers execute tasks in an co-operative multitasking environment involving
+a scheduler\\.
 
-\uabschnitt{\slcoros of N4134:}
+\uabschnitt{segmented stack\cite{llvmseg}:}
+also known as \textit{split stack}\cite{gccsplit}, represents a stack with
+a non-contigous address-range.
+
+\uabschnitt{\resumfn of N4134:}
 is intented to provide an efficient language supported mechanism for \slcoros
 introduceing two new keywords - \await and \yield.\\
 Characteristics of N4134 \slcoros:
 \begin{itemize}
     \item stackless
-    \item asymmetric: two operations - \await and \yield - for context switch
+    \item asymmetric (suspend operations returns to caller of \slcoro)
     \item no first-class objects (coroutine structure/object is hidden by the
           compiler)
+    \item uncommon implicit \textit{return}-statement\cite{N4134}
+          \cppf{N4134/fib.cpp}
 \end{itemize}
-\slcoros might have higher performance than \sfcoros but cann't be used if
-suspention from within nested call-stack is required.

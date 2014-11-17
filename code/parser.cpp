@@ -76,17 +76,30 @@ private:
    }
 };
 
-void parse(istream& is) {
-	Parser p(is,[](char ch){ yield ch; });
-        p.run();
-}
-
-void main() {
-    istringstream is("1+1");
+int main() {
+    std::istringstream is("1+1");
+    bool done=false;
+    char c;
+    std::execution_context main_ctx(
+        std::execution_context::current() );
     // invert control flow
-    auto seq = await stackfull[segmented(64*1024)] parse(is);
+    std::execution_context parser_ctx(
+        std::fixedsize(),
+        [&is,&main_ctx,&done,&c](){
+            Parser p(is,
+                     [&main_ctx,&c](char ch){
+                        c=ch;
+                        // resume main-context
+                        main_ctx.jump_to();
+                     });
+            p.run();
+            done=true;
+        });
+
     // user-code pulls parsed data from parser
-    for(char c: seq){
+    while(!done){
+        // resume parser-context
+        parser_ctx.jump_to();
         printf("Parsed: %c\n",c);
     }
 }
