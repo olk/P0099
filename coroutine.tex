@@ -1,12 +1,3 @@
-\pdfoutput=1
-\pdfcompresslevel=9
-\pdfinfo
-{
-	/Title (A low-level API for stackfull coroutines)
-	/Author (Oliver Kowalke)
-	/Keywords (C++ coroutine)
-}
-
 %//////////////////////////////////////////////////////////////////////////////
 
 \documentclass[a4paper,10pt,DIV15]{scrartcl}
@@ -29,6 +20,17 @@
 
 %//////////////////////////////////////////////////////////////////////////////
 
+\pdfoutput=1
+\pdfcompresslevel=9
+\pdfinfo
+{
+	/Author (Oliver Kowalke)
+	/Title (A low-level API for stackfull coroutines)
+	/Keywords (C++ coroutine)
+}
+
+%//////////////////////////////////////////////////////////////////////////////
+
 \begin{document}
 
 \small
@@ -39,7 +41,7 @@
     Reply-to:        \> Oliver Kowalke (oliver dot kowalke at gmail dot com)\\
 \end{tabbing}
 
-\section*{A low-level API for stackfull coroutines}
+\section*{A low-level API for stackfull coroutines (context-switching)}
 
 %//////////////////////////////////////////////////////////////////////////////
 
@@ -48,11 +50,14 @@
 %//////////////////////////////////////////////////////////////////////////////
 
 \paragraph*{Revision History}
-This document supersedes N3985 and elaborates on a lower-level API for \sfcoros.
+This document supersedes N3985 and elaborates on a lower-level API for stackfull
+coroutines (context-switching).
 
 \input{background}
 \input{definitions}
 \input{discussion}
+\input{impact}
+\input{design}
 
 %//////////////////////////////////////////////////////////////////////////////
 

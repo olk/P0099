@@ -1,4 +1,12 @@
 \abschnitt{Definitions}
+
+\uabschnitt{execution context:}
+environment where program logic is evaluated in.
+
+\uabschnitt{control block:}
+holds a set of registers (callee-saved registers, instruction pointer, stack
+pointer) describing the execution context.
+
 \uabschnitt{coroutine:}
 enables explicit suspend and resume of its progress via additional operations by
 preserving execution state and thus provides an enhanced control flow.\\
@@ -7,39 +15,47 @@ Coroutines have following characteristics\cite{N3985}:
     \item values of local data persist between successive context switches
     \item execution is suspended as control leaves coroutine and resumed at
           certain time later
-    \item symmetric or asymmetric control-transfer mechanism
+    \item symmetric or asymmetric control transfer-mechanism
     \item first-class object or compiler-internal structure
-    \item stackful or stackless
+    \item stackless or stackfull
 \end{itemize}
 
-\uabschnitt{\ascoro:}
-provides two disting operations for contexts switch - one operation to
+\uabschnitt{asymmetric coroutine:}
+provides two distingt operations for contexts switch - one operation to
 resume and one operation to suspend the coroutine.\\
-A \ascoro is tightly coupled with its caller, e.g. on suspending the
-coroutine transferes the execution control back to its invoker.
+A asymmetric coroutine is tightly coupled with its caller, e.g. on suspending
+the coroutine transferes the execution control back to its invoker.\\
+Usually used in the context of generators.
 
-\uabschnitt{\sycoro:}
+\uabschnitt{symmetric coroutine:}
 only one operation to resume/suspend the context is available.\\
-A \sycoro does not know its caller, e.g. the execution control can passed to
-any other \sycoro.
+A symmetric coroutine does not know its caller, e.g. the execution control can
+passed to any other symmetric coroutine.\\
+Usually used to implement user-mode threads.
 
 \uabschnitt{fiber/user-mode thread:}
-fibers execute tasks in an co-operative multitasking environment involving
-a scheduler\\.
+execute tasks in an cooperative multitasking environment involving a
+scheduler. Coroutines and fibers are distinct (see N4024\cite{N4024}).
 
-\uabschnitt{segmented stack\cite{llvmseg}:}
-also known as \textit{split stack}\cite{gccsplit}, represents a stack with
-a non-contigous address-range.
-
-\uabschnitt{\resumfn of N4134:}
-is intented to provide an efficient language supported mechanism for \slcoros
-introduceing two new keywords - \await and \yield.\\
-Characteristics of N4134 \slcoros:
+\uabschnitt{resumeable function:}
+N4134\cite{\N4134} describes resumable functions as an efficient language
+supported mechanism for stackless coroutines introducing two new keywords -
+\await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
+Characteristics of resumkable functions:
 \begin{itemize}
     \item stackless
-    \item asymmetric (suspend operations returns to caller of \slcoro)
-    \item no first-class objects (coroutine structure/object is hidden by the
-          compiler)
-    \item uncommon implicit \textit{return}-statement\cite{N4134}
+    \item allocates memory (activation frame) for the body of the resumable
+          function to store local data, registers etc.
+    \item thight coupling between caller and resumable function (asymmetric
+          control transfer-mechanism)
+    \item implicit \textit{return}-statement\cite{N4134} (code-transformation)
           \cppf{N4134/fib.cpp}
 \end{itemize}
+
+\uabschnitt{linked stack:}
+also known as \textit{split stack}\cite{gccsplit} or
+\textit{segmented stack}\cite{llvmseg}, represents a stack with a non-contigous
+address-range.\\
+Applications compiled with support for linked stacks can use (link against)
+libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
+chapter 'Backward compatibility').

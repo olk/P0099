@@ -1,5 +1,7 @@
 \abschnitt{Background}
-At the meeting in Urbana the committee accepted that \sless and \sfull coroutine
-are distinct and decided to pursue \sless and \sfull coroutines.\\
-This paper proposes a low-level API for \sfcoros and tries to give an answer why
-\sless and \sfull coroutines should have a different syntax.
+At the meeting in Urbana the committee accepted that stackless and stackfull
+coroutines are distinct and decided to pursue both kinds of coroutines.\\
+This paper proposes a low-level API for stackfull context switching enabling
+implementation of stackfull coroutines as proposed in N3985 (see
+boost.coroutine2\cite{bcoroutine2}) as well as cooperative multitasking (see
+boost.fiber\cite{bfiber}).
