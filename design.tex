@@ -1,11 +1,27 @@
 \abschnitt{Design}
-The design suggests class \ectx as the basic API, enabling to implement
-high-level APIs for stackfull coroutines (as proposed in N3985\cite{N3985},
-boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
-cooperative multitasking environment, boost.fiber\cite{bfiber}).
+in the first part the author describes class \ectx as the basic API, enabling to
+implement high-level APIs for stackful coroutines (as proposed in
+N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode threads
+(executing tasks in a cooperative multitasking environment,
+boost.fiber\cite{bfiber}).\\
+Based on the feature set of \ectx the author evaluates n the second part a
+syntax similiar to resumable lambdas known from proposal N4244 but with
+different properties (stackful, symmetric etc.).
 
-\uabschnitt{Construction}
-\uabschnitt{Destruction}
-\uabschnitt{Accessing active contex}
-\uabschnitt{Resuming a context}
-\uabschnitt{Exceptions}
+\uabschnitt{Class \ectx}
+In contrast to resumable functions/lambda the author believes that providing
+only one operation to resume/suspend an execution context is much more flexible
+and efficient.\\
+
+\paragraph{Construction}
+\paragraph{Destruction}
+\paragraph{Accessing active contex}
+\paragraph{Resuming a context}
+\paragraph{Exceptions}
+
+\uabschnitt{Resumable Lambda}
+\paragraph{Construction}
+\paragraph{Destruction}
+\paragraph{Accessing active contex}
+\paragraph{Resuming a context}
+\paragraph{Exceptions}

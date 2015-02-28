@@ -1,6 +1,103 @@
 \abschnitt{Discussion}
-\uabschnitt{Activation frame:}
-
 \uabschnitt{Implications of \textit{stackless}:}
+Resumable functions and resumable lambdas are stackless because the instances of
+those types share the same stack (application/main stack) with each other.\\
+This implies that no stack frame must remain on the stack at context switch -
+otherwise the stack frames get corrupted (overwritten by other code).\\
+Suspention from nested functions is not possible!\\
+Therefore it is not possible to use resumable functions/lambdas together with
+code which requires suspenting the execution context from nested functions.
+This would require that the complete code has to be transformed into resumable
+functions - which is impossible for closed source code or a too large or complex
+code base.
 
-\uabschnitt{Implications of \textit{stackfull}:}
+\uabschnitt{Implications of \textit{stackful}:}
+In the context of stackful coroutines each context has its own stack,
+without interfering with each other. Therefore stack frames of sub-routines can
+remain on the stack and supention from nested functions is supported.\\
+Tge code executed in a stakfull execution context can be arbitrary and does not
+need any modification (in contrast to resumable functions/lambdas if suspention
+from nested call stack is required). The appendix\ref{appendix} contains an
+example of an recursive descent parser with invertion of control.
+
+\uabschnitt{Activation frame:}
+Resumable functions as well as resumable lambdas require storage for control
+structures, local variables and resume point (content of certain CPU registers).
+The required size will be determined by the compiler and the storage is
+allocated on the heap/freestore - such called activation frame.\\
+A stackful execution context might allocate its controll structures on top of
+its own stack. Local variables use stack space as ordinary fucntions do.
+The resume point (CPU registers) are pushed to/poped from at the memory (stack)
+where the stack-pointer points to.\\
+If the compiler can analyse the code executed in the stackful execution context,
+than the stackful context switching shows the same memory requirements as
+resumable functions/lambdas.\\
+\newline
+The statement that stackless coroutines (resumable functions/lambdas) have
+always a lower memory requirement than stackful coroutines is not true
+\cppf{N4134/fib.cpp}
+As shown in the example above, the function body is simple (no sub-routines
+called). The compiler determines the required size for the activation frame and
+allocates it.\\
+In the case of stackful coroutines for generating the sequence of fibonacci
+numbers (example below), the required memory could be estemated (library only
+solution) or calculated by the compiler (support by the compiler through
+language extension).
+\cppf{N3985/fib.cpp}
+As shown, for simple function bodies stackless and stackful coroutines have
+similar memory requirements.\\
+
+\uabschnitt{Calling sub-routines:}
+What happens if sub-routines (maybe compiled, from third-party vendors) are
+invoked (for instance recursive)? In the context of stackful execution context
+the user has to estimate the required stack space or use a stack that grows on
+demand (linked stacks). Suspending from the nested call stack is still
+possible.\\
+On the other side resumable functions/lambdas share the same stack (suspending
+from nested functions is not possible). If the stack of the application
+(contains stack frame from function main()) is used, the size of the stack grows
+on demand. But what happens if those resumable functions/lambdas are executed
+inside a thread? The stack size of a thread is fix - usually 1MB (Windows) till
+2MB (Linux) but on other platforms 64KB (HP-UX/PA)/256KB (HP-UX/Itanium).\\
+If the called sequence of nested sub-routines exceeds the size of the stack the
+resumable function/lambda will fail.\\
+\newline
+Because of this reasons the author beleives that the argument that stackless
+resumable functions/lambdas are more space efficient applies not very well.
+
+\uabschnitt{Resume/suspend operations:}
+Resumable functions/lambdas provide two operations for context switching. One
+operation to resume (for instance \rlop) and one
+operation to supend the context (for instance keywork \yield inside the function
+body). But this introduced a tight coupeling between invoker and resumable
+function/lambda - e.g. a resumable function/lambda can only jump back to the
+point in the code where it was invoked.\\
+This is sufficient in the case of generators but in the context of cooperative
+multitasking it is inefficient!\\
+In contrast to resumable functions/lambdas the proposed stackful execution
+context (class \ectx) provides only one operation to resume/suspend
+the context (\ectxop). The execution control is directly transferred from one
+execution context to another - no need to jump back to the caller. This enables
+a much more efficient implementation of cooperative multitasking (no additional
+context switch back to caller) as well as the implementation of generators.
+
+\uabschnitt{Summary stackless:}
+\begin{itemize}
+    \item   for each resumable function/lambda an activation frame is allocated
+    \item   activation frame and stack used for function frames a separat
+    \item   stack (used to allocated function frames on it) is shared between
+            resumable functions/lambdas
+    \item   asymmetric context switching -> tight coupeling between caller and
+            invoker (less efficient in the context of cooperative multitasking)
+\end{itemize}
+
+\uabschnitt{Summary stackful:}
+\begin{itemize}
+    \item   each stackful execution context owns a stack (fixed size or growing
+            on demand)
+    \item   activation frame and stack (for function frmaes) are the same; no
+            distinction
+    \item   stack is not shared between execution contexts
+    \item   symmetric context switching -> no coupeling between caller and
+            invoker (more efficient in the context of cooperative multitasking)
+\end{itemize}

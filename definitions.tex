@@ -17,7 +17,7 @@ Coroutines have following characteristics\cite{N3985}:
           certain time later
     \item symmetric or asymmetric control transfer-mechanism
     \item first-class object or compiler-internal structure
-    \item stackless or stackfull
+    \item stackless or stackful
 \end{itemize}
 
 \uabschnitt{asymmetric coroutine:}
@@ -38,10 +38,10 @@ execute tasks in an cooperative multitasking environment involving a
 scheduler. Coroutines and fibers are distinct (see N4024\cite{N4024}).
 
 \uabschnitt{resumeable function:}
-N4134\cite{\N4134} describes resumable functions as an efficient language
+N4134\cite{N4134} describes resumable functions as an efficient language
 supported mechanism for stackless coroutines introducing two new keywords -
 \await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
-Characteristics of resumkable functions:
+Characteristics of resumable functions:
 \begin{itemize}
     \item stackless
     \item allocates memory (activation frame) for the body of the resumable
@@ -49,7 +49,23 @@ Characteristics of resumkable functions:
     \item thight coupling between caller and resumable function (asymmetric
           control transfer-mechanism)
     \item implicit \textit{return}-statement\cite{N4134} (code-transformation)
-          \cppf{N4134/fib.cpp}
+\end{itemize}
+
+\uabschnitt{resumeable lambdas:}
+N4244\cite{N4244} describes resumable functions as an efficient language
+supported mechanism for stackless coroutines introducing two new keywords -
+\await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
+Characteristics of resumable functions:
+\begin{itemize}
+    \item stackless
+    \item body of a lambda is available to the compiler at the point
+          where the lambda type is defined
+    \item compiler can analyse the lambda body to determine what stack
+          variables need to be accommodated
+    \item space can be made available for the stack variables in exactly the
+          same way as is already done for the capture set
+    \item thight coupling between caller and resumable lambda (asymmetric
+          control transfer-mechanism)
 \end{itemize}
 
 \uabschnitt{linked stack:}

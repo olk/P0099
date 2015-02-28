@@ -20,7 +20,7 @@
         keywordstyle=\color{blue},
         commentstyle=\color{green},
         stringstyle=\color{red},
-        morekeywords={await,yield,stackfull}
+        morekeywords={await,yield,stackful}
     ] {#1}
 }
 \newcommand{\cppf}[1]{
@@ -30,12 +30,14 @@
         keywordstyle=\color{blue},
         commentstyle=\color{red},
         stringstyle=\color{green},
-        morekeywords={await,yield,stackfull}
+        morekeywords={await,yield,stackful}
     ] {code/#1}
 }
 
 \newcommand{\await}{\textit{\cpp{await}}\xspace}
 \newcommand{\ectx}{\textit{\cpp{std::execution_context}}\xspace}
+\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()}}\xspace}
+\newcommand{\rlop}{\textit{\cpp{__resumable_lambda::operator()}}\xspace}
 \newcommand{\yield}{\textit{\cpp{yield}}\xspace}
 
 \newcommand{\abschnitt}[1]{
