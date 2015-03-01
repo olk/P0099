@@ -81,6 +81,18 @@ execution context to another - no need to jump back to the caller. This enables
 a much more efficient implementation of cooperative multitasking (no additional
 context switch back to caller) as well as the implementation of generators.
 
+\uabschnitt{Passing data:}
+Because of the asymmmetric resume/suspend operations of N4134 and N4244 both
+proposals apply well to generator-examples, e.g. returning data from the
+resumable function/lambda u(for isntance using \yield).\\
+Passing data into the body of resumable functions/lambdas is not intuitive -
+instead verhicles like \cpp{channel<>} (N4134)
+\cppf{N4134/channel.cpp}
+or \cpp{template< typename T > T * resumable_lambda::wanted()} (N4244)
+\cppf{N4244/wanted.cpp}
+have to be used.\\
+
+
 \uabschnitt{Summary stackless:}
 \begin{itemize}
     \item   for each resumable function/lambda an activation frame is allocated
@@ -89,6 +101,8 @@ context switch back to caller) as well as the implementation of generators.
             resumable functions/lambdas
     \item   asymmetric context switching -> tight coupeling between caller and
             invoker (less efficient in the context of cooperative multitasking)
+    \item   returning data from resumable function/lambda via \yield etc.
+    \item   no intuitive passing data into body of resumable function/lambda
 \end{itemize}
 
 \uabschnitt{Summary stackful:}
@@ -100,4 +114,6 @@ context switch back to caller) as well as the implementation of generators.
     \item   stack is not shared between execution contexts
     \item   symmetric context switching -> no coupeling between caller and
             invoker (more efficient in the context of cooperative multitasking)
+    \item   no tansfer of data between context switches (clean API; data transport
+            must be organized from sorounding code)
 \end{itemize}
