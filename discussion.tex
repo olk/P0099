@@ -85,13 +85,26 @@ context switch back to caller) as well as the implementation of generators.
 Because of the asymmmetric resume/suspend operations of N4134 and N4244 both
 proposals apply well to generator-examples, e.g. returning data from the
 resumable function/lambda u(for isntance using \yield).\\
-Passing data into the body of resumable functions/lambdas is not intuitive -
-instead verhicles like \cpp{channel<>} (N4134)
+Passing data into the body of resumable functions (N4123) requires helper
+classes like \cpp{channel<>}.
 \cppf{N4134/channel.cpp}
-or \cpp{template< typename T > T * resumable_lambda::wanted()} (N4244)
+Resumable lambdas from N4244 use special member classes
+\cpp{template< typename T > T * resumable_lambda::wanted()} to pass data.
 \cppf{N4244/wanted.cpp}
-have to be used.\\
-
+In both cases the way how data have to be passed into the body is not intuitive
+and provides some problems how return values are accessed. For instance multiple
+parameters must be transported with an container (\cpp{std::tuple<>) or via
+multiple invokations of
+\cpp{template< typename T > T * resumable_lambda::wanted()}.\\
+\newline
+An alternative would be not directly support paramater passing. The interface
+would become small as possible. C++11 already provides all mechanisms the user
+can use in order to transport exceptions (use of \cpp{std::exception_ptr}) and
+parameters (== lvalues) are accessed via their addresses (from stack or heap).\\
+The user (for instance library vendor) pays only for what he realy needs -
+choosing mechanisms suitable for the special use case (see
+boost.coroutine2\cite{bcoroutine2}).
+\cppf{code/excptr.cpp}
 
 \uabschnitt{Summary stackless:}
 \begin{itemize}

@@ -1,27 +1,93 @@
 \abschnitt{Design}
-in the first part the author describes class \ectx as the basic API, enabling to
-implement high-level APIs for stackful coroutines (as proposed in
-N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode threads
-(executing tasks in a cooperative multitasking environment,
-boost.fiber\cite{bfiber}).\\
-Based on the feature set of \ectx the author evaluates n the second part a
-syntax similiar to resumable lambdas known from proposal N4244 but with
-different properties (stackful, symmetric etc.).
+Class \ectx provides a small, basic API, suitable to implement high-level APIs
+for stackful coroutines (as proposed in N3985\cite{N3985},
+boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
+cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
+Based on the feature set of \ectx the author evaluates a syntax similiar to
+resumable lambdas known from N4244 but with - but with different properties
+(stackful, symmetric etc.).
 
 \uabschnitt{Class \ectx}
 In contrast to resumable functions/lambda the author believes that providing
-only one operation to resume/suspend an execution context is much more flexible
-and efficient.\\
+only one operation to resume/suspend an execution context provides much more
+flexibility and efficiency.\\
+\newline
+\ectx provides only one operations to switch the execution context
+\cpp{std::execution_context::operator()} (symmetric operation) - that implies
+that \ectx needs to specify explictly to which other context the execution
+control has to be transferred to. The appendix\ref{appendix} shows the inversion
+of control in the context of an recursive descent parser.
 
-\paragraph{Construction}
-\paragraph{Destruction}
-\paragraph{Accessing active contex}
-\paragraph{Resuming a context}
-\paragraph{Exceptions}
+\paragraph*{member functions}
+\subparagraph*{(constructor)}
+constructs new execution context\\
 
-\uabschnitt{Resumable Lambda}
-\paragraph{Construction}
-\paragraph{Destruction}
-\paragraph{Accessing active contex}
-\paragraph{Resuming a context}
-\paragraph{Exceptions}
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{template<typename StackAlloc,typename Fn,typename... Args> execution_context(StackAlloc salloc,Fn&& fn,Args&&... args);} & (1)\\
+
+    \midrule
+
+    \cpp{execution_context(execution_context const& other)=default;} & (2)\\
+
+    \midrule
+
+    \cpp{execution_context(execution_context&& other)=default;} & (3)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] creates a \pullcoro which does not represent a context of execution
+    \item[2)] creates a \pullcoro object and associates it with a execution
+              context
+    \item[3)] move constructor, constructs a \pullcoro object to represent a
+              context of execution that was represented by \textit{other}, after this
+              call \textit{other} no longer represents a coroutine
+\end{description}
+
+{\bf Notes}
+\newline
+Return values from the \corofunction are accessible via \pullcoroget.\\
+If the \corofunction throws an exception, this exception is re-thrown when the
+caller returns from\\
+\pullcoroop.\\
+
+{\bf Parameters}
+\begin{description}
+    \item[fn]     function to execute in the new context
+    \item[args]   parameter pack passed to function \cpp{fn}
+    \item[other]  another execution context object\\
+\end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1), 3)] noexcept specification: \cpp{noexcept}
+    \item[2)] \cpp{std::system_error} if the coroutine could not be started
+                  - the exception may represent a implementation-specific error
+                  condition; re-throw user defined exceptions from \corofunction\\
+\end{description}
+
+{\bf Example}
+\cppf{fibonacci.cpp}
+
+\uabschnitt{Stackful resumable lambda}
+The author assumes that it should be possible to transform the syntax of \ectx
+into a syntax similar to resumable lambdas known from N4244.\\
+The differences to N4244 are the absence of keyword \yield because symmetric
+context switching is favourized, e.g. the target of a cotnext switch must be
+explicitly specified.\\
+Stackful resumabel lambdas required keyword \resumable together with an hint
+(attribute) about the type and size of the stack -
+\cpp{ auto l = []()resumable(fixedsize(1024){...}}
+Hint types are \cpp{fixedsize()} and \cpp{segmented()} - \cpp{fixedsize(x)} tells
+the compiler to allocate an new (or re-use cached) stack with the given size
+\cpp{x}. With \cpp{segmented(y)} an linked stack that grows on demand with an
+initial size of \cpp{y} is used.\\
+If the compiler is able to analyse the function body (including all
+sub-routines) the compiler might ignore the hint and allocated an approbriate
+sized stack.\\
+\newline
+The example of an recursive descent parser would look like
+\cppf{lparser.cpp}

@@ -43,20 +43,20 @@ public:
                     // set termination flags
                     state_ |= static_cast< int >( state_t::complete);
                     // jump back to caller
-                    caller_.jump_to();
+                    caller_.resume();
                     assert( false);
                 }),
         state_( static_cast< int >( state_t::unwind) ),
         except_(),
         t_( nullptr) {
-        callee_.jump_to();
+        callee_.resume();
     }
 
     pull_coroutine( pull_coroutine const&) = delete;
     pull_coroutine & operator=( pull_coroutine const&) = delete;
 
     void operator()() {
-        callee_.jump_to();
+        callee_.resume();
         if ( except_) {
             std::rethrow_exception( except_);
         }

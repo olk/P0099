@@ -90,7 +90,7 @@ int main() {
                      [&main_ctx,&c](char ch){
                         c=ch;
                         // resume main-context
-                        main_ctx.jump_to();
+                        main_ctx.resume();
                      });
             p.run();
             done=true;
@@ -99,7 +99,7 @@ int main() {
     // user-code pulls parsed data from parser
     while(!done){
         // resume parser-context
-        parser_ctx.jump_to();
+        parser_ctx.resume();
         printf("Parsed: %c\n",c);
     }
 }
