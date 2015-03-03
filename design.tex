@@ -25,7 +25,7 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{template<typename StackAlloc,typename Fn,typename... Args> execution_context(StackAlloc salloc,Fn&& fn,Args&&... args);} & (1)\\
+    \cpp{execution_context(StackAlloc salloc,Fn&& fn,Args&&... args);} & (1)\\
 
     \midrule
 
@@ -39,55 +39,165 @@ constructs new execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates a \pullcoro which does not represent a context of execution
-    \item[2)] creates a \pullcoro object and associates it with a execution
-              context
-    \item[3)] move constructor, constructs a \pullcoro object to represent a
-              context of execution that was represented by \textit{other}, after this
-              call \textit{other} no longer represents a coroutine
+    \item[1)] creates a \ectx
+              \begin{itemize}
+                  \item \textit{salloc} allocates/deallocates stack
+                  \item \textit{fn} function executed in the new context
+                  \item \textit{args} parameter pack passed to \textit{fn}
+              \end{itemize}
+    \item[2)] copies \ectx, e.g. underlying control block is shared
+    \item[3)] moves underlying cotnrol block to new \ectx
 \end{description}
 
 {\bf Notes}
 \newline
-Return values from the \corofunction are accessible via \pullcoroget.\\
-If the \corofunction throws an exception, this exception is re-thrown when the
-caller returns from\\
-\pullcoroop.\\
+If an instance of \ectx is copied, both instances share the same underlying
+control block (CPU registers, stack). Resuming one instance modifies the
+control block (internal state) of the other \ectx too.\\
+If this is behaviour is not permitted, the stack has to be copied. That requires
+identification and modification of local variables pointing to address of the
+stack.\\
+
+\subparagraph*{(destructor)}
+destroys a execution context\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{~execution_context();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] destroys a \ectx. If that \ectx is associated with a context of execution
+              and holds the last reference to the internal control block,
+              then the context of execution is destroyed too. Specifically,
+              its stack is unwound.\\
+\end{description}
+
+\subparagraph*{operator=}
+moves the coroutine object\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{execution_context_type & operator=(execution_context_type&& other);} & (1)\\
+
+    \midrule
+
+    \cpp{execution_context_type & operator=(const execution_context_type& other);} & (2)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] assigns the state of \textit{other} to *this using move semantics
+    \item[2)] copies the state of \textit{other} to *this, state (control block) is shared
+\end{description}
 
 {\bf Parameters}
 \begin{description}
-    \item[fn]     function to execute in the new context
-    \item[args]   parameter pack passed to function \cpp{fn}
-    \item[other]  another execution context object\\
+    \item[other]   another coroutine object to assign to this coroutine object\\
+\end{description}
+
+{\bf Return value}
+\begin{description}
+    \item[*this]
 \end{description}
 
 {\bf Exceptions}
 \begin{description}
-    \item[1), 3)] noexcept specification: \cpp{noexcept}
-    \item[2)] \cpp{std::system_error} if the coroutine could not be started
-                  - the exception may represent a implementation-specific error
-                  condition; re-throw user defined exceptions from \corofunction\\
+    \item[1)] noexcept specification: \cpp{noexcept}\\
 \end{description}
 
-{\bf Example}
-\cppf{fibonacci.cpp}
+\subparagraph*{operator()}
+jump context of execution\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void operator()();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] resumes the execution context\\
+\end{description}
+
+\subparagraph*{current}
+accesses the current active execution context\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{static execution_context current();} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] construct a instance of \ectx associated with the current execution context\\
+\end{description}
 
 \uabschnitt{Stackful resumable lambda}
-The author assumes that it should be possible to transform the syntax of \ectx
-into a syntax similar to resumable lambdas known from N4244.\\
-The differences to N4244 are the absence of keyword \yield because symmetric
-context switching is favourized, e.g. the target of a cotnext switch must be
-explicitly specified.\\
+The author assumes that transforming the syntax of \ectx into a syntax similar
+to resumable lambdas known from N4244 should be possible.\\
+The differences to N4244 are the absence of keyword \yield because of the
+symmetric context switching (== only one operation for context switching), e.g.
+the target of a context switch must be explicitly specified.\\
 Stackful resumabel lambdas required keyword \resumable together with an hint
 (attribute) about the type and size of the stack -
-\cpp{ auto l = []()resumable(fixedsize(1024){...}}
-Hint types are \cpp{fixedsize()} and \cpp{segmented()} - \cpp{fixedsize(x)} tells
-the compiler to allocate an new (or re-use cached) stack with the given size
-\cpp{x}. With \cpp{segmented(y)} an linked stack that grows on demand with an
-initial size of \cpp{y} is used.\\
+\cpp{auto l = []()resumable(fixedsize(1024)){...}}
+Hint types are \cpp{fixedsize()} and \cpp{segmented()} - \cpp{fixedsize(x)}
+tells the compiler to allocate an new (or re-use a cached) stack with the given
+size \cpp{x} bytes. With \cpp{segmented(y)} an linked stack that grows on demand
+with an initial size of \cpp{y} bytes is used.\\
 If the compiler is able to analyse the function body (including all
 sub-routines) the compiler might ignore the hint and allocated an approbriate
 sized stack.\\
 \newline
 The example of an recursive descent parser would look like
 \cppf{lparser.cpp}
+
+\paragraph*{Syntax for stackless/stackful resumable lambda?}
+The author assumes, that a syntax, combining stackless and stackful resumable
+lambdas, would be possible.\\
+Stackful resumable lambdas are identified by the additional stack hint, e.g.
+\cpp{[capture-list] (params) mutable(optional) exception attribute -> void \{body\}}
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{[capture-list] (params) mutable resumable(hint) exceptions attribute -> ret \{body\}} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] Full declaration
+\end{description}
+
+{\bf Parameters}
+\begin{description}
+    \item[mutable]      allows to modify parameters captured by copy
+    \item[resumable]    indentify resumable operation
+    \item[hint]         stack type hint:
+                        \begin{itemize}
+                            \item <no hint specified>: create stackless resumable lambda
+                            \item \textit{fixedsize(x)}: create stackful resumable lambda; fixed size stack
+                            \item \textit{segmented(x)}: create stackful resumable lambda; stack grows on demand
+                        \end{itemize}
+    \item[exceptions]   only \textit{noexcept} allowed; no exception is permitted to leave the body
+    \item[attribute]    attributes for \cpp{operator()}
+    \item[capture-list] list of captures
+    \item[params]       only empty parameter-list allowed
+    \item[ret]          only \textit{void} allowed; resumabel lambda returns nothing
+    \item[body]         function body\\
+\end{description}
+
+Because the function \cpp{main()} can be interpreted as an execution context too
+(e.g. control block with CPU registers, stack, local variables) the API needs
+the possibily to access the context currently executed. The author suggestes an
+free-standing function similar to \cpp{std::execution_context::current()}.

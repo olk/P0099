@@ -1,8 +1,10 @@
-\abschnitt{A. recursive descent parser}\label{appendix}
-This example uses a recursive descent parser for processing a stream of
-characters.\\
+\abschnitt{A. recursive descent parser (std::execution_context)}\label{appendix}
+This example (taken from boost.context\cite{bcontext}) uses a recursive descent
+parser for processing a stream of characters.\\
 The parser (a SAX parser or other event-dispatching framework would be
 equivalent) uses callbacks to push parsed data to the user-code.
 Using a \ectx allows user code to invert the control-flow. In this case, the
 user-code \textit{pulls} data from the parser.
 \cppf{parser.cpp}
+Using resumable lambdas, the example (\cpp{main()}) could be re-written.
+\cppf{lparser.cpp}

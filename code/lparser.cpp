@@ -17,7 +17,7 @@ int main() {
                      });
             p.run();
             done=true;
-        });
+        };
     // inversion of control: user-code pulls parsed data from parser
     while(!done){
         // resume parser-context

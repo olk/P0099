@@ -93,7 +93,7 @@ Resumable lambdas from N4244 use special member classes
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
 and provides some problems how return values are accessed. For instance multiple
-parameters must be transported with an container (\cpp{std::tuple<>) or via
+parameters must be transported with an container (\cpp{std::tuple<>}) or via
 multiple invokations of
 \cpp{template< typename T > T * resumable_lambda::wanted()}.\\
 \newline
@@ -104,7 +104,7 @@ parameters (== lvalues) are accessed via their addresses (from stack or heap).\\
 The user (for instance library vendor) pays only for what he realy needs -
 choosing mechanisms suitable for the special use case (see
 boost.coroutine2\cite{bcoroutine2}).
-\cppf{code/excptr.cpp}
+\cppf{excptr.cpp}
 
 \uabschnitt{Summary stackless:}
 \begin{itemize}
