@@ -1,12 +1,11 @@
-// class Parser omitted
 int main() {
     std::istringstream is("1+1");
     bool done=false;
     char c;
     // create resumable lambda from current execution context
     auto ml=std::current_context();
-    // create resumable lambda using an stack
-    // which grows on demand and with an initial size of 1KB
+    // create stackful resumable lambda
+    // segmented stack grows on demand, initial size 1KB
     auto pl=[&is,&ml,&done,&c]()resumable(segmented(1024)){
             Parser p(is,
                      // create/pass callback, invoked by the parser

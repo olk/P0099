@@ -1,112 +1,117 @@
 \abschnitt{Discussion}
-\uabschnitt{Implications of \textit{stackless}:}
-Resumable functions and resumable lambdas are stackless because the instances of
-those types share the same stack (application/main stack) with each other.\\
-This implies that no stack frame must remain on the stack at context switch -
-otherwise the stack frames get corrupted (overwritten by other code).\\
-Suspention from nested functions is not possible!\\
-Therefore it is not possible to use resumable functions/lambdas together with
-code which requires suspenting the execution context from nested functions.
-This would require that the complete code has to be transformed into resumable
-functions - which is impossible for closed source code or a too large or complex
-code base.
+\uabschnitt{Implications of \textit{stackless}}\label{stackless}
+Resumable functions/lambdas are stackless because the instances of those types
+share the same stack (application/thread stack) with each other.\\
+This implies that all stack frame, allocated inside the body of the resumable
+function/lambda, have to be removed from the stack before suspending the
+resumable function/lambda - otherwise the stack frames get corrupted
+(overwritten by other code) - suspention from nested functions is not possible!\\
+Code like shown in the appendix (recursive descent parser\ref{appendix}) is not
+possible without transforming all member functions of class \cpp{Parser} into
+resumable functions - which is impossible for closed source code or for a too
+large/complex code base.
 
-\uabschnitt{Implications of \textit{stackful}:}
-In the context of stackful coroutines each context has its own stack,
-without interfering with each other. Therefore stack frames of sub-routines can
-remain on the stack and supention from nested functions is supported.\\
-Tge code executed in a stakfull execution context can be arbitrary and does not
-need any modification (in contrast to resumable functions/lambdas if suspention
-from nested call stack is required). The appendix\ref{appendix} contains an
-example of an recursive descent parser with invertion of control.
+\uabschnitt{Implications of \textit{stackful}}
+Stackful context switching requires that each context owns a separate stack.
+Thus stack frames of sub-routines remain intact while the execution context gets
+suspented from nested functions.\\
+In contrast to resumable functions the usage of the stack inside a execution
+context does not differ from using the application stack in the main context
+(functions called from function \main). For instance local variables are saved
+on the stack - resumable functions store local variables on the activation frame
+(heap allocated).\\
+In contrast to resumable functions the code does not need to be modified if the
+execution context has to be suspended from nested call stack.
 
-\uabschnitt{Activation frame:}
+\uabschnitt{Activation frame}
 Resumable functions as well as resumable lambdas require storage for control
-structures, local variables and resume point (content of certain CPU registers).
-The required size will be determined by the compiler and the storage is
-allocated on the heap/freestore - such called activation frame.\\
-A stackful execution context might allocate its controll structures on top of
-its own stack. Local variables use stack space as ordinary fucntions do.
-The resume point (CPU registers) are pushed to/poped from at the memory (stack)
-where the stack-pointer points to.\\
+structures, local variables and control block (resumtion point). The required
+size is determined by the compiler and the storage is allocated on the heap
+(activation frame).\\
+A stackful execution context allocates its controll structures on top of its own
+stack (placement new). The control block is pushed to/poped from at the
+memory (stack) where the stack-pointer points to (boost.context\cite{bcontext}.\\
 If the compiler can analyse the code executed in the stackful execution context,
 than the stackful context switching shows the same memory requirements as
 resumable functions/lambdas.\\
 \newline
-The statement that stackless coroutines (resumable functions/lambdas) have
-always a lower memory requirement than stackful coroutines is not true
+For simple function bodies, stackless and stackful coroutines have similar
+memory requirements.
 \cppf{N4134/fib.cpp}
-As shown in the example above, the function body is simple (no sub-routines
-called). The compiler determines the required size for the activation frame and
-allocates it.\\
-In the case of stackful coroutines for generating the sequence of fibonacci
-numbers (example below), the required memory could be estemated (library only
-solution) or calculated by the compiler (support by the compiler through
-language extension).
-\cppf{N3985/fib.cpp}
-As shown, for simple function bodies stackless and stackful coroutines have
-similar memory requirements.\\
+In the case of resumable functions the compiler determines the required size for
+the activation frame (containing space for local variables and control block).\\
+In the case of stackful coroutines (using coroutines from N3985), the required
+memory has to be estimated (library only solution) or calculated by the compiler
+(language extension) but the the size of the stack would be similiar as the size
+of the activation frame.
+\cppf{fib.cpp}
+Higher level frameworks based on \ectx can realize more sophisticated APIs
+(like range based for etc.) - as an example the API of N3985\cite{N3985} is
+implemented in boost.coroutine2\cite{bcoroutine2} on behalf of\\
+\cpp{boost::context::execution_context}.
 
-\uabschnitt{Calling sub-routines:}
+\uabschnitt{Calling sub-routines}
 What happens if sub-routines (maybe compiled, from third-party vendors) are
-invoked (for instance recursive)? In the context of stackful execution context
-the user has to estimate the required stack space or use a stack that grows on
+recursive called? In the context of stackful execution context
+the user has to guess the required stack space or use a stack that grows on
 demand (linked stacks). Suspending from the nested call stack is still
 possible.\\
 On the other side resumable functions/lambdas share the same stack (suspending
-from nested functions is not possible). If the stack of the application
-(contains stack frame from function main()) is used, the size of the stack grows
-on demand. But what happens if those resumable functions/lambdas are executed
-inside a thread? The stack size of a thread is fix - usually 1MB (Windows) till
-2MB (Linux) but on other platforms 64KB (HP-UX/PA)/256KB (HP-UX/Itanium).\\
+from nested functions is not possible). If the resumable function/lambda is
+called from the main context (function \main) the application stack is used.\\
+If the resumable functions/lambda is invoked inside a thread, the stack size is
+fix - usually 1MB (Windows) till 2MB (Linux) but other platforms might use
+smaller stacks for threads (64KB on HP-UX/PA and 256KB on HP-UX/Itanium).\\
 If the called sequence of nested sub-routines exceeds the size of the stack the
 resumable function/lambda will fail.\\
 \newline
-Because of this reasons the author beleives that the argument that stackless
-resumable functions/lambdas are more space efficient applies not very well.
+Using stackless resumable functions/lambdas requires to take care about the
+available stack space.\\
+The benefit of stackless resumable functions/lambdas consists in sharing the
+stack, e.g. the space used by the sub-routines is shared between the resumable
+functions/lambdas (but prevents nested yield - see above\ref{stackless}).
 
-\uabschnitt{Resume/suspend operations:}
+\uabschnitt{Resume/suspend operations}
 Resumable functions/lambdas provide two operations for context switching. One
-operation to resume (for instance \rlop) and one
-operation to supend the context (for instance keywork \yield inside the function
-body). But this introduced a tight coupeling between invoker and resumable
-function/lambda - e.g. a resumable function/lambda can only jump back to the
-point in the code where it was invoked.\\
+operation to resume (\rlop) and one operation to supend the context (\yield
+inside the function body). Call and resumable function/lambda are coupled - e.g.
+a resumable function/lambda can only jump back to the point in the code where it
+was resumed.\\
+For N resumabel functions/lambdas 2*N context switches are required.\\
 This is sufficient in the case of generators but in the context of cooperative
 multitasking it is inefficient!\\
 In contrast to resumable functions/lambdas the proposed stackful execution
-context (class \ectx) provides only one operation to resume/suspend
-the context (\ectxop). The execution control is directly transferred from one
+context (\ectx) provides only one operation to resume/suspend the context
+(\ectxop). The execution control is directly transferred from one
 execution context to another - no need to jump back to the caller. This enables
 a much more efficient implementation of cooperative multitasking (no additional
 context switch back to caller) as well as the implementation of generators.
+Resuming N instances of \ectx takes N+1 context switches.
 
-\uabschnitt{Passing data:}
+\uabschnitt{Passing data}
 Because of the asymmmetric resume/suspend operations of N4134 and N4244 both
 proposals apply well to generator-examples, e.g. returning data from the
 resumable function/lambda u(for isntance using \yield).\\
 Passing data into the body of resumable functions (N4123) requires helper
-classes like \cpp{channel<>}.
+classes like \channel.
 \cppf{N4134/channel.cpp}
-Resumable lambdas from N4244 use special member classes
-\cpp{template< typename T > T * resumable_lambda::wanted()} to pass data.
+Resumable lambdas from N4244 use special member classes \rlwanted to pass data.
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
 and provides some problems how return values are accessed. For instance multiple
-parameters must be transported with an container (\cpp{std::tuple<>}) or via
-multiple invokations of
-\cpp{template< typename T > T * resumable_lambda::wanted()}.\\
+parameters must be transported with an container (\tuple) or via
+multiple invokations of \rlwanted.\\
 \newline
 An alternative would be not directly support paramater passing. The interface
 would become small as possible. C++11 already provides all mechanisms the user
-can use in order to transport exceptions (use of \cpp{std::exception_ptr}) and
-parameters (== lvalues) are accessed via their addresses (from stack or heap).\\
+can use in order to transport exceptions (use of \excpt) and parameters (==
+lvalues) are accessed via their addresses (from stack or heap).\\
 The user (for instance library vendor) pays only for what he realy needs -
 choosing mechanisms suitable for the special use case (see
 boost.coroutine2\cite{bcoroutine2}).
 \cppf{excptr.cpp}
 
-\uabschnitt{Summary stackless:}
+\uabschnitt{Summary \textit{stackless}}
 \begin{itemize}
     \item   for each resumable function/lambda an activation frame is allocated
     \item   activation frame and stack used for function frames a separat
@@ -118,7 +123,7 @@ boost.coroutine2\cite{bcoroutine2}).
     \item   no intuitive passing data into body of resumable function/lambda
 \end{itemize}
 
-\uabschnitt{Summary stackful:}
+\uabschnitt{Summary \textit{stackful}}
 \begin{itemize}
     \item   each stackful execution context owns a stack (fixed size or growing
             on demand)

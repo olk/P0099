@@ -13,10 +13,10 @@ only one operation to resume/suspend an execution context provides much more
 flexibility and efficiency.\\
 \newline
 \ectx provides only one operations to switch the execution context
-\cpp{std::execution_context::operator()} (symmetric operation) - that implies
-that \ectx needs to specify explictly to which other context the execution
-control has to be transferred to. The appendix\ref{appendix} shows the inversion
-of control in the context of an recursive descent parser.
+\ectxop (symmetric operation) - that implies that \ectx needs to specify
+explictly to which other context the execution control has to be transferred to.
+The appendix\ref{appendix} shows the inversion of control in the context of an
+recursive descent parser.
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -64,7 +64,7 @@ destroys a execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{~execution_context();} & (1)\\
+    \cpp{\~execution_context();} & (1)\\
 
     \midrule
 \end{tabular}
@@ -149,11 +149,11 @@ symmetric context switching (== only one operation for context switching), e.g.
 the target of a context switch must be explicitly specified.\\
 Stackful resumabel lambdas required keyword \resumable together with an hint
 (attribute) about the type and size of the stack -
-\cpp{auto l = []()resumable(fixedsize(1024)){...}}
+\cpp{auto l=[]()resumable(fixedsize(1024)){...}}.
 Hint types are \cpp{fixedsize()} and \cpp{segmented()} - \cpp{fixedsize(x)}
 tells the compiler to allocate an new (or re-use a cached) stack with the given
-size \cpp{x} bytes. With \cpp{segmented(y)} an linked stack that grows on demand
-with an initial size of \cpp{y} bytes is used.\\
+size \textit{x} bytes. With \cpp{segmented(y)} an linked stack that grows on demand
+with an initial size of \textit{y} bytes is used.\\
 If the compiler is able to analyse the function body (including all
 sub-routines) the compiler might ignore the hint and allocated an approbriate
 sized stack.\\
@@ -161,7 +161,7 @@ sized stack.\\
 The example of an recursive descent parser would look like
 \cppf{lparser.cpp}
 
-\paragraph*{Syntax for stackless/stackful resumable lambda?}
+\uabschnitt{Combined syntax?}
 The author assumes, that a syntax, combining stackless and stackful resumable
 lambdas, would be possible.\\
 Stackful resumable lambdas are identified by the additional stack hint, e.g.
@@ -197,7 +197,7 @@ Stackful resumable lambdas are identified by the additional stack hint, e.g.
     \item[body]         function body\\
 \end{description}
 
-Because the function \cpp{main()} can be interpreted as an execution context too
+Because the function \main can be interpreted as an execution context too
 (e.g. control block with CPU registers, stack, local variables) the API needs
 the possibily to access the context currently executed. The author suggestes an
-free-standing function similar to \cpp{std::execution_context::current()}.
+free-standing function similar to \ectxcurrent.

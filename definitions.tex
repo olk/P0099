@@ -1,13 +1,13 @@
 \abschnitt{Definitions}
 
-\uabschnitt{execution context:}
+\uabschnitt{execution context}
 environment where program logic is evaluated in.
 
-\uabschnitt{control block:}
+\uabschnitt{control block}
 holds a set of registers (callee-saved registers, instruction pointer, stack
 pointer) describing the execution context.
 
-\uabschnitt{coroutine:}
+\uabschnitt{coroutine}
 enables explicit suspend and resume of its progress via additional operations by
 preserving execution state and thus provides an enhanced control flow.\\
 Coroutines have following characteristics\cite{N3985}:
@@ -20,24 +20,25 @@ Coroutines have following characteristics\cite{N3985}:
     \item stackless or stackful
 \end{itemize}
 
-\uabschnitt{asymmetric coroutine:}
+\uabschnitt{asymmetric coroutine}
 provides two distingt operations for contexts switch - one operation to
 resume and one operation to suspend the coroutine.\\
-A asymmetric coroutine is tightly coupled with its caller, e.g. on suspending
-the coroutine transferes the execution control back to its invoker.\\
+A asymmetric coroutine is tightly coupled with its caller, e.g. suspending
+the coroutine transferes the execution control back to its invoker (implicit
+specified).\\
 Usually used in the context of generators.
 
-\uabschnitt{symmetric coroutine:}
+\uabschnitt{symmetric coroutine}
 only one operation to resume/suspend the context is available.\\
 A symmetric coroutine does not know its caller, e.g. the execution control can
-passed to any other symmetric coroutine.\\
+passed to any other symmetric coroutine (must be explicitly specified).\\
 Usually used to implement user-mode threads.
 
-\uabschnitt{fiber/user-mode thread:}
+\uabschnitt{fiber/user-mode thread}
 execute tasks in an cooperative multitasking environment involving a
 scheduler. Coroutines and fibers are distinct (see N4024\cite{N4024}).
 
-\uabschnitt{resumeable function:}
+\uabschnitt{resumable function}
 N4134\cite{N4134} describes resumable functions as an efficient language
 supported mechanism for stackless coroutines introducing two new keywords -
 \await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
@@ -51,11 +52,11 @@ Characteristics of resumable functions:
     \item implicit \textit{return}-statement\cite{N4134} (code-transformation)
 \end{itemize}
 
-\uabschnitt{resumeable lambdas:}
-N4244\cite{N4244} describes resumable functions as an efficient language
-supported mechanism for stackless coroutines introducing two new keywords -
-\await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
-Characteristics of resumable functions:
+\uabschnitt{resumable lambdas}
+N4244\cite{N4244} describes resumable lambdas as stackless coroutines -
+introducing new keywords \resumable, flavours of \yield and \rlthis. Stackless
+resumable lambdas are equivalent to asymmetric coroutines.\\
+Characteristics of resumable lambdas:
 \begin{itemize}
     \item stackless
     \item body of a lambda is available to the compiler at the point
@@ -68,7 +69,7 @@ Characteristics of resumable functions:
           control transfer-mechanism)
 \end{itemize}
 
-\uabschnitt{linked stack:}
+\uabschnitt{linked stack}
 also known as \textit{split stack}\cite{gccsplit} or
 \textit{segmented stack}\cite{llvmseg}, represents a stack with a non-contigous
 address-range.\\

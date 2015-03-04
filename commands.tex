@@ -14,14 +14,14 @@
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
 
 \newcommand{\cpp}[1]{
-    \lstinline[
+    {\lstinline[
         language=C++,
         basicstyle=\ttfamily\color{black},
         keywordstyle=\color{blue},
         commentstyle=\color{green},
         stringstyle=\color{red},
-        morekeywords={resumable,fixedsize,segmented}
-    ] !{#1!}
+        morekeywords={await,fixedsize,from,resumable,segmented,yield}
+    ] !#1!}
 }
 \newcommand{\cppf}[1]{
     \lstinputlisting[
@@ -30,15 +30,22 @@
         keywordstyle=\color{blue},
         commentstyle=\color{red},
         stringstyle=\color{green},
-        morekeywords={resumable,fixedsize,segmented}
+        morekeywords={await,fixedsize,from,resumable,segmented,yield}
     ] {code/#1}
 }
 
 \newcommand{\await}{\textit{\cpp{await}}\xspace}
+\newcommand{\channel}{\textit{\cpp{channel<>}}\xspace}
 \newcommand{\ectx}{\textit{\cpp{std::execution_context}}\xspace}
-\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()}}\xspace}
+\newcommand{\ectxop}{\textit{\cpp{std::execution_context::resume()}}\xspace}
+\newcommand{\ectxcurrent}{\textit{\cpp{std::execution_context::current()}}\xspace}
+\newcommand{\excpt}{\textit{\cpp{std::exception_ptr}}\xspace}
+\newcommand{\main}{\textit{\cpp{main()}}\xspace}
 \newcommand{\rlop}{\textit{\cpp{__resumable_lambda::operator()}}\xspace}
+\newcommand{\rlthis}{\textit{\cpp{[]this}}\xspace}
+\newcommand{\rlwanted}{\textit{\cpp{template<typename T> T* resumable_lambda::wanted()}}\xspace}
 \newcommand{\resumable}{\textit{\cpp{resumable}}\xspace}
+\newcommand{\tuple}{\textit{\cpp{std::tuple<>}}\xspace}
 \newcommand{\yield}{\textit{\cpp{yield}}\xspace}
 
 \newcommand{\abschnitt}[1]{
