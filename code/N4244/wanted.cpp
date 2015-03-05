@@ -1,12 +1,13 @@
-auto f3=[]()resumable{   
-    yield from  f1(); 
-    yield from  f2(); 
-};  
-
 int main(){
-    f3(); // primes the resumable lambda    
-    for(int i=0;i<4;++i){   
-        *f3.wanted<int>()=i;    
-        f3(); 
-    }
+    auto f=[]()resumable{
+        int n=yield(int);   
+        std::cout<<"received="<<n<<"\n";
+        std::string s=yield(std::string);
+        std::cout<<"received="<<s<<"\n";
+    };
+
+    *f.wanted<int>()=1; // transfer parameter
+    f();
+    *f.wanted<std::string>()=s"abc"; // transfer parameter
+    f();
 }

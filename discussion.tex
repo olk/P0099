@@ -47,8 +47,9 @@ of the activation frame.
 \cppf{fib.cpp}
 Higher level frameworks based on \ectx can realize more sophisticated APIs
 (like range based for etc.) - as an example the API of N3985\cite{N3985} is
-implemented in boost.coroutine2\cite{bcoroutine2} on behalf of\\
-\cpp{boost::context::execution_context}.
+implemented in boost.coroutine2\cite{bcoroutine2} based on
+\cpp{execution_context}.
+\cppf{N3985/fib.cpp}
 
 \uabschnitt{Calling sub-routines}
 What happens if sub-routines (maybe compiled, from third-party vendors) are
@@ -79,14 +80,16 @@ a resumable function/lambda can only jump back to the point in the code where it
 was resumed.\\
 For N resumabel functions/lambdas 2*N context switches are required.\\
 This is sufficient in the case of generators but in the context of cooperative
-multitasking it is inefficient!\\
+multitasking it is inefficient.
+\imgc{asymm.png}
 In contrast to resumable functions/lambdas the proposed stackful execution
 context (\ectx) provides only one operation to resume/suspend the context
 (\ectxop). The execution control is directly transferred from one
-execution context to another - no need to jump back to the caller. This enables
-a much more efficient implementation of cooperative multitasking (no additional
-context switch back to caller) as well as the implementation of generators.
-Resuming N instances of \ectx takes N+1 context switches.
+execution context to another - no jump back to the caller. This enables a much
+more efficient implementation of cooperative multitasking (no additional context
+switch back to caller) as well as the implementation of generators. Resuming N
+instances of \ectx takes N+1 context switches.
+\imgc{symm.png}
 
 \uabschnitt{Passing data}
 Because of the asymmmetric resume/suspend operations of N4134 and N4244 both
@@ -95,21 +98,20 @@ resumable function/lambda u(for isntance using \yield).\\
 Passing data into the body of resumable functions (N4123) requires helper
 classes like \channel.
 \cppf{N4134/channel.cpp}
-Resumable lambdas from N4244 use special member classes \rlwanted to pass data.
+Resumable lambdas from N4244 use special member function \rlwanted to pass data.
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
 and provides some problems how return values are accessed. For instance multiple
-parameters must be transported with an container (\tuple) or via
-multiple invokations of \rlwanted.\\
+parameters must be transported with an container (\tuple) or via multiple
+invokations of \rlwanted.\\
 \newline
-An alternative would be not directly support paramater passing. The interface
-would become small as possible. C++11 already provides all mechanisms the user
-can use in order to transport exceptions (use of \excpt) and parameters (==
-lvalues) are accessed via their addresses (from stack or heap).\\
-The user (for instance library vendor) pays only for what he realy needs -
-choosing mechanisms suitable for the special use case (see
-boost.coroutine2\cite{bcoroutine2}).
-\cppf{excptr.cpp}
+An alternative would be not directly support paramater passing in the API.\\
+During the use of \cpp{execution_context} from boost.context\cite{bcontext} a
+common pattern was to pass lambdas to the execution context and use the capture
+list to pass data into and return data from the body. Exceptions are transferred
+via a reference of \excpt and parameters (input/output) are accessed via their
+captured addresses (reference or pointer).
+\cppf{param.cpp}
 
 \uabschnitt{Summary \textit{stackless}}
 \begin{itemize}
@@ -132,6 +134,5 @@ boost.coroutine2\cite{bcoroutine2}).
     \item   stack is not shared between execution contexts
     \item   symmetric context switching -> no coupeling between caller and
             invoker (more efficient in the context of cooperative multitasking)
-    \item   no tansfer of data between context switches (clean API; data transport
-            must be organized from sorounding code)
+    \item   passing data via lambda captures
 \end{itemize}

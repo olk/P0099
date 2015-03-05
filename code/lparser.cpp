@@ -1,4 +1,4 @@
-int main() {
+int main(){
     std::istringstream is("1+1");
     bool done=false;
     char c;

@@ -1,22 +1,16 @@
 \abschnitt{Design}
-Class \ectx provides a small, basic API, suitable to implement high-level APIs
-for stackful coroutines (as proposed in N3985\cite{N3985},
+Class \ectx is derived from the work on boost.context\cite{bcontext} - it
+provides a small, basic API, suitable to implement high-level APIs for stackful
+coroutines (as proposed in N3985\cite{N3985},
 boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
 cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
-Based on the feature set of \ectx the author evaluates a syntax similiar to
-resumable lambdas known from N4244 but with - but with different properties
-(stackful, symmetric etc.).
 
 \uabschnitt{Class \ectx}
-In contrast to resumable functions/lambda the author believes that providing
-only one operation to resume/suspend an execution context provides much more
-flexibility and efficiency.\\
-\newline
 \ectx provides only one operations to switch the execution context
 \ectxop (symmetric operation) - that implies that \ectx needs to specify
 explictly to which other context the execution control has to be transferred to.
-The appendix\ref{appendix} shows the inversion of control in the context of an
-recursive descent parser.
+Transfering data from and to the context requires the use of lambdas, especially
+lambda captures.
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -142,11 +136,15 @@ accesses the current active execution context\\
 \end{description}
 
 \uabschnitt{Stackful resumable lambda}
-The author assumes that transforming the syntax of \ectx into a syntax similar
-to resumable lambdas known from N4244 should be possible.\\
+Based on teh implementation expiriance with \cpp{executin_context} the author
+encountered that \cpp{execution_context} is always used together with lambdas
+(executed inside the new execution context). Especially the lambda captures are
+suitable to transport data between different execution context's.\\
+This pattern could be an indication that \ectx + lambdas should be trnasformt
+in a syntax for resumable lambdas, smilar as described in N4244\cite{N4244}.\\
 The differences to N4244 are the absence of keyword \yield because of the
-symmetric context switching (== only one operation for context switching), e.g.
-the target of a context switch must be explicitly specified.\\
+symmetric context switching (== only one operation transfers the control of
+execution), e.g. the target of a context switch must be explicitly specified.\\
 Stackful resumabel lambdas required keyword \resumable together with an hint
 (attribute) about the type and size of the stack -
 \cpp{auto l=[]()resumable(fixedsize(1024)){...}}.

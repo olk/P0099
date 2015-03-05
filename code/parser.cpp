@@ -76,7 +76,7 @@ private:
    }
 };
 
-int main() {
+int main(){
     std::istringstream is("1+1");
     bool done=false;
     char c;
@@ -86,7 +86,7 @@ int main() {
     // create execution context
     // stack has fixed size (default 64KB)
     std::execution_context parser_ctx(
-        std::fixedsize(),
+        std::make_fixedsize_stack(),
         [&is,&main_ctx,&done,&c](){
             Parser p(is,
                      // create/pass callback, invoked by the parser

@@ -1,6 +1,7 @@
-// N3985 stackful coroutine
-typedef std::coroutine< int > coro_t;
-int main() {
+// N3985 stackful coroutine (boost:coroutine2)
+// implemented with execution_context
+typedef coroutine<int> coro_t;
+int main(){
     int n=35;
     coro_t::pull_type fib([n](coro_t::push_type & yield){
             int a=0;
