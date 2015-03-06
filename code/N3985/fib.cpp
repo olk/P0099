@@ -1,5 +1,4 @@
-// N3985 stackful coroutine (boost:coroutine2)
-// implemented with execution_context
+// N3985: stackful coroutine (boost.coroutine2) implemented with execution_context
 typedef coroutine<int> coro_t;
 int main(){
     int n=35;

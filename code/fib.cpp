@@ -1,5 +1,5 @@
 // stackful execution_context
-#define yield(x) p=x; mctx.resume();
+#define yield(x) p=x; mctx();
 int main(){
     int n=35;
     int p=0;
@@ -16,7 +16,7 @@ int main(){
                                    }
                                });
     for(int i=0;i<10;++i){
-        ctx.resume();
+        ctx();
         std::cout<<p<<std::endl;
     }
 }

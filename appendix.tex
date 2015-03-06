@@ -2,9 +2,9 @@
 This example (taken from boost.context\cite{bcontext}) uses a recursive descent
 parser for processing a stream of characters.\\
 The parser (a SAX parser or other event-dispatching framework would be
-equivalent) uses callbacks to push parsed data to the user-code.
-Using a \ectx allows user code to invert the control-flow. In this case, the
-user-code \textit{pulls} data from the parser.
+equivalent) uses callbacks to push parsed data to the user code. With \ectx the
+user code inverts the control-flow. In this case, the user code \textit{pulls}
+data from the parser.
 \cppf{parser.cpp}
 \abschnitt{B. recursive descent parser using \textit{stackful resumable lambda}}
 Using resumable lambdas, the example (\cpp{main()}) could be re-written:

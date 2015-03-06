@@ -80,20 +80,19 @@ int main(){
     std::istringstream is("1+1");
     bool done=false;
     char c;
-    // create execution context from current
-    std::execution_context main_ctx(
-        std::execution_context::current() );
+    // access current execution context
+    std::execution_context m=std::execution_context::current();
     // create execution context
     // stack has fixed size (default 64KB)
-    std::execution_context parser_ctx(
+    std::execution_context l(
         std::make_fixedsize_stack(),
-        [&is,&main_ctx,&done,&c](){
+        [&is,&m,&done,&c](){
             Parser p(is,
                      // create/pass callback, invoked by the parser
-                     [&main_ctx,&c](char ch){
+                     [&m,&c](char ch){
                         c=ch;
                         // resume main-context
-                        main_ctx.resume();
+                        m();
                      });
             p.run();
             done=true;
@@ -101,7 +100,7 @@ int main(){
     // inversion of control: user-code pulls parsed data from parser
     while(!done){
         // resume parser-context
-        parser_ctx.resume();
+        l();
         printf("Parsed: %c\n",c);
     }
 }

@@ -10,24 +10,25 @@
 \usepackage{fancyhdr}
 \usepackage{listings}
 \usepackage{rotating}
+\usepackage{svg}
 \usepackage{xcolor}
 \usepackage{xspace}
 \usepackage[colorlinks=true,urlcolor=blue]{hyperref}
 
 %//////////////////////////////////////////////////////////////////////////////
 
-\input{commands}
+\hypersetup{
+  pdftitle    = {A low-level API for stackful context switching - the resurrection of resumable lambda}
+  pdfsubject  = {},
+  pdfauthor   = {Oliver Kowalke},
+  pdfkeywords = {C++,execution context,coroutine,resumable function,resumable lambda},
+  pdfcreator  = {},
+  pdfproducer = {}
+}
 
 %//////////////////////////////////////////////////////////////////////////////
 
-\pdfoutput=1
-\pdfcompresslevel=9
-\pdfinfo
-{
-	/Author (Oliver Kowalke)
-    /Title (A low-level API for stackful context switching - the resurrection of resumable lambda?)
-	/Keywords (C++ execution context coroutine resumable lambda)
-}
+\input{commands}
 
 %//////////////////////////////////////////////////////////////////////////////
 
@@ -37,11 +38,11 @@
 \begin{tabbing}
     Document number: \= N????\\
     Date:            \> 2014-11-18\\
-    Project:         \> Programming Language C++, SSG1\\
+    Project:         \> WG21, SG1\\
     Reply-to:        \> Oliver Kowalke (oliver dot kowalke at gmail dot com)\\
 \end{tabbing}
 
-\section*{A low-level API for stackful context switching - the resurrection of resumable lambda?}
+\section*{A low-level API for stackful context switching - the resurrection of resumable lambda}
 
 %//////////////////////////////////////////////////////////////////////////////
 

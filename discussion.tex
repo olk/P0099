@@ -2,10 +2,10 @@
 \uabschnitt{Implications of \textit{stackless}}\label{stackless}
 Resumable functions/lambdas are stackless because the instances of those types
 share the same stack (application/thread stack) with each other.\\
-This implies that all stack frame, allocated inside the body of the resumable
-function/lambda, have to be removed from the stack before suspending the
-resumable function/lambda - otherwise the stack frames get corrupted
-(overwritten by other code) - suspention from nested functions is not possible!\\
+This implies that all stack frames, allocated inside the body of the resumable
+function/lambda, have to be removed from the stack before the resumable
+function/lambda is suspended - otherwise the stack frames get corrupted
+(overwritten by other code) - yielding from nested functions is not possible!\\
 Code like shown in the appendix (recursive descent parser\ref{appendix}) is not
 possible without transforming all member functions of class \cpp{Parser} into
 resumable functions - which is impossible for closed source code or for a too
@@ -14,23 +14,23 @@ large/complex code base.
 \uabschnitt{Implications of \textit{stackful}}
 Stackful context switching requires that each context owns a separate stack.
 Thus stack frames of sub-routines remain intact while the execution context gets
-suspented from nested functions.\\
-In contrast to resumable functions the usage of the stack inside a execution
+suspended from nested functions.\\
+In contrast to resumable functions, the usage of the stack inside a execution
 context does not differ from using the application stack in the main context
 (functions called from function \main). For instance local variables are saved
-on the stack - resumable functions store local variables on the activation frame
-(heap allocated).\\
-In contrast to resumable functions the code does not need to be modified if the
-execution context has to be suspended from nested call stack.
+on the stack while resumable functions store local variables in the heap
+allocated activation frame.\\
+In contrast to resumable functions, the code does not require a modification if
+the execution context has to be suspended from nested call stack.
 
 \uabschnitt{Activation frame}
 Resumable functions as well as resumable lambdas require storage for control
-structures, local variables and control block (resumtion point). The required
-size is determined by the compiler and the storage is allocated on the heap
-(activation frame).\\
+structures, local variables and the control block. The required size is
+determined by the compiler and the storage is allocated on the heap (activation
+frame).\\
 A stackful execution context allocates its controll structures on top of its own
 stack (placement new). The control block is pushed to/poped from at the
-memory (stack) where the stack-pointer points to (boost.context\cite{bcontext}.\\
+memory (stack) where the stack-pointer points to.\\
 If the compiler can analyse the code executed in the stackful execution context,
 than the stackful context switching shows the same memory requirements as
 resumable functions/lambdas.\\
@@ -42,7 +42,7 @@ In the case of resumable functions the compiler determines the required size for
 the activation frame (containing space for local variables and control block).\\
 In the case of stackful coroutines (using coroutines from N3985), the required
 memory has to be estimated (library only solution) or calculated by the compiler
-(language extension) but the the size of the stack would be similiar as the size
+(language extension), but the size of the stack would be similar as the size
 of the activation frame.
 \cppf{fib.cpp}
 Higher level frameworks based on \ectx can realize more sophisticated APIs
@@ -57,82 +57,88 @@ recursive called? In the context of stackful execution context
 the user has to guess the required stack space or use a stack that grows on
 demand (linked stacks). Suspending from the nested call stack is still
 possible.\\
-On the other side resumable functions/lambdas share the same stack (suspending
+\newline
+On the other side, resumable functions/lambdas share the same stack (suspending
 from nested functions is not possible). If the resumable function/lambda is
 called from the main context (function \main) the application stack is used.\\
 If the resumable functions/lambda is invoked inside a thread, the stack size is
-fix - usually 1MB (Windows) till 2MB (Linux) but other platforms might use
-smaller stacks for threads (64KB on HP-UX/PA and 256KB on HP-UX/Itanium).\\
+fix - usually 1MB (Windows) till 2MB (Linux), but on other platforms smaller
+stacks are used (64KB on HP-UX/PA and 256KB on HP-UX/Itanium).\\
 If the called sequence of nested sub-routines exceeds the size of the stack the
 resumable function/lambda will fail.\\
 \newline
 Using stackless resumable functions/lambdas requires to take care about the
 available stack space.\\
+\newline
 The benefit of stackless resumable functions/lambdas consists in sharing the
 stack, e.g. the space used by the sub-routines is shared between the resumable
-functions/lambdas (but prevents nested yield - see above\ref{stackless}).
+functions/lambdas. Allocating this memory for each resumable function/lambda is
+not necessary.
 
 \uabschnitt{Resume/suspend operations}
 Resumable functions/lambdas provide two operations for context switching. One
-operation to resume (\rlop) and one operation to supend the context (\yield
-inside the function body). Call and resumable function/lambda are coupled - e.g.
-a resumable function/lambda can only jump back to the point in the code where it
-was resumed.\\
-For N resumabel functions/lambdas 2*N context switches are required.\\
+operation to resume (\rlop) and one operation to suspend the context (\yield
+inside the function body). The caller and the resumable function/lambda are
+coupled - e.g. a resumable function/lambda can only jump back to the point in
+the code where it was resumed.\\
+\newline
+For N resumable functions/lambdas 2*N context switches are required.\\
 This is sufficient in the case of generators but in the context of cooperative
 multitasking it is inefficient.
-\imgc{asymm.png}
+\imgc{asymm.pdf}
 In contrast to resumable functions/lambdas the proposed stackful execution
 context (\ectx) provides only one operation to resume/suspend the context
 (\ectxop). The execution control is directly transferred from one
 execution context to another - no jump back to the caller. This enables a much
 more efficient implementation of cooperative multitasking (no additional context
-switch back to caller) as well as the implementation of generators. Resuming N
-instances of \ectx takes N+1 context switches.
-\imgc{symm.png}
+switch back to caller) as well as the implementation of generators. As an
+conmsequence, the next execution context has to be explicitly specified.\\
+\newline
+Resuming N instances of \ectx takes N+1 context switches.
+\imgc{symm.pdf}
 
 \uabschnitt{Passing data}
-Because of the asymmmetric resume/suspend operations of N4134 and N4244 both
+Because of the asymmetric resume/suspend operations of N4134 and N4244 both
 proposals apply well to generator-examples, e.g. returning data from the
-resumable function/lambda u(for isntance using \yield).\\
+resumable function/lambda (for instance using \yield).\\
 Passing data into the body of resumable functions (N4123) requires helper
 classes like \channel.
 \cppf{N4134/channel.cpp}
-Resumable lambdas from N4244 use special member function \rlwanted to pass data.
+N4244 resumable lambda specifies the special member function \rlwanted.
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
-and provides some problems how return values are accessed. For instance multiple
-parameters must be transported with an container (\tuple) or via multiple
-invokations of \rlwanted.\\
+and provides some problems how returned values should be accessed. For instance
+multiple parameters must be transported with an container (\tuple) or via
+multiple invocations of \rlwanted.\\
 \newline
-An alternative would be not directly support paramater passing in the API.\\
+An alternative would be not directly support parameter passing in the API.\\
 During the use of \cpp{execution_context} from boost.context\cite{bcontext} a
 common pattern was to pass lambdas to the execution context and use the capture
 list to pass data into and return data from the body. Exceptions are transferred
-via a reference of \excpt and parameters (input/output) are accessed via their
+via a reference of \excpt and parameters (input/output) are accessed via
 captured addresses (reference or pointer).
 \cppf{param.cpp}
 
-\uabschnitt{Summary \textit{stackless}}
+\uabschnitt{Summary \textit{stackless} resumable function/lambda}
 \begin{itemize}
     \item   for each resumable function/lambda an activation frame is allocated
-    \item   activation frame and stack used for function frames a separat
-    \item   stack (used to allocated function frames on it) is shared between
-            resumable functions/lambdas
-    \item   asymmetric context switching -> tight coupeling between caller and
-            invoker (less efficient in the context of cooperative multitasking)
+    \item   activation frame (local variables, control block) and stack are
+            distinct
+    \item   stack is shared between resumable functions/lambdas
+    \item   asymmetric context switching -> tight coupling between caller and
+            invoker
     \item   returning data from resumable function/lambda via \yield etc.
     \item   no intuitive passing data into body of resumable function/lambda
 \end{itemize}
 
-\uabschnitt{Summary \textit{stackful}}
+\uabschnitt{Summary \textit{stackful} execution context}
 \begin{itemize}
-    \item   each stackful execution context owns a stack (fixed size or growing
-            on demand)
-    \item   activation frame and stack (for function frmaes) are the same; no
+    \item   each stackful execution context owns a stack (fixed-size or linked
+            stack)
+    \item   activation frame and stack (function frames) are the same; no
             distinction
-    \item   stack is not shared between execution contexts
-    \item   symmetric context switching -> no coupeling between caller and
+    \item   stack is not shared between execution context's
+    \item   symmetric context switching -> no coupling between caller and
             invoker (more efficient in the context of cooperative multitasking)
     \item   passing data via lambda captures
 \end{itemize}

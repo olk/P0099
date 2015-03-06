@@ -9,78 +9,86 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="210mm"
-   height="297mm"
+   width="237.07668"
+   height="222.05566"
    id="svg2"
    version="1.1"
    inkscape:version="0.48.5 r10040"
-   sodipodi:docname="call_seq.svg">
+   sodipodi:docname="asymm.svg"
+   inkscape:export-filename="/home/graemer/Projekte/C++/coroutine_proposal/pics/asymm.pdf.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90">
   <defs
      id="defs4">
     <marker
        inkscape:stockid="Arrow1Mstart"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Mstart"
        style="overflow:visible">
       <path
          id="path3883"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
-         transform="scale(0.4) translate(10,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.4,0,0,0.4,4,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Send"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Send"
-       style="overflow:visible;">
+       style="overflow:visible">
       <path
          id="path3892"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
-         transform="scale(0.2) rotate(180) translate(6,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Mend"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Mend"
-       style="overflow:visible;">
+       style="overflow:visible">
       <path
          id="path3886"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
-         transform="scale(0.4) rotate(180) translate(10,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Lend"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Lend"
-       style="overflow:visible;">
+       style="overflow:visible">
       <path
          id="path3880"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt;"
-         transform="scale(0.8) rotate(180) translate(12.5,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Lstart"
        orient="auto"
-       refY="0.0"
-       refX="0.0"
+       refY="0"
+       refX="0"
        id="Arrow1Lstart"
        style="overflow:visible">
       <path
          id="path3877"
-         d="M 0.0,0.0 L 5.0,-5.0 L -12.5,0.0 L 5.0,5.0 L 0.0,0.0 z "
-         style="fill-rule:evenodd;stroke:#000000;stroke-width:1.0pt"
-         transform="scale(0.8) translate(12.5,0)" />
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         inkscape:connector-curvature="0" />
     </marker>
     <marker
        inkscape:stockid="Arrow1Mend"
@@ -133,19 +141,29 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.4"
-     inkscape:cx="215.59163"
-     inkscape:cy="827.19554"
+     inkscape:cx="255.67374"
+     inkscape:cy="85.27046"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
      inkscape:window-width="1920"
-     inkscape:window-height="1122"
+     inkscape:window-height="1119"
      inkscape:window-x="0"
      inkscape:window-y="27"
-     inkscape:window-maximized="1">
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0">
     <inkscape:grid
        type="xygrid"
-       id="grid6221" />
+       id="grid6221"
+       empspacing="5"
+       visible="true"
+       enabled="true"
+       snapvisiblegridlinesonly="true"
+       originx="-140.71742px"
+       originy="-1297.6394px" />
   </sodipodi:namedview>
   <metadata
      id="metadata7">
@@ -155,247 +173,232 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
   <g
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
-     id="layer1">
+     id="layer1"
+     transform="translate(-140.71742,467.33286)">
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="47.142857"
-       y="52.362183"
+       x="179.28572"
+       y="-460.49496"
        id="text2985"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan2987"
-         x="47.142857"
-         y="52.362183">int main() {</tspan><tspan
+         x="179.28572"
+         y="-460.49496"
+         style="font-size:9px">int main() {</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="64.862183"
-         id="tspan2991">    auto l1 = [] () resumable { ... };</tspan><tspan
+         x="179.28572"
+         y="-449.24496"
+         id="tspan2991"
+         style="font-size:9px">    auto l1 = [] () resumable {</tspan><tspan
+         id="tspan3052"
          sodipodi:role="line"
-         x="47.142857"
-         y="77.362183"
-         id="tspan2999">    auto l2 = [] () resumable { ... };</tspan><tspan
+         x="179.28572"
+         y="-437.99496"
+         style="font-size:9px">       ...</tspan><tspan
+         id="tspan3054"
          sodipodi:role="line"
-         x="47.142857"
-         y="89.862183"
-         id="tspan3001">    ...</tspan><tspan
+         x="179.28572"
+         y="-426.74496"
+         style="font-size:9px">       yield; // suspend l1</tspan><tspan
+         id="tspan3056"
          sodipodi:role="line"
-         x="47.142857"
-         y="102.36218"
-         id="tspan3003">    l1(); // resume l1</tspan><tspan
+         x="179.28572"
+         y="-415.49496"
+         style="font-size:9px">       ...</tspan><tspan
+         id="tspan3050"
          sodipodi:role="line"
-         x="47.142857"
-         y="114.86218"
-         id="tspan3005">    ...    // ::operator() of l1 returned</tspan><tspan
+         x="179.28572"
+         y="-404.24496"
+         style="font-size:9px">    };</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="127.36218"
-         id="tspan3029" /><tspan
+         x="179.28572"
+         y="-392.99496"
+         id="tspan2999"
+         style="font-size:9px">    auto l2 = [] () resumable {</tspan><tspan
+         id="tspan3058"
          sodipodi:role="line"
-         x="47.142857"
-         y="139.86218"
-         id="tspan3039">    ...</tspan><tspan
+         x="179.28572"
+         y="-381.74496"
+         style="font-size:9px">       ...</tspan><tspan
+         id="tspan3062"
          sodipodi:role="line"
-         x="47.142857"
-         y="152.36218"
-         id="tspan3043" /><tspan
+         x="179.28572"
+         y="-370.49496"
+         style="font-size:9px">       yield; // suspend l2</tspan><tspan
+         id="tspan3064"
          sodipodi:role="line"
-         x="47.142857"
-         y="164.86218"
-         id="tspan3009">    l2(); // resume l2</tspan><tspan
+         x="179.28572"
+         y="-359.24496"
+         style="font-size:9px">       ...</tspan><tspan
+         id="tspan3060"
          sodipodi:role="line"
-         x="47.142857"
-         y="177.36218"
-         id="tspan3011">    ...    // ::operator() of l2 returned</tspan><tspan
+         x="179.28572"
+         y="-347.99496"
+         style="font-size:9px">    };</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="189.86218"
-         id="tspan3059" /><tspan
+         x="179.28572"
+         y="-336.74496"
+         id="tspan3001"
+         style="font-size:9px">    ...</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="202.36218"
-         id="tspan3061">}</tspan><tspan
+         x="179.28572"
+         y="-325.49496"
+         id="tspan3003"
+         style="font-size:9px">    l1(); // resume l1</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="214.86218"
-         id="tspan3063" /><tspan
+         x="179.28572"
+         y="-314.24496"
+         id="tspan3005"
+         style="font-size:9px">    ...    // ::operator() of l1 returned</tspan><tspan
          sodipodi:role="line"
-         x="47.142857"
-         y="227.36218"
-         id="tspan3007" /></text>
+         x="179.28572"
+         y="-302.99496"
+         id="tspan3029"
+         style="font-size:9px" /><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-291.74496"
+         id="tspan3039"
+         style="font-size:9px">    ...</tspan><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-280.49496"
+         id="tspan3043"
+         style="font-size:9px" /><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-269.24496"
+         id="tspan3009"
+         style="font-size:9px">    l2(); // resume l2</tspan><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-257.99496"
+         id="tspan3059"
+         style="font-size:9px">    ...    // ::operator() of l2 returned</tspan><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-246.74496"
+         id="tspan3061"
+         style="font-size:9px">}</tspan><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-235.49496"
+         id="tspan3063"
+         style="font-size:9px" /><tspan
+         sodipodi:role="line"
+         x="179.28572"
+         y="-224.24496"
+         id="tspan3007"
+         style="font-size:9px" /></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="305"
-       y="87.362183"
-       id="text3013"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         x="305"
-         y="87.362183"
-         id="tspan3017">auto l1 = [] () resumable {</tspan><tspan
-         sodipodi:role="line"
-         x="305"
-         y="99.862183"
-         id="tspan3021">    ...</tspan><tspan
-         sodipodi:role="line"
-         x="305"
-         y="112.36218"
-         id="tspan3023">    yield; // suspend l1</tspan><tspan
-         sodipodi:role="line"
-         x="305"
-         y="124.86218"
-         id="tspan3025">    ...</tspan><tspan
-         sodipodi:role="line"
-         x="305"
-         y="137.36218"
-         id="tspan3027">}</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="65.714287"
-       y="123.79075"
+       x="197.85715"
+       y="-389.06641"
        id="text3031"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3033"
-         x="65.714287"
-         y="123.79075" /><tspan
+         x="197.85715"
+         y="-389.06641" /><tspan
          sodipodi:role="line"
          id="tspan3035"
-         x="65.714287"
-         y="136.29074" /><tspan
+         x="197.85715"
+         y="-376.56641" /><tspan
          sodipodi:role="line"
-         x="65.714287"
-         y="148.79074"
+         x="197.85715"
+         y="-364.06641"
          id="tspan3037" /></text>
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="304.34732"
-       y="149.36761"
-       id="text3045"
-       sodipodi:linespacing="125%"><tspan
-         sodipodi:role="line"
-         id="tspan3047"
-         x="304.34732"
-         y="149.36761">auto l2 = [] () resumable {</tspan><tspan
-         sodipodi:role="line"
-         x="304.34732"
-         y="161.86761"
-         id="tspan3049">    ...</tspan><tspan
-         sodipodi:role="line"
-         x="304.34732"
-         y="174.36761"
-         id="tspan3051">    yield; // suspend l2</tspan><tspan
-         sodipodi:role="line"
-         x="304.34732"
-         y="186.86761"
-         id="tspan3053">    ...</tspan><tspan
-         sodipodi:role="line"
-         x="304.34732"
-         y="199.36761"
-         id="tspan3055">}</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="87.378197"
-       y="143.72997"
+       x="219.52106"
+       y="-369.12717"
        id="text6019"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan6021"
-         x="87.378197"
-         y="143.72997" /></text>
-    <g
-       id="g6829">
-      <g
-         id="g6823">
-        <text
-           xml:space="preserve"
-           style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="255"
-           y="92.362183"
-           id="text5253"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan5255"
-             x="255"
-             y="92.362183"
-             style="font-size:6px">resume</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="255"
-           y="122.36218"
-           id="text6015"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan6017"
-             x="255"
-             y="122.36218">suspend</tspan></text>
-      </g>
-      <path
-         inkscape:connector-curvature="0"
-         inkscape:connector-type="polyline"
-         id="path6223"
-         d="m 230,97.362183 75,0"
-         style="fill:none;stroke:#000000;stroke-width:0.70710677;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.82842712, 0.70710678;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)" />
-      <path
-         inkscape:connector-curvature="0"
-         inkscape:connector-type="polyline"
-         id="path6223-3"
-         d="m 230,112.36218 75,0"
-         style="fill:none;stroke:#000000;stroke-width:0.70710677;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.82842712, 0.70710678;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);marker-end:none" />
-    </g>
-    <g
-       transform="translate(0,65)"
-       id="g6829-9">
-      <g
-         id="g6823-1">
-        <text
-           xml:space="preserve"
-           style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="255"
-           y="92.362183"
-           id="text5253-5"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan5255-5"
-             x="255"
-             y="92.362183"
-             style="font-size:6px">resume</tspan></text>
-        <text
-           xml:space="preserve"
-           style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-           x="255"
-           y="122.36218"
-           id="text6015-4"
-           sodipodi:linespacing="125%"><tspan
-             sodipodi:role="line"
-             id="tspan6017-8"
-             x="255"
-             y="122.36218">suspend</tspan></text>
-      </g>
-      <path
-         inkscape:connector-curvature="0"
-         inkscape:connector-type="polyline"
-         id="path6223-8"
-         d="m 230,97.362183 75,0"
-         style="fill:none;stroke:#000000;stroke-width:0.70710677;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.82842712, 0.70710678;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)" />
-      <path
-         inkscape:connector-curvature="0"
-         inkscape:connector-type="polyline"
-         id="path6223-3-3"
-         d="m 230,112.36218 75,0"
-         style="fill:none;stroke:#000000;stroke-width:0.70710677;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:2.82842712, 0.70710678;stroke-dashoffset:0;marker-start:url(#Arrow1Mstart);marker-end:none" />
-    </g>
+         x="219.52106"
+         y="-369.12717" /></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.80000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.8, 0.8;stroke-dashoffset:0;marker-end:url(#Arrow1Mend-3)"
+       d="m 170.35714,251.95163 -26.07143,0 0,-111.07143 27.14286,0"
+       id="path3124"
+       inkscape:connector-curvature="0"
+       transform="translate(2.8571426,-581.53002)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.89999998;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:5.4, 0.9;stroke-dashoffset:0;marker-end:url(#Arrow1Mend-3)"
+       d="m 172.14286,151.95162 -14.28572,0 0,111.78572 12.14286,0"
+       id="path4138"
+       inkscape:connector-curvature="0"
+       transform="translate(2.8571426,-581.53002)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.80000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.8, 0.8;stroke-dashoffset:0;marker-end:url(#Arrow1Mend-3)"
+       d="m 339.64286,-271.72125 31.78572,0 0,-111.42857 -29.64286,0"
+       id="path4338"
+       inkscape:connector-curvature="0" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.80000001;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:4.8, 0.8;stroke-dashoffset:0;marker-end:url(#Arrow1Mend-3)"
+       d="m 335.71429,208.02305 16.78571,0 0,112.5 -16.07143,0"
+       id="path4536"
+       inkscape:connector-curvature="0"
+       transform="translate(2.8571426,-581.53002)" />
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="373.06174"
+       y="144.07777"
+       id="text4734"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4736"
+         x="373.06174"
+         y="144.07777">resume</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="317.8526"
+       y="377.70914"
+       id="text4734-8"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4736-6"
+         x="317.8526"
+         y="377.70914">resume</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="369.46603"
+       y="168.42293"
+       id="text4759"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4761"
+         x="369.46603"
+         y="168.42293">suspend</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="318.16791"
+       y="351.65527"
+       id="text4759-7"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan4761-9"
+         x="318.16791"
+         y="351.65527">suspend</tspan></text>
   </g>
 </svg>

@@ -14,7 +14,7 @@ public:
                 [=](){
                    try {
                        outp_=lexical_cast<std::string>(*inp_);
-                       caller_.resume();
+                       caller_();
                    } catch (...) {
                        excptr_=std::current_exception();
                    }
@@ -23,7 +23,7 @@ public:
 
     std::string operator()(int i){
         inp_=&i;
-        callee_.resume();
+        callee_();
         if(excptr_){
             std::rethrow_exception(excptr_);
         }

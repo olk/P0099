@@ -1,16 +1,15 @@
 \abschnitt{Design}
 Class \ectx is derived from the work on boost.context\cite{bcontext} - it
 provides a small, basic API, suitable to implement high-level APIs for stackful
-coroutines (as proposed in N3985\cite{N3985},
-boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
+coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
+threads (executing tasks in a
 cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
 
 \uabschnitt{Class \ectx}
-\ectx provides only one operations to switch the execution context
+The interface contains only one operations to switch the execution context
 \ectxop (symmetric operation) - that implies that \ectx needs to specify
 explictly to which other context the execution control has to be transferred to.
-Transfering data from and to the context requires the use of lambdas, especially
-lambda captures.
+Exchanging data between execution context's requires the use of lambda captures.
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -40,7 +39,7 @@ constructs new execution context\\
                   \item \textit{args} parameter pack passed to \textit{fn}
               \end{itemize}
     \item[2)] copies \ectx, e.g. underlying control block is shared
-    \item[3)] moves underlying cotnrol block to new \ectx
+    \item[3)] moves underlying control block to new \ectx
 \end{description}
 
 {\bf Notes}
@@ -64,10 +63,10 @@ destroys a execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] destroys a \ectx. If that \ectx is associated with a context of execution
-              and holds the last reference to the internal control block,
-              then the context of execution is destroyed too. Specifically,
-              its stack is unwound.\\
+    \item[1)] destroys a \ectx. If associated with a context of execution and
+              holds the last reference to the internal control block, then the
+              context of execution is destroyed too. Specifically, the stack is
+              unwound.\\
 \end{description}
 
 \subparagraph*{operator=}
@@ -76,33 +75,29 @@ moves the coroutine object\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{execution_context_type & operator=(execution_context_type&& other);} & (1)\\
+    \cpp{execution_context & operator=(execution_context&& other);} & (1)\\
 
     \midrule
 
-    \cpp{execution_context_type & operator=(const execution_context_type& other);} & (2)\\
+    \cpp{execution_context & operator=(const execution_context& other);} & (2)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] assigns the state of \textit{other} to *this using move semantics
-    \item[2)] copies the state of \textit{other} to *this, state (control block) is shared
+    \item[2)] copies the state of \textit{other} to *this, state (control block)
+              is shared
 \end{description}
 
 {\bf Parameters}
 \begin{description}
-    \item[other]   another coroutine object to assign to this coroutine object\\
+    \item[other]   another execution context to assign to this object\\
 \end{description}
 
 {\bf Return value}
 \begin{description}
     \item[*this]
-\end{description}
-
-{\bf Exceptions}
-\begin{description}
-    \item[1)] noexcept specification: \cpp{noexcept}\\
 \end{description}
 
 \subparagraph*{operator()}
@@ -111,7 +106,7 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{void operator()();} & (1)\\
+    \cpp{void operator()() noexcept;} & (1)\\
 
     \midrule
 \end{tabular}
@@ -119,6 +114,16 @@ jump context of execution\\
 \begin{description}
     \item[1)] resumes the execution context\\
 \end{description}
+
+{\bf Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+{\bf Notes}
+\newline
+If an exception leaves this function \cpp{std::terminate()} is called.\\ 
+If this function returns, \cpp{std::exit(0)} is called.
 
 \subparagraph*{current}
 accesses the current active execution context\\
@@ -132,38 +137,44 @@ accesses the current active execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] construct a instance of \ectx associated with the current execution context\\
+    \item[1)] construct a instance of \ectx associated with the current active
+              execution context\\
 \end{description}
 
+{\bf Notes}
+\newline
+The current active execution context is thread-specific.
+
 \uabschnitt{Stackful resumable lambda}
-Based on teh implementation expiriance with \cpp{executin_context} the author
-encountered that \cpp{execution_context} is always used together with lambdas
-(executed inside the new execution context). Especially the lambda captures are
-suitable to transport data between different execution context's.\\
-This pattern could be an indication that \ectx + lambdas should be trnasformt
-in a syntax for resumable lambdas, smilar as described in N4244\cite{N4244}.\\
-The differences to N4244 are the absence of keyword \yield because of the
+Based on the implementation experience with \cpp{execution_context} in
+boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber} the author
+encountered that \cpp{execution_context} is almost always used together with
+lambdas (passed as argument to the constructor of \ectx). Especially the
+lambda captures are suitable to transport data between different execution
+context's.\\
+Why not construct \ectx directly with an 'resumable lambda'-like syntax?
+\cppf{rl1.cpp}
+The differences to N4244 are the absence of keyword \yield because of
 symmetric context switching (== only one operation transfers the control of
 execution), e.g. the target of a context switch must be explicitly specified.\\
-Stackful resumabel lambdas required keyword \resumable together with an hint
-(attribute) about the type and size of the stack -
-\cpp{auto l=[]()resumable(fixedsize(1024)){...}}.
-Hint types are \cpp{fixedsize()} and \cpp{segmented()} - \cpp{fixedsize(x)}
-tells the compiler to allocate an new (or re-use a cached) stack with the given
-size \textit{x} bytes. With \cpp{segmented(y)} an linked stack that grows on demand
-with an initial size of \textit{y} bytes is used.\\
-If the compiler is able to analyse the function body (including all
-sub-routines) the compiler might ignore the hint and allocated an approbriate
-sized stack.\\
-\newline
-The example of an recursive descent parser would look like
+Stackful resumable lambdas require keyword \resumable together with an hint
+(attribute) about the type and size of the stack.\\
+Hints are \cpp{fixedsize()} and \cpp{segmented()}:
+\begin{itemize}
+    \item \cpp{fixedsize(x)}: instructs the compiler to allocate an new (or
+          re-use a cached) stack with a size of \textit{x} bytes
+    \item \cpp{segmented(y)}: use a linked stack that grows on demand
+          with an initial size of \textit{y} bytes
+\end{itemize}
+The example of an recursive descent parser using stackful resumable lambda would
+look like:
 \cppf{lparser.cpp}
 
-\uabschnitt{Combined syntax?}
-The author assumes, that a syntax, combining stackless and stackful resumable
-lambdas, would be possible.\\
-Stackful resumable lambdas are identified by the additional stack hint, e.g.
-\cpp{[capture-list] (params) mutable(optional) exception attribute -> void \{body\}}
+\uabschnitt{A combined syntax for stackless and stackful context switching}
+A syntax, combining stackless and stackful resumable lambdas, could be possible
+too. Stackful resumable lambdas are identified by the additional stack hint
+applied to lambda attribute \textit{resumable}. The absence of the hint would
+tell the compiler to  create a stackless context.\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -180,22 +191,26 @@ Stackful resumable lambdas are identified by the additional stack hint, e.g.
 {\bf Parameters}
 \begin{description}
     \item[mutable]      allows to modify parameters captured by copy
-    \item[resumable]    indentify resumable operation
+    \item[resumable]    identify resumable operation
     \item[hint]         stack type hint:
                         \begin{itemize}
-                            \item <no hint specified>: create stackless resumable lambda
-                            \item \textit{fixedsize(x)}: create stackful resumable lambda; fixed size stack
-                            \item \textit{segmented(x)}: create stackful resumable lambda; stack grows on demand
+                            \item <no hint specified>: create stackless
+                                  resumable lambda
+                            \item \textit{fixedsize(x)}: create stackful
+                                  resumable lambda; fixed size stack
+                            \item \textit{segmented(x)}: create stackful
+                                  resumable lambda; stack grows on demand
                         \end{itemize}
-    \item[exceptions]   only \textit{noexcept} allowed; no exception is permitted to leave the body
+    \item[exceptions]   only \textit{noexcept} allowed; no exception is
+                        permitted to leave the body otherwise
+                        \cpp{std::terminate()} is called
     \item[attribute]    attributes for \cpp{operator()}
     \item[capture-list] list of captures
     \item[params]       only empty parameter-list allowed
-    \item[ret]          only \textit{void} allowed; resumabel lambda returns nothing
+    \item[ret]          only \textit{void} allowed; resumable lambda returns nothing
     \item[body]         function body\\
 \end{description}
 
-Because the function \main can be interpreted as an execution context too
-(e.g. control block with CPU registers, stack, local variables) the API needs
-the possibily to access the context currently executed. The author suggestes an
-free-standing function similar to \ectxcurrent.
+If the compiler can analyse the function body of the resumable lambda, then the
+compiler is free ton transform the stackful into a stackless resumable lambda as
+an optimization.

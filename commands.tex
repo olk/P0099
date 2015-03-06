@@ -13,6 +13,9 @@
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
 
+\setsvg{inkscape = inkscape -z -D}
+\setsvg{svgpath = pics/}
+
 \newcommand{\cpp}[1]{
     {\lstinline[
         language=C++,
@@ -37,7 +40,7 @@
 \newcommand{\await}{\textit{\cpp{await}}\xspace}
 \newcommand{\channel}{\textit{\cpp{channel<>}}\xspace}
 \newcommand{\ectx}{\textit{\cpp{std::execution_context}}\xspace}
-\newcommand{\ectxop}{\textit{\cpp{std::execution_context::resume()}}\xspace}
+\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()()}}\xspace}
 \newcommand{\ectxcurrent}{\textit{\cpp{std::execution_context::current()}}\xspace}
 \newcommand{\excpt}{\textit{\cpp{std::exception_ptr}}\xspace}
 \newcommand{\main}{\textit{\cpp{main()}}\xspace}

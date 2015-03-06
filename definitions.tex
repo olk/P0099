@@ -1,7 +1,7 @@
 \abschnitt{Definitions}
 
 \uabschnitt{execution context}
-environment where program logic is evaluated in.
+environment where program logic is evaluated in (CPU registers, stack).
 
 \uabschnitt{control block}
 holds a set of registers (callee-saved registers, instruction pointer, stack
@@ -9,7 +9,7 @@ pointer) describing the execution context.
 
 \uabschnitt{coroutine}
 enables explicit suspend and resume of its progress via additional operations by
-preserving execution state and thus provides an enhanced control flow.\\
+preserving execution state and thus provides an enhanced control flow.
 Coroutines have following characteristics\cite{N3985}:
 \begin{itemize}
     \item values of local data persist between successive context switches
@@ -21,22 +21,23 @@ Coroutines have following characteristics\cite{N3985}:
 \end{itemize}
 
 \uabschnitt{asymmetric coroutine}
-provides two distingt operations for contexts switch - one operation to
+provides two distingt operations for context switch - one operation to
 resume and one operation to suspend the coroutine.\\
 A asymmetric coroutine is tightly coupled with its caller, e.g. suspending
 the coroutine transferes the execution control back to its invoker (implicit
-specified).\\
-Usually used in the context of generators.
+specified). The asymmetric control transfer-mechanism is usually used in the
+context of generators.
 
 \uabschnitt{symmetric coroutine}
 only one operation to resume/suspend the context is available.\\
 A symmetric coroutine does not know its caller, e.g. the execution control can
-passed to any other symmetric coroutine (must be explicitly specified).\\
-Usually used to implement user-mode threads.
+passed to any other symmetric coroutine (must be explicitly specified). The
+symmetric control transfer-mechanism is usually used to implement user-mode
+threads.
 
 \uabschnitt{fiber/user-mode thread}
 execute tasks in an cooperative multitasking environment involving a
-scheduler. Coroutines and fibers are distinct (see N4024\cite{N4024}).
+scheduler. Coroutines and fibers are distinct (N4024\cite{N4024}).
 
 \uabschnitt{resumable function}
 N4134\cite{N4134} describes resumable functions as an efficient language
