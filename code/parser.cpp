@@ -88,19 +88,21 @@ int main(){
         std::make_fixedsize_stack(),
         [&is,&m,&done,&c](){
             Parser p(is,
-                     // create/pass callback, invoked by the parser
+                     // callback, invoked by the parser
                      [&m,&c](char ch){
                         c=ch;
                         // resume main-context
                         m();
                      });
+            // start parsing
             p.run();
+            // signal termination
             done=true;
         });
     // inversion of control: user-code pulls parsed data from parser
     while(!done){
         // resume parser-context
         l();
-        printf("Parsed: %c\n",c);
+        std::cout<<"Parsed: "<<c<<std::endl;
     }
 }

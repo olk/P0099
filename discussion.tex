@@ -1,20 +1,20 @@
 \abschnitt{Discussion}
 \uabschnitt{Implications of \textit{stackless}}\label{stackless}
-Resumable functions/lambdas are stackless because the instances of those types
-share the same stack (application/thread stack) with each other.\\
+Resumable functions/lambdas are characterized as stackless because the instances
+of those types share the same stack (application/thread stack) with each other.\\
 This implies that all stack frames, allocated inside the body of the resumable
 function/lambda, have to be removed from the stack before the resumable
 function/lambda is suspended - otherwise the stack frames get corrupted
 (overwritten by other code) - yielding from nested functions is not possible!\\
 Code like shown in the appendix (recursive descent parser\ref{appendix}) is not
-possible without transforming all member functions of class \cpp{Parser} into
-resumable functions - which is impossible for closed source code or for a too
+possible without transforming all functions in the call chain into resumable
+functions - which is impossible for closed source code or for a too
 large/complex code base.
 
 \uabschnitt{Implications of \textit{stackful}}
 Stackful context switching requires that each context owns a separate stack.
-Thus stack frames of sub-routines remain intact while the execution context gets
-suspended from nested functions.\\
+As a consequence stack frames of sub-routines remain intact while the execution
+context gets suspended from nested functions.\\
 In contrast to resumable functions, the usage of the stack inside a execution
 context does not differ from using the application stack in the main context
 (functions called from function \main). For instance local variables are saved
@@ -29,8 +29,8 @@ structures, local variables and the control block. The required size is
 determined by the compiler and the storage is allocated on the heap (activation
 frame).\\
 A stackful execution context allocates its controll structures on top of its own
-stack (placement new). The control block is pushed to/poped from at the
-memory (stack) where the stack-pointer points to.\\
+stack (placement new). The control block is pushed to/poped from the memory
+(stack) where the stack-pointer points to.\\
 If the compiler can analyse the code executed in the stackful execution context,
 than the stackful context switching shows the same memory requirements as
 resumable functions/lambdas.\\

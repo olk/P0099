@@ -6,8 +6,7 @@ int main(){
     std::execution_context mctx(std::execution_context::current());
     std::execution_context ctx(std::make_fixedsize_stack(1024),
                                [n,&p,mctx]()mutable{
-                                   int a=0;
-                                   int b=1;
+                                   int a=0,b=1;
                                    while(n-->0){
                                        yield(a);
                                        auto next=a+b;

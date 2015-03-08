@@ -21,18 +21,18 @@ Coroutines have following characteristics\cite{N3985}:
 \end{itemize}
 
 \uabschnitt{asymmetric coroutine}
-provides two distingt operations for context switch - one operation to
+provides two distingt operations for the context switch - one operation to
 resume and one operation to suspend the coroutine.\\
-A asymmetric coroutine is tightly coupled with its caller, e.g. suspending
-the coroutine transferes the execution control back to its invoker (implicit
-specified). The asymmetric control transfer-mechanism is usually used in the
+An asymmetric coroutine is tightly coupled with its caller, e.g. suspending the
+coroutine transferes the execution control back to the point in the code were it
+was called. The asymmetric control transfer-mechanism is usually used in the
 context of generators.
 
 \uabschnitt{symmetric coroutine}
 only one operation to resume/suspend the context is available.\\
 A symmetric coroutine does not know its caller, e.g. the execution control can
-passed to any other symmetric coroutine (must be explicitly specified). The
-symmetric control transfer-mechanism is usually used to implement user-mode
+be transferred to any other symmetric coroutine (must be explicitly specified).
+The symmetric control transfer-mechanism is usually used to implement user-mode
 threads.
 
 \uabschnitt{fiber/user-mode thread}
@@ -49,14 +49,15 @@ Characteristics of resumable functions:
     \item allocates memory (activation frame) for the body of the resumable
           function to store local data, registers etc.
     \item thight coupling between caller and resumable function (asymmetric
-          control transfer-mechanism)
-    \item implicit \textit{return}-statement\cite{N4134} (code-transformation)
+          control transfer mechanism)
+    \item implicit \textit{return}-statement\cite{N4134} (code transformation)
 \end{itemize}
 
-\uabschnitt{resumable lambdas}
+\uabschnitt{resumable lambda}
 N4244\cite{N4244} describes resumable lambdas as stackless coroutines -
-introducing new keywords \resumable, flavours of \yield and \rlthis. Stackless
-resumable lambdas are equivalent to asymmetric coroutines.\\
+introducing new keywords\\
+\resumable, flavours of \yield and \rlthis. Stackless resumable lambdas are
+equivalent to asymmetric coroutines.\\
 Characteristics of resumable lambdas:
 \begin{itemize}
     \item stackless
@@ -73,7 +74,7 @@ Characteristics of resumable lambdas:
 \uabschnitt{linked stack}
 also known as \textit{split stack}\cite{gccsplit} or
 \textit{segmented stack}\cite{llvmseg}, represents a stack with a non-contigous
-address-range.\\
+address range.\\
 Applications compiled with support for linked stacks can use (link against)
 libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
 chapter 'Backward compatibility').
