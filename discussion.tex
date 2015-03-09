@@ -24,10 +24,10 @@ In contrast to resumable functions, the code does not require a modification if
 the execution context has to be suspended from nested call stack.
 
 \uabschnitt{Activation frame}
-Resumable functions as well as resumable lambdas require storage for control
-structures, local variables and the control block. The required size is
-determined by the compiler and the storage is allocated on the heap (activation
-frame).\\
+Resumable functions as well as resumable lambdas require storage for local
+variables and the control block. The required size is determined by the compiler
+and the storage is allocated by the compiler.\\
+\cppf{N4134/fib.cpp}
 A stackful execution context allocates its controll structures on top of its own
 stack (placement new). The control block is pushed to/poped from the memory
 (stack) where the stack-pointer points to.\\
@@ -36,8 +36,7 @@ than the stackful context switching shows the same memory requirements as
 resumable functions/lambdas.\\
 \newline
 For simple function bodies, stackless and stackful coroutines have similar
-memory requirements.
-\cppf{N4134/fib.cpp}
+memory requirements.\\
 In the case of resumable functions the compiler determines the required size for
 the activation frame (containing space for local variables and control block).\\
 In the case of stackful coroutines (using coroutines from N3985), the required
@@ -104,7 +103,7 @@ resumable function/lambda (for instance using \yield).\\
 Passing data into the body of resumable functions (N4123) requires helper
 classes like \channel.
 \cppf{N4134/channel.cpp}
-N4244 resumable lambda specifies the special member function \rlwanted.
+N4244 resumable lambda specifies the member function \rlwanted.
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
 and provides some problems how returned values should be accessed. For instance

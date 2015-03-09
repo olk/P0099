@@ -9,7 +9,9 @@ cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
 The interface contains only one operations to switch the execution context
 \ectxop (symmetric operation) - that implies that \ectx needs to specify
 explictly to which other context the execution control has to be transferred to.
-Exchanging data between execution context's requires the use of lambda captures.
+Exchanging data between execution context's requires the use of lambda captures.\\
+A main execution context is created at statup (entering function \main),
+accessible via \ectxcurrent (same applies for threads).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -143,7 +145,8 @@ accesses the current active execution context\\
 
 {\bf Notes}
 \newline
-The current active execution context is thread-specific.
+The current active execution context is thread-specific, e.g. for each thread
+(including \main) a execution context is created at start-up.
 
 \uabschnitt{Stackful resumable lambda}
 Based on the implementation experience with \cpp{execution_context} in
@@ -166,6 +169,8 @@ Hints are \cpp{fixedsize()} and \cpp{segmented()}:
     \item \cpp{segmented(y)}: use a linked stack that grows on demand
           with an initial size of \textit{y} bytes
 \end{itemize}
+If \textit{fixedsize()} and \textit{segmented()} are used without an argument,
+then a default stack size (platform depended) is used.\\
 The example of an recursive descent parser using stackful resumable lambda would
 look like:
 \cppf{lparser.cpp}
@@ -196,18 +201,22 @@ tell the compiler to  create a stackless context.\\
                         \begin{itemize}
                             \item <no hint specified>: create stackless
                                   resumable lambda
-                            \item \textit{fixedsize(x)}: create stackful
-                                  resumable lambda; fixed size stack
-                            \item \textit{segmented(x)}: create stackful
-                                  resumable lambda; stack grows on demand
+                            \item \cpp{fixedsize(x=default_stacksize)}:
+                                  create stackful resumable lambda;
+                                  fixed size stack (\cpp{default_stacksize)} is
+                                  platform depended)
+                            \item \cpp{segmented(x=default_stacksize)}:
+                                  create stackful resumable lambda;
+                                  stack grows on demand (\cpp{default_stacksize)}
+                                  is platform depended)
                         \end{itemize}
-    \item[exceptions]   only \textit{noexcept} allowed; no exception is
+    \item[exceptions]   only \cpp{noexcept} allowed; no exception is
                         permitted to leave the body otherwise
                         \cpp{std::terminate()} is called
     \item[attribute]    attributes for \cpp{operator()}
     \item[capture-list] list of captures
     \item[params]       only empty parameter-list allowed
-    \item[ret]          only \textit{void} allowed; resumable lambda returns nothing
+    \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
     \item[body]         function body\\
 \end{description}
 

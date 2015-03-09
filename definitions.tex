@@ -41,8 +41,9 @@ scheduler. Coroutines and fibers are distinct (N4024\cite{N4024}).
 
 \uabschnitt{resumable function}
 N4134\cite{N4134} describes resumable functions as an efficient language
-supported mechanism for stackless coroutines introducing two new keywords -
-\await and \yield. Resumable functions are equivalent to asymmetric coroutines.\\
+supported mechanism for stackless context switching introducing two new keywords
+- \await and \yield. Resumable functions are equivalent to asymmetric
+coroutines.\\
 Characteristics of resumable functions:
 \begin{itemize}
     \item stackless
@@ -70,6 +71,13 @@ Characteristics of resumable lambdas:
     \item thight coupling between caller and resumable lambda (asymmetric
           control transfer-mechanism)
 \end{itemize}
+
+\uabschnitt{activation frame}
+is a chunk of memory used by resumable functions to store local (stack)
+variables and the control block. Resumable lambdas re-use the storage of the
+capture set for the same purpose.\\
+Each resumable function/lambda is bound to its own activation frame (== memory
+to preserve its data).
 
 \uabschnitt{linked stack}
 also known as \textit{split stack}\cite{gccsplit} or
