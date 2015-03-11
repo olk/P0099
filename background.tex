@@ -1,9 +1,9 @@
 \abschnitt{Background}
 At the meeting in Urbana the committee accepted that stackless and stackful
 coroutines are distinct and decided to pursue both kinds of coroutines.\\
-This paper proposes a low-level API for context switching enabling the
-implementation of higher level constructs like stackful coroutines from N3985
-(boost.coroutine2\cite{bcoroutine2}) as well as cooperative multitasking
-(boost.fiber\cite{bfiber}).\\
+This paper proposes a low-level API for context switching suitable to act as 
+building-block for higher level constructs like stackful coroutines from
+N3985\cite{N3985} (boost.coroutine2\cite{bcoroutine2}) or cooperative
+multitasking (boost.fiber\cite{bfiber}).\\
 The author evaluates an alternative, 'resumable lambda'-like syntax for
-stackful/stackless context switching.
+stackful context switching.

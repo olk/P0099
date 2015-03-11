@@ -72,12 +72,27 @@ Characteristics of resumable lambdas:
           control transfer-mechanism)
 \end{itemize}
 
+\uabschnitt{application stack}
+also known as call stack - is a chunk of memory assigned the stack pointer and
+used to store information (for instance local variables) about the active
+subroutines. The stack used by function \main grows on demand while the stack
+assigned to a thread has a fixed size - usually 1MB (Windows) till 2MB (Linux),
+but some platforms use smaller stacks (64KB on HP-UX/PA and 256KB on
+HP-UX/Itanium).
+
+\uabschnitt{side stack}
+is a call stack that is used in the case of stackful context switching, e.g.
+each execution context gets its own stack (assigned to stack pointer). Thus
+stack frames of subroutines are allocated on the side stack, the application
+stack remains unchanged.
+
 \uabschnitt{activation frame}
 is a chunk of memory used by resumable functions to store local (stack)
-variables and the control block. Resumable lambdas re-use the storage of the
-capture set for the same purpose.\\
-Each resumable function/lambda is bound to its own activation frame (== memory
-to preserve its data).
+variables and the control block. Each resumable function is bound to its own
+activation frame. The stack pointer remains unchanged, e.g. it still points to
+the application stack. Thus stack frames of subroutines are allocated on the 
+application stack.\\
+Resumable lambdas re-use the storage of the capture set for the same purpose.
 
 \uabschnitt{linked stack}
 also known as \textit{split stack}\cite{gccsplit} or
