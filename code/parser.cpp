@@ -24,7 +24,7 @@ class Parser{
 
 public:
    Parser(istream& is_,function<void(char)> cb_) :
-      level(0), next(), is(is_), cb(cb_)
+      level(0),next(),is(is_),cb(cb_)
     {}
 
    void run() {
@@ -39,7 +39,7 @@ private:
    void E(){
       T();
       while (next=='+'||next=='-'){
-         cb(next); 
+         cb(next); // callback; signal new symbol
          scan();
          T();
       }
@@ -48,7 +48,7 @@ private:
    void T(){
       S();
       while (next=='*'||next=='/'){
-         cb(next); 
+         cb(next); // callback; signal new symbol
          scan();
          S();
       }
@@ -56,15 +56,15 @@ private:
 
    void S(){
       if (isdigit(next)){
-         cb(next);
+         cb(next); // callback; signal new symbol
          scan();
       }
       else if(next=='('){
-         cb(next); 
+         cb(next); // callback; signal new symbol
          scan();
          E();
          if (next==')'){
-             cb(next); 
+             cb(next); // callback; signal new symbol
              scan();
          }else{
              exit(2);
@@ -81,28 +81,23 @@ int main(){
     bool done=false;
     char c;
     // access current execution context
-    std::execution_context m=std::execution_context::current();
+    auto m=std::execution_context::current();
     // create execution context
     // stack has fixed size (default 64KB)
     std::execution_context l(
-        std::make_fixedsize_stack(),
-        [&is,&m,&done,&c](){
+    auto l=[&is,&m,&done,&c]()resumable(segmented(1024)){
             Parser p(is,
-                     // callback, invoked by the parser
+                     // callback, used to signal new symbol
                      [&m,&c](char ch){
                         c=ch;
-                        // resume main-context
-                        m();
+                        m(); // resume main-context
                      });
-            // start parsing
-            p.run();
-            // signal termination
-            done=true;
+            p.run(); // start parsing
+            done=true; // signal termination
         });
     // inversion of control: user-code pulls parsed data from parser
     while(!done){
-        // resume parser-context
-        l();
+        l(); // resume parser-context
         std::cout<<"Parsed: "<<c<<std::endl;
     }
 }

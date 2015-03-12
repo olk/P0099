@@ -1,8 +1,9 @@
-// N3985: stackful coroutine (boost.coroutine2) implemented with execution_context
+// N3985: stackful coroutine (boost.coroutine2)
+// implemented with execution_context
 typedef coroutine<int> coro_t;
 int main(){
     int n=35;
-    coro_t::pull_type fib([n](coro_t::push_type & yield){
+    coro_t::pull_type fib([n](coro_t::push_type& yield){
             int a=0,b=1;
             while(n-->0){
                 yield(a);

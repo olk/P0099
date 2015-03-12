@@ -10,12 +10,11 @@ public:
     X():
         inp_(nullptr),outp_(),excptr_(),
         caller_(std::execution_context::current()),
-        callee_(std::make_fixedsize_stack(),
-                [=](){
-                   try {
+        callee_([=]()resumable(segmented(1024)){
+                   try{
                        outp_=lexical_cast<std::string>(*inp_);
-                       caller_();
-                   } catch (...) {
+                       caller_(); // context switch to main()
+                   }catch (...){
                        excptr_=std::current_exception();
                    }
                 })
@@ -23,7 +22,7 @@ public:
 
     std::string operator()(int i){
         inp_=&i;
-        callee_();
+        callee_(); // context switch for conversion
         if(excptr_){
             std::rethrow_exception(excptr_);
         }

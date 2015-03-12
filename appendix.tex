@@ -6,6 +6,6 @@ equivalent) uses callbacks to push parsed data to the user code. With \ectx the
 user code inverts the control-flow. In this case, the user code \textit{pulls}
 data from the parser.
 \cppf{parser.cpp}
-\abschnitt{B. recursive descent parser using \textit{stackful resumable lambda}}
-Using 'resumable lambda'-syntax, the example (\cpp{main()}) could be re-written:
-\cppf{lparser.cpp}
+Code like this example is not possible without transforming all functions in the
+call chain into resumable functions - which is impossible for closed source code
+or for a too large/complex code base.
