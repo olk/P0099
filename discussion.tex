@@ -133,11 +133,12 @@ list to pass data into and return data from the body. Exceptions are transferred
 via a reference of \excpt and parameters (input/output) are accessed via
 captured addresses (reference or pointer).
 \cppf{param.cpp}
-Class \cpp{X} demonstrates how input and output parameter are transferred
-between a context switch. Member variable \textit{callee\_} represents a new
-execution context and captures the \textit{this}-pointer of \cpp{X}. The body
-converts a integer variable (input) into a string (output). Exceptions, thrown
-by the conversion, are transported via \textit{exptr\_}.
+Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
+parameter are transferred between a context switch. Member variable
+\textit{callee\_} represents a new execution context and captures the
+\textit{this}-pointer of \cpp{X}. The body converts a integer variable (input)
+into a string (output). Exceptions, thrown by the conversion, are transported
+via \textit{exptr\_}.
 
 \uabschnitt{Summary \textit{stackless} resumable function/lambda}
 \begin{itemize}
