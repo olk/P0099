@@ -9,7 +9,7 @@ In the example of calculating Fibonacci numbers using a resumable function
 (simple function body, no subroutine is called), the compiler reserves space
 (activation frame) for local variables \cpp{n}, \cpp{a}, \cpp{b} and \cpp{next}.
 Those variables are not accessed via the stack pointer as common in ordinary
-functions - instead he compiler generates inside \cpp{fib()} assembler code,
+functions - instead the compiler generates inside \cpp{fib()} assembler code,
 that references the local variables by re-useing another CPU register. The
 application stack is not used and the stack pointer is not changed.\\
 \newline
@@ -31,8 +31,8 @@ variables. In both cases the application stack remains unchanged.
 
 \uabschnitt{Calling subroutines}
 Resumable functions/lambdas share the same application stack, e.g. the stack
-pointer is unchanged and holds an address from the application stack (function
-\main or thread).\\
+pointer is unchanged and holds an address from the application stack ( \main or
+thread).\\
 If a subroutine is invoked inside the body of a resumable function/lambda, then
 a stack frame is allocated on the application stack (not on the activation
 frame)! As a consequence stack frames of subroutines have to be removed from the
@@ -65,8 +65,8 @@ stackless resumable functions/lambdas (but this applies only in the context of
 calling subroutines).\\
 On the other side, it is benefital to use side stacks because the stack frames
 of subroutines remain intact while the execution context gets suspended. This is
-the reason why stackful context switching permits yielding from nested stack
-frames.
+the reason why stackful context switching permits yielding from nested call
+stack.
 \cppf{simple.cpp}
 Variable \textit{l1} is passed to stackful execution context \textit{l2} via
 the capture list of \textit{l2}. The stack frames of \cpp{std::printf()} are
@@ -80,6 +80,7 @@ subroutines have to be removed from the application stack before the resumable
 function/lambda yields back to its resumption point (point in code were it was
 resumed/invoked). Hence, suspending a resumable function/lambda from nested call
 stack is not possible.\\
+\newline
 Stackful context switching permits stack frames of subroutines on the side stack
 while the execution context is suspended.
 
@@ -97,12 +98,12 @@ multitasking it is inefficient.
 \imgc{asymm.pdf}
 In contrast to resumable functions/lambdas the proposed stackful execution
 context (\ectx) provides only one operation to resume/suspend the context
-(\ectxop). The execution control is directly transferred from one
+(\ectxop). The execution control is directly transfered from one
 execution context to another (symmetric transfer-mechanism) - no jump back to
 the caller. This enables a much more efficient implementation of cooperative
-multitasking (no additional context switch back to caller) as well as the
-implementation of generators. As an consequence, the next execution context has
-to be explicitly specified.\\
+multitasking (no additional context switch back to caller; direct context switch
+to next task) as well as the implementation of generators. As an consequence,
+the next execution context has to be explicitly specified.\\
 \newline
 Resuming N instances of \ectx takes N+1 context switches.
 \imgc{symm.pdf}
@@ -129,16 +130,16 @@ multiple invocations of \rlwanted (including additional context switches).\\
 An alternative would be not directly support parameter passing in the API.\\
 During the use of \cpp{execution_context} from boost.context\cite{bcontext} a
 common pattern was to pass lambdas to the execution context and use the capture
-list to pass data into and return data from the body. Exceptions are transferred
-via a reference of \excpt and parameters (input/output) are accessed via
-captured addresses (reference or pointer).
+list to transfer data into and to return data from the body. Exceptions are
+transfered via a reference of \excpt and parameters (input/output) are accessed
+via captured addresses (reference or pointer).
 \cppf{param.cpp}
 Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
-parameter are transferred between a context switch. Member variable
+parameter are transfered between a context switch. Member variable
 \textit{callee\_} represents a new execution context and captures the
 \textit{this}-pointer of \cpp{X}. The body converts a integer variable (input)
 into a string (output). Exceptions, thrown by the conversion, are transported
-via \textit{exptr\_}.
+via member variable \textit{exptr\_}.
 
 \uabschnitt{Summary \textit{stackless} resumable function/lambda}
 \begin{itemize}
@@ -160,8 +161,8 @@ via \textit{exptr\_}.
     \item   activation frame and stack are the same, not distinct
     \item   stack is not shared between different instances of \ectx
     \item   symmetric context switching -> no coupling between caller and
-            invoker (more efficient in the context of cooperative multitasking)
-    \item   passing data via lambda captures
+            invoker (efficiency)
+    \item   passing data via lambda capture list
     \item   suspend operation from nested call stack is permitted
 \end{itemize}
 Higher level frameworks based on \ectx can realize more sophisticated APIs

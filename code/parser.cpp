@@ -83,7 +83,7 @@ int main(){
     // access current execution context
     auto m=std::execution_context::current();
     // create execution context
-    // stack has fixed size (default 64KB)
+    // use of linked stack (grows on demand) with initial size of 1KB
     std::execution_context l(
     auto l=[&is,&m,&done,&c]()resumable(segmented(1024)){
             Parser p(is,

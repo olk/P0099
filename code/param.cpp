@@ -1,3 +1,4 @@
+// stackful execution_context
 class X{
 private:
     int* inp_;

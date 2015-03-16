@@ -1,3 +1,4 @@
+// N4244: stackless resumable lambda
 int main(){
     auto f=[]()resumable{
         int n=yield(int);   

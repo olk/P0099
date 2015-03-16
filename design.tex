@@ -9,19 +9,20 @@ cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
 Based on the implementation experience with \cpp{execution_context} in
 boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber} the author
 encountered that \cpp{execution_context} is almost always used together with
-lambdas (passed as argument to the constructor of \ectx). Especially the
-lambda captures are suitable to transport data between different execution
-context's (address of lvalue, reside on stack/heap).\\
+lambdas (passed as argument to the constructor of \cpp{execution_context}).
+Especially the lambda captures are suitable to transport data between different
+execution context's (address of lvalue, reside on stack/heap).\\
 Why not construct \ectx directly with an 'resumable lambda'-like syntax?
 \cppf{rl1.cpp}
-The differences to N4244 are the absence of keyword \yield because of
+The differences to N4244 are the absence of keyword \yield because of the
 symmetric context switching (== only one operation transfers the control of
-execution), e.g. the target switch must be explicitly specified.\\
+execution), e.g. the target context must be explicitly specified.\\
 Stackful resumable lambdas require keyword \resumable together with an hint
-(attribute) about the type and size of the stack.\\
+(attribute) about the type and size of the side stack.\\
 Exchanging data between execution context's requires the use of lambda captures.\\
-A main execution context is created at statup (entering function \main),
-accessible via \ectxcurrent (same applies for threads).
+A main execution context is created at statup (entering function \main; same
+applies for threads). The current (active) execution context can be accessed
+through the static member function \ectxcurrent.
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -47,27 +48,25 @@ constructs new execution context\\
     \item[1)] creates a \ectx from a 'resumable lambda'-like syntax
               \begin{description}
                   \item[mutable]      allows to modify parameters captured by copy
-                  \item[resumable]    identify resumable operation
+                  \item[resumable]    identify resumable context
                   \item[hint]         stack type hint:
                                       \begin{itemize}
-                                          \item <no hint specified>: create stackless
-                                              resumable lambda
                                           \item \cpp{fixedsize(x=default_stacksize)}:
                                               create stackful resumable lambda;
-                                              fixed size stack (\cpp{default_stacksize)} is
+                                              fixed size stack (\cpp{default_stacksize} is
                                               platform depended)
                                           \item \cpp{segmented(x=default_stacksize)}:
                                               create stackful resumable lambda;
-                                              stack grows on demand (\cpp{default_stacksize)}
+                                              stack grows on demand (\cpp{default_stacksize}
                                               is platform depended)
                                       \end{itemize}
-                  \item[exceptions]   only \cpp{noexcept} allowed; no exception is
-                                      permitted to leave the body otherwise
-                                      \cpp{std::terminate()} is called
+                  \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
+                                      trigger \cpp{std::terminate()}
                   \item[attribute]    attributes for \cpp{operator()}
                   \item[capture-list] list of captures
                   \item[params]       only empty parameter-list allowed
                   \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
+                                      (use of capture list instead)
                   \item[body]         function body\\
               \end{description}
     \item[2)] copies \ectx, e.g. underlying control block is shared
@@ -80,8 +79,8 @@ If an instance of \ectx is copied, both instances share the same underlying
 control block. Resuming one instance modifies the control block of the other
 \ectx too.\\
 If this is behaviour is not permitted, the stack has to be copied. That requires
-identification and modification of local variables pointing to address of the
-stack.\\
+identification and modification of local variables containing to address of the
+stack.
 
 \subparagraph*{(destructor)}
 destroys a execution context\\
@@ -131,6 +130,15 @@ copies/moves the coroutine object\\
 \begin{description}
     \item[*this]
 \end{description}
+
+{\bf Notes}
+\newline
+If an instance of \ectx is copied, both instances share the same underlying
+control block. Resuming one instance modifies the control block of the other
+\ectx too.\\
+If this is behaviour is not permitted, the stack has to be copied. That requires
+identification and modification of local variables containing to address of the
+stack.
 
 \subparagraph*{operator()}
 jump context of execution\\
@@ -182,5 +190,5 @@ The current active execution context is thread-specific, e.g. for each thread
 A syntax, combining stackless and stackful resumable lambdas, might be possible.
 The absence of the stack hint for keyword \resumable could be used to indicate
 that a stackless execution context has to be constructed.\\
-The disadvatage is that the user and/or the compiler have to ensure that no
-context switch is triggered from a nested call stack.
+The disadvatage is that user and/or compiler have to ensure that no context
+switch is triggered from a nested call stack.

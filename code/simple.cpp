@@ -1,4 +1,5 @@
-// access current execution context
+// stackful execution_context
+// access current execution context l1
 auto l1=std::execution_context::current();
 // create stackful execution context l2
 auto l2=[&l1]()resumable(segmented()){

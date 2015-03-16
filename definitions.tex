@@ -31,13 +31,13 @@ context of generators.
 \uabschnitt{symmetric coroutine}
 only one operation to resume/suspend the context is available.\\
 A symmetric coroutine does not know its caller, e.g. the execution control can
-be transferred to any other symmetric coroutine (must be explicitly specified).
+be transfered to any other symmetric coroutine (must be explicitly specified).
 The symmetric control transfer-mechanism is usually used to implement
 cooperative multitasking.
 
 \uabschnitt{fiber/user-mode thread}
-execute tasks in an cooperative multitasking environment involving a
-scheduler. Coroutines and fibers are distinct (N4024\cite{N4024}).
+execute tasks in a cooperative multitasking environment involving a scheduler.
+Coroutines and fibers are distinct (N4024\cite{N4024}).
 
 \uabschnitt{resumable function}
 N4134\cite{N4134} describes resumable functions as an efficient language
