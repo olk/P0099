@@ -13,43 +13,40 @@
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
 
-\setsvg{inkscape = inkscape -z -D}
-\setsvg{svgpath = pics/}
+\lstset{
+        basicstyle=\ttfamily\color{black},
+        breaklines=true,
+        captionpos=b, 
+        commentstyle=\ttfamily\color{gray},
+        keywordstyle=\ttfamily\color{blue},
+        language={C++},
+        morekeywords={await,fixedsize,from,resumable,segmented,yield},
+        showspaces=false,
+        showstringspaces=false,
+        showtabs=false,
+        stringstyle=\ttfamily\color{red}
+}
 
 \newcommand{\cpp}[1]{
-    {\lstinline[
-        language=C++,
-        basicstyle=\ttfamily\color{black},
-        keywordstyle=\color{blue},
-        commentstyle=\color{green},
-        stringstyle=\color{red},
-        morekeywords={await,fixedsize,from,resumable,segmented,yield}
-    ] !#1!}
+    {\lstinline !#1!}
 }
 \newcommand{\cppf}[1]{
-    \lstinputlisting[
-        language=C++,
-        basicstyle=\ttfamily\color{black},
-        keywordstyle=\color{blue},
-        commentstyle=\color{red},
-        stringstyle=\color{green},
-        morekeywords={await,fixedsize,from,resumable,segmented,yield}
-    ] {code/#1}
+    \lstinputlisting {code/#1}
 }
 
-\newcommand{\await}{\textit{\cpp{await}}\xspace}
-\newcommand{\channel}{\textit{\cpp{channel<>}}\xspace}
-\newcommand{\ectx}{\textit{\cpp{std::execution_context}}\xspace}
-\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()()}}\xspace}
-\newcommand{\ectxcurrent}{\textit{\cpp{std::execution_context::current()}}\xspace}
-\newcommand{\excpt}{\textit{\cpp{std::exception_ptr}}\xspace}
-\newcommand{\main}{\textit{\cpp{main()}}\xspace}
-\newcommand{\rlop}{\textit{\cpp{__resumable_lambda::operator()}}\xspace}
-\newcommand{\rlthis}{\textit{\cpp{[]this}}\xspace}
-\newcommand{\rlwanted}{\textit{\cpp{template<typename T> T* resumable_lambda::wanted()}}\xspace}
-\newcommand{\resumable}{\textit{\cpp{resumable}}\xspace}
-\newcommand{\tuple}{\textit{\cpp{std::tuple<>}}\xspace}
-\newcommand{\yield}{\textit{\cpp{yield}}\xspace}
+\newcommand{\await}{\textit{\cpp{await}}}
+\newcommand{\channel}{\textit{\cpp{channel<>}}}
+\newcommand{\ectx}{\textit{\cpp{std::execution_context}}}
+\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()()}}}
+\newcommand{\ectxcurrent}{\textit{\cpp{std::execution_context::current()}}}
+\newcommand{\excpt}{\textit{\cpp{std::exception_ptr}}}
+\newcommand{\main}{\textit{\cpp{main()}}}
+\newcommand{\rlop}{\textit{\cpp{__resumable_lambda::operator()}}}
+\newcommand{\rlthis}{\textit{\cpp{[]this}}}
+\newcommand{\rlwanted}{\textit{\cpp{template<typename T> T* resumable_lambda::wanted()}}}
+\newcommand{\resumable}{\textit{\cpp{resumable}}}
+\newcommand{\tuple}{\textit{\cpp{std::tuple<>}}}
+\newcommand{\yield}{\textit{\cpp{yield}}}
 
 \newcommand{\abschnitt}[1]{
     \addcontentsline{toc}{subsection}{#1}

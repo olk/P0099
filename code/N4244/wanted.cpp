@@ -9,6 +9,6 @@ int main(){
 
     *f.wanted<int>()=1; // assign parameter
     f(); // context switch
-    *f.wanted<std::string>()=s"abc"; // assign parameter
+    *f.wanted<std::string>()=std::string("abc"); // assign parameter
     f(); // context switch
 }
