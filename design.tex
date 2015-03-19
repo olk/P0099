@@ -3,10 +3,10 @@ Class \ectx is derived from the work on boost.context\cite{bcontext} - it
 provides a small, basic API, suitable to implement high-level APIs for stackful
 coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
 threads (executing tasks in a
-cooperative multitasking environment, boost.fiber\cite{bfiber}).\\
+cooperative multitasking environment, boost.fiber\cite{bfiber}).
 
 \uabschnitt{Class \ectx}
-Based on the implementation experience with \cpp{execution_context} in
+Based on the implementation experience with \cpp{execution_context} in\\
 boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber} the author
 encountered that \cpp{execution_context} is almost always used together with
 lambdas (passed as argument to the constructor of \cpp{execution_context}).
@@ -22,7 +22,8 @@ Stackful resumable lambdas require keyword \resumable together with an hint
 Exchanging data between execution context's requires the use of lambda captures.\\
 A main execution context is created at statup (entering function \main; same
 applies for threads). The current (active) execution context can be accessed
-through the static member function \ectxcurrent.
+through the static member function \cpp{current()}.
+\newpage
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -52,12 +53,10 @@ constructs new execution context\\
                   \item[hint]         stack type hint:
                                       \begin{itemize}
                                           \item \cpp{fixedsize(x=default_stacksize)}:
-                                              create stackful resumable lambda;
-                                              fixed size stack (\cpp{default_stacksize} is
+                                              fixed size stack (\textit{default\_stacksize} is
                                               platform depended)
                                           \item \cpp{segmented(x=default_stacksize)}:
-                                              create stackful resumable lambda;
-                                              stack grows on demand (\cpp{default_stacksize}
+                                              stack grows on demand (\textit{default\_stacksize}
                                               is platform depended)
                                       \end{itemize}
                   \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
@@ -116,8 +115,8 @@ copies/moves the coroutine object\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] assigns the state of \textit{other} to *this using move semantics
-    \item[2)] copies the state of \textit{other} to *this, state (control block)
+    \item[1)] assigns the state of \textit{other} to \textit{*this} using move semantics
+    \item[2)] copies the state of \textit{other} to \textit{*this}, state (control block)
               is shared
 \end{description}
 
@@ -162,8 +161,10 @@ jump context of execution\\
 
 {\bf Notes}
 \newline
-If an exception leaves this function \cpp{std::terminate()} is called. If this
-function returns, \cpp{std::exit(0)} is called.
+If an exception leaves this function \cpp{std::terminate()} is called. When this
+function returns, \cpp{std::exit(0)} is called.\\
+The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
+returns \textit{*this} (e.g. resuming an already running context).
 
 \subparagraph*{current}
 accesses the current active execution context\\

@@ -7,20 +7,21 @@ activation frame.
 \cppf{N4134/fib.cpp}
 In the example of calculating Fibonacci numbers using a resumable function
 (simple function body, no subroutine is called), the compiler reserves space
-(activation frame) for local variables \cpp{n}, \cpp{a}, \cpp{b} and \cpp{next}.
-Those variables are not accessed via the stack pointer as common in ordinary
-functions - instead the compiler generates inside \cpp{fib()} assembler code,
-that references the local variables by re-useing another CPU register. The
-application stack is not used and the stack pointer is not changed.\\
+(activation frame) for local variables \textit{n}, \textit{a}, \textit{b} and
+\textit{next}. Those variables are not accessed via the stack pointer as common
+in ordinary functions - instead the compiler generates inside \cpp{fib()}
+assembler code, that references the local variables by re-useing another CPU
+register. The application stack is not used and the stack pointer is not
+changed.\\
 \newline
 Each stackful execution context owns a stack, e.g. the side stack is assigned to
 the stack pointer. The control block (CPU register) is pushed to/ poped from the
 side stack.
 \cppf{fib.cpp}
 In the case of calculating the Fibonacci numbers using a stackful execution
-context, the compiler stores the local variables \cpp{n}, \cpp{a}, \cpp{b} and
-\cpp{next} on the side stack. The local variables are accessed via the stack
-pointer.
+context, the compiler stores the local variables \textit{n}, \textit{a},
+\textit{b} and \textit{next} on the side stack. The local variables are accessed
+via the stack pointer.
 \paragraph*{Summary}
 For simple function bodies, stackless and stackful context switching has similar
 memory requirements. A stackful and a stackless context switch differ only in
@@ -31,7 +32,7 @@ variables. In both cases the application stack remains unchanged.
 
 \uabschnitt{Calling subroutines}
 Resumable functions/lambdas share the same application stack, e.g. the stack
-pointer is unchanged and holds an address from the application stack ( \main or
+pointer is unchanged and holds an address from the application stack (\main or
 thread).\\
 If a subroutine is invoked inside the body of a resumable function/lambda, then
 a stack frame is allocated on the application stack (not on the activation
@@ -123,9 +124,10 @@ classes like \channel.
 For resumable lambdas of N4244 the member function \rlwanted has to be used.
 \cppf{N4244/wanted.cpp}
 In both cases the way how data have to be passed into the body is not intuitive
-and provides some problems how returned values should be accessed. For instance
-multiple parameters must be transported with an container (\tuple) or via
-multiple invocations of \rlwanted (including additional context switches).\\
+and provides some problems how returned values should be accessed (because of
+the asymmetric nature of N4134 and N4244). For instance multiple parameters must
+be transported with an container (\tuple) or via multiple invocations of
+\rlwanted (including additional context switches).\\
 \newline
 An alternative would be not directly support parameter passing in the API.\\
 During the use of \cpp{execution_context} from boost.context\cite{bcontext} a
@@ -159,7 +161,7 @@ via member variable \textit{exptr\_}.
     \item   each stackful execution context owns a side stack (fixed-size or
             linked stack)
     \item   activation frame and stack are the same, not distinct
-    \item   stack is not shared between different instances of \ectx
+    \item   stack is not shared
     \item   symmetric context switching -> no coupling between caller and
             invoker (efficiency)
     \item   passing data via lambda capture list

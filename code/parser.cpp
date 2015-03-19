@@ -1,10 +1,8 @@
-/*
- * grammar:
- *   P ---> E '\0'
- *   E ---> T {('+'|'-') T}
- *   T ---> S {('*'|'/') S}
- *   S ---> digit | '(' E ')'
- */
+// grammar:
+//   P ---> E '\0'
+//   E ---> T {('+'|'-') T}
+//   T ---> S {('*'|'/') S}
+//   S ---> digit | '(' E ')'
 class Parser{
    int level;
    char next;
@@ -30,9 +28,6 @@ public:
    void run() {
       scan();
       E();
-      if (next!='\0'){
-          exit(1);
-      }
    }
 
 private:
@@ -67,11 +62,11 @@ private:
              cb(next); // callback; signal new symbol
              scan();
          }else{
-             exit(2);
+             throw std::runtime_error("parsing failed");
          }
       }
       else{
-         exit(3);
+          throw std::runtime_error("parsing failed");
       }
    }
 };
@@ -80,24 +75,41 @@ int main(){
     std::istringstream is("1+1");
     bool done=false;
     char c;
+    std::exception_ptr except;
     // access current execution context
     auto m=std::execution_context::current();
-    // create execution context
     // use of linked stack (grows on demand) with initial size of 1KB
     std::execution_context l(
-    auto l=[&is,&m,&done,&c]()resumable(segmented(1024)){
+    auto l=[&is,&m,&done,&except,&c]()resumable(segmented(1024)){
             Parser p(is,
                      // callback, used to signal new symbol
                      [&m,&c](char ch){
                         c=ch;
                         m(); // resume main-context
                      });
-            p.run(); // start parsing
+            try{
+                p.run(); // start parsing
+            }catch(...){
+                // store other exceptions in exception-pointer
+                except=std::current_exception();
+            }
             done=true; // signal termination
+            m(); // resume main-context
         });
-    // inversion of control: user-code pulls parsed data from parser
-    while(!done){
+    try{
+        // inversion of control: user-code pulls parsed data from parser
         l(); // resume parser-context
-        std::cout<<"Parsed: "<<c<<std::endl;
+        if(except){
+            std::rethrow_exception(except);
+        }
+        while(!done){
+            std::cout<<"Parsed: "<<c<<std::endl;
+            l(); // resume parser-context
+            if(except){
+                std::rethrow_exception(except);
+            }
+        }
+    }catch(const std::exception& e){
+        std::cerr<<"exception: "<<e.what()<<std::endl;
     }
 }
