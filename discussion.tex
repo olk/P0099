@@ -96,7 +96,7 @@ to the point in the code where it was resumed.\\
 For N resumable functions/lambdas 2*N context switches are required.\\
 This is sufficient in the case of generators but in the context of cooperative
 multitasking it is inefficient.
-\imgc{asymm.pdf}
+%\imgc{asymm.pdf}
 In contrast to resumable functions/lambdas the proposed stackful execution
 context (\ectx) provides only one operation to resume/suspend the context
 (\ectxop). The execution control is directly transfered from one
@@ -107,7 +107,7 @@ to next task) as well as the implementation of generators. As an consequence,
 the next execution context has to be explicitly specified.\\
 \newline
 Resuming N instances of \ectx takes N+1 context switches.
-\imgc{symm.pdf}
+%\imgc{symm.pdf}
 \paragraph*{Summary}
 Stackful context switching as proposed in this paper, provides only one
 resume/suspend operation (symmetric transfer of execution control). In the use

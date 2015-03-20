@@ -98,16 +98,12 @@ int main(){
         });
     try{
         // inversion of control: user-code pulls parsed data from parser
-        l(); // resume parser-context
-        if(except){
-            std::rethrow_exception(except);
-        }
         while(!done){
-            std::cout<<"Parsed: "<<c<<std::endl;
             l(); // resume parser-context
             if(except){
                 std::rethrow_exception(except);
             }
+            std::cout<<"Parsed: "<<c<<std::endl;
         }
     }catch(const std::exception& e){
         std::cerr<<"exception: "<<e.what()<<std::endl;
