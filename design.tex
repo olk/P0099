@@ -2,28 +2,30 @@
 Class \ectx is derived from the work on boost.context\cite{bcontext} - it
 provides a small, basic API, suitable to implement high-level APIs for stackful
 coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
-threads (executing tasks in a
-cooperative multitasking environment, boost.fiber\cite{bfiber}).
+threads (executing tasks in a cooperative multitasking environment,
+boost.fiber\cite{bfiber}).
 
 \uabschnitt{Class \ectx}
-Based on the implementation experience with \cpp{execution_context} in\\
-boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber} the author
-encountered that \cpp{execution_context} is almost always used together with
-lambdas (passed as argument to the constructor of \cpp{execution_context}).
-Especially the lambda captures are suitable to transport data between different
-execution context's (address of lvalue, reside on stack/heap).\\
-Why not construct \ectx directly with an 'resumable lambda'-like syntax?
-\cppf{rl1.cpp}
-The differences to N4244 are the absence of keyword \yield because of the
-symmetric context switching (== only one operation transfers the control of
-execution), e.g. the target context must be explicitly specified.\\
-Stackful resumable lambdas require keyword \resumable together with an hint
-(attribute) about the type and size of the side stack.\\
-Exchanging data between execution context's requires the use of lambda captures.\\
-A main execution context is created at statup (entering function \main; same
+Based on the implementation experience with \cpp{execution_context} in
+boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber}, the author
+noticed that \cpp{execution_context} is almost always used together with lambdas
+(passed as argument to the constructor of \cpp{execution_context}). Especially
+the lambda captures are suitable to transport data between different execution
+context's (address of lvalue, reside on stack/heap).\\
+Why not construct \ectx with an 'resumable lambda'-like syntax, instead of
+passing a lambda as argument? \ectx is constructed like a lambda but actually it
+is not of this type (because it is constructible from \ectxcurrent too).
+\cppf{N4397/rl1.cpp}
+Because of the symmetric context switching (only one operation transfers the
+control of execution), e.g. the target context must be explicitly specified.\\
+The keyword \resumable together with an hint (attribute) about the type and size
+of the side stack.\\
+Exchanging data between different execution context's requires the use of lambda
+captures.\\
+A main execution context is created at startup (entering function \main; same
 applies for threads). The current (active) execution context can be accessed
-through the static member function \cpp{current()}.
-\newpage
+through the static member function\\
+\ectxcurrent.
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -32,38 +34,40 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{[capture-list] (params) mutable resumable(hint) exceptions attribute -> ret \{body\}} & (1)\\
+    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable}(hint) {\color{blue}exceptions} attrs -> ret \{body\}} & (1)\\
 
     \midrule
 
-    \cpp{execution_context(execution_context const& other)=default;} & (2)\\
+    \cpp{execution_context(const execution_context& other)=default} & (2)\\
 
     \midrule
 
-    \cpp{execution_context(execution_context&& other)=default;} & (3)\\
+    \cpp{execution_context(execution_context&& other)=default} & (3)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] creates a \ectx from a 'resumable lambda'-like syntax
+    \item[1)] the constructor does not take a lambda as argument, instead the
+              compiler evaluates the lambda-like syntax and constructs a \ectx
+              directly
               \begin{description}
+                  \item[captures]     list of captures
+                  \item[params]       only empty parameter-list allowed
                   \item[mutable]      allows to modify parameters captured by copy
                   \item[resumable]    identify resumable context
                   \item[hint]         stack type hint:
                                       \begin{itemize}
                                           \item \cpp{fixedsize(x=default_stacksize)}:
-                                              fixed size stack (\textit{default\_stacksize} is
+                                              fixed size stack (\cpp{default_stacksize} is
                                               platform depended)
                                           \item \cpp{segmented(x=default_stacksize)}:
-                                              stack grows on demand (\textit{default\_stacksize}
+                                              stack grows on demand (\cpp{default_stacksize}
                                               is platform depended)
                                       \end{itemize}
                   \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
                                       trigger \cpp{std::terminate()}
-                  \item[attribute]    attributes for \cpp{operator()}
-                  \item[capture-list] list of captures
-                  \item[params]       only empty parameter-list allowed
+                  \item[attrs]        attributes for \cpp{operator()}
                   \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
                                       (use of capture list instead)
                   \item[body]         function body\\
@@ -72,14 +76,14 @@ constructs new execution context\\
     \item[3)] moves underlying control block to new \ectx
 \end{description}
 
-{\bf Notes}
+{\bfseries Notes}
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
 control block. Resuming one instance modifies the control block of the other
 \ectx too.\\
-If this is behaviour is not permitted, the stack has to be copied. That requires
-identification and modification of local variables containing to address of the
-stack.
+As an alternative, if this is behaviour is not permitted, the stack has to be
+copied. That requires identification and modification of local variables
+containing to address of the stack.
 
 \subparagraph*{(destructor)}
 destroys a execution context\\
@@ -87,7 +91,7 @@ destroys a execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{\~execution_context();} & (1)\\
+    \cpp{\~execution_context()} & (1)\\
 
     \midrule
 \end{tabular}
@@ -105,39 +109,39 @@ copies/moves the coroutine object\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{execution_context & operator=(execution_context&& other);} & (1)\\
+    \cpp{execution_context& operator=(execution_context&& other)} & (1)\\
 
     \midrule
 
-    \cpp{execution_context & operator=(const execution_context& other);} & (2)\\
+    \cpp{execution_context& operator=(const execution_context& other)} & (2)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] assigns the state of \textit{other} to \textit{*this} using move semantics
-    \item[2)] copies the state of \textit{other} to \textit{*this}, state (control block)
+    \item[1)] assigns the state of \emph{other} to \emph{*this} using move semantics
+    \item[2)] copies the state of \emph{other} to \emph{*this}, state (control block)
               is shared
 \end{description}
 
-{\bf Parameters}
+{\bfseries Parameters}
 \begin{description}
     \item[other]   another execution context to assign to this object\\
 \end{description}
 
-{\bf Return value}
+{\bfseries Return value}
 \begin{description}
     \item[*this]
 \end{description}
 
-{\bf Notes}
+{\bfseries Notes}
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
 control block. Resuming one instance modifies the control block of the other
 \ectx too.\\
-If this is behaviour is not permitted, the stack has to be copied. That requires
-identification and modification of local variables containing to address of the
-stack.
+As an alternative, if this is behaviour is not permitted, the stack has to be
+copied. That requires identification and modification of local variables
+containing to address of the stack.
 
 \subparagraph*{operator()}
 jump context of execution\\
@@ -145,7 +149,7 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{void operator()() noexcept;} & (1)\\
+    void operator()() noexcept & (1)\\
 
     \midrule
 \end{tabular}
@@ -154,17 +158,17 @@ jump context of execution\\
     \item[1)] resumes the execution context\\
 \end{description}
 
-{\bf Exceptions}
+{\bfseries Exceptions}
 \begin{description}
     \item[1)] noexcept specification: \cpp{noexcept}\\
 \end{description}
 
-{\bf Notes}
+{\bfseries Notes}
 \newline
 If an exception leaves this function \cpp{std::terminate()} is called. When this
-function returns, \cpp{std::exit(0)} is called.\\
-The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
-returns \textit{*this} (e.g. resuming an already running context).
+function returns, \cpp{std::exit(0)} is called. The behaviour is undefined if
+\cpp{operator()} is called while \cpp{current()} returns \emph{*this} (e.g.
+resuming an already running context).
 
 \subparagraph*{current}
 accesses the current active execution context\\
@@ -172,7 +176,7 @@ accesses the current active execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{static execution_context current();} & (1)\\
+    static execution\_context current() & (1)\\
 
     \midrule
 \end{tabular}
@@ -182,14 +186,7 @@ accesses the current active execution context\\
               execution context\\
 \end{description}
 
-{\bf Notes}
+{\bfseries Notes}
 \newline
 The current active execution context is thread-specific, e.g. for each thread
 (including \main) a execution context is created at start-up.
-
-\uabschnitt{A combined syntax for stackless and stackful context switching?}
-A syntax, combining stackless and stackful resumable lambdas, might be possible.
-The absence of the stack hint for keyword \resumable could be used to indicate
-that a stackless execution context has to be constructed.\\
-The disadvatage is that user and/or compiler have to ensure that no context
-switch is triggered from a nested call stack.

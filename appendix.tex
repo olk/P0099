@@ -3,9 +3,9 @@ This example (taken from boost.context\cite{bcontext}) uses a recursive descent
 parser for processing a stream of characters.\\
 The parser (a SAX parser or other event-dispatching framework would be
 equivalent) uses callbacks to push parsed data to the user code. With \ectx the
-user code inverts the control-flow. In this case, the user code \textit{pulls}
+user code inverts the control-flow. In this case, the user code \emph{pulls}
 data from the parser.
-\cppf{parser.cpp}
+\cppf{N4397/parser.cpp}
 Code like this example is not possible without transforming all functions in the
 call chain into resumable functions - which is impossible for closed source code
 or for a too large/complex code base.

@@ -4,57 +4,45 @@
 \makeatletter
     \renewcommand*\l@subsection{\@dottedtocline{2}{0em}{2.3em}}
     \renewcommand*\l@subsection{\@dottedtocline{3}{0em}{3.2em}}
-    \renewcommand{\tableofcontents}{%
-        \@starttoc{toc}
-    }
+    \renewcommand{\tableofcontents}{\@starttoc{toc}}
 \makeatother
+
+\MakePerPage{footnote}
+\renewcommand*{\thefootnote}{\fnsymbol{footnote}}
 
 \newcommand{\pdfimg}[1]{\pdfximage{pics/#1}\pdfrefximage\pdflastximage}
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
 
-\lstset{
-        basicstyle=\ttfamily\color{black},
+\lstset{basicstyle=\ttfamily\small\color{black},
         breakatwhitespace=true,
         breaklines=true,
         captionpos=b,
         commentstyle=\ttfamily\color{gray},
         keywordstyle=\ttfamily\color{blue},
         language={C++},
-        morekeywords={await,fixedsize,from,resumable,segmented,yield},
+        morekeywords={await,fixedsize,from,noexcept,resumable,segmented,yield},
         showspaces=false,
         showstringspaces=false,
         showtabs=false,
-        stringstyle=\ttfamily\color{red}
-}
+        stringstyle=\ttfamily\color{red}}
 
-\newcommand{\cpp}[1]{
-    {\lstinline !#1!}
-}
-\newcommand{\cppf}[1]{
-    \lstinputlisting {code/#1}
-}
+\newcommand{\cpp}[1]{{\lstinline !#1!}\xspace}
+\newcommand{\cppf}[1]{\lstinputlisting {code/#1}}
 
-\newcommand{\await}{\textit{\cpp{await}}}
-\newcommand{\channel}{\textit{\cpp{channel<>}}}
-\newcommand{\ectx}{\textit{\cpp{std::execution_context}}}
-\newcommand{\ectxop}{\textit{\cpp{std::execution_context::operator()()}}}
-\newcommand{\ectxcurrent}{\textit{\cpp{std::execution_context::current()}}}
-\newcommand{\excpt}{\textit{\cpp{std::exception_ptr}}}
-\newcommand{\main}{\textit{\cpp{main()}}}
-\newcommand{\rlop}{\textit{\cpp{__resumable_lambda::operator()}}}
-\newcommand{\rlthis}{\textit{\cpp{[]this}}}
-\newcommand{\rlwanted}{\textit{\cpp{template<typename T> T* resumable_lambda::wanted()}}}
-\newcommand{\resumable}{\textit{\cpp{resumable}}}
-\newcommand{\tuple}{\textit{\cpp{std::tuple<>}}}
-\newcommand{\yield}{\textit{\cpp{yield}}}
+\newcommand{\await}{\cpp{await}}
+\newcommand{\channel}{\cpp{channel<>}}
+\newcommand{\ectx}{\cpp{std::execution_context}}
+\newcommand{\ectxop}{\cpp{std::execution_context::operator()()}}
+\newcommand{\ectxcurrent}{\cpp{std::execution_context::current()}}
+\newcommand{\excpt}{\cpp{std::exception_ptr}}
+\newcommand{\main}{\cpp{main()}}
+\newcommand{\rlop}{\cpp{__resumable_lambda::operator()}}
+\newcommand{\rlthis}{\cpp{[]this}}
+\newcommand{\rlwanted}{\cpp{template<typename T> T* resumable_lambda::wanted()}}
+\newcommand{\resumable}{\cpp{resumable}}
+\newcommand{\tuple}{\cpp{std::tuple<>}}
+\newcommand{\yield}{\cpp{yield}}
 
-\newcommand{\abschnitt}[1]{
-    \addcontentsline{toc}{subsection}{#1}
-    \subsection*{#1}
-}
-
-\newcommand{\uabschnitt}[1]{
-    \addcontentsline{toc}{subsubsection}{#1}
-    \paragraph*{#1}
-}
+\newcommand{\abschnitt}[1]{\addcontentsline{toc}{subsection}{#1}\subsection*{#1}}
+\newcommand{\uabschnitt}[1]{\addcontentsline{toc}{subsubsection}{#1}\paragraph*{#1}}

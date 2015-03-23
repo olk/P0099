@@ -1,171 +1,148 @@
 \abschnitt{Discussion}
-\uabschnitt{Side stack/activation frame}
-Resumable functions as well as resumable lambdas require storage for local
-(stack) variables and the control block (preserved CPU register). The compiler
-analyzes the function body, determines the required size and allocates the
-activation frame.
+\uabschnitt{Memory requirements}
+For simple function bodies, stackless and stackful context switching have
+similar memory requirements.\\
+\newline
+Resumable functions require storage for local (stack) variables and the control
+block (preserved CPU register). The compiler analyzes the function body,
+determines the required size and allocates the activation frame\footnote{as
+N4134 describes, the allocation of the activation frame can be optimized out
+if the resumable function does not yield}
 \cppf{N4134/fib.cpp}
 In the example of calculating Fibonacci numbers using a resumable function
 (simple function body, no subroutine is called), the compiler reserves space
-(activation frame) for local variables \textit{n}, \textit{a}, \textit{b} and
-\textit{next}. Those variables are not accessed via the stack pointer as common
-in ordinary functions - instead the compiler generates inside \cpp{fib()}
-assembler code, that references the local variables by re-useing another CPU
-register. The application stack is not used and the stack pointer is not
-changed.\\
+(activation frame) for local variables \emph{n}, \emph{a}, \emph{b} and
+\emph{next}. Those variables are not accessed via the stack pointer. The
+processor stack is not used and the stack pointer is not
+changed\footnote{depending on the calling convetion, \emph{x86} requires to
+store parameters and return address on the stack - other architectures/ABIs do
+not have this requirement}.\\
 \newline
 Each stackful execution context owns a stack, e.g. the side stack is assigned to
 the stack pointer. The control block (CPU register) is pushed to/ poped from the
-side stack.
-\cppf{fib.cpp}
+side stack, thus the applciation stack remains unchanged.
+\cppf{N4397/fib.cpp}
 In the case of calculating the Fibonacci numbers using a stackful execution
-context, the compiler stores the local variables \textit{n}, \textit{a},
-\textit{b} and \textit{next} on the side stack. The local variables are accessed
+context, the compiler stores the local variables \emph{n}, \emph{a},
+\emph{b} and \emph{next} on the side stack. The local variables are accessed
 via the stack pointer.
-\paragraph*{Summary}
-For simple function bodies, stackless and stackful context switching has similar
-memory requirements. A stackful and a stackless context switch differ only in
-how local data are accessed - a stackful execution context uses its stack
-pointer (pointing to the side stack) while a stackless resumable function
-re-uses another CPU register to point to the activation frame holding its local
-variables. In both cases the application stack remains unchanged.
 
 \uabschnitt{Calling subroutines}
-Resumable functions/lambdas share the same application stack, e.g. the stack
-pointer is unchanged and holds an address from the application stack (\main or
-thread).\\
-If a subroutine is invoked inside the body of a resumable function/lambda, then
-a stack frame is allocated on the application stack (not on the activation
-frame)! As a consequence stack frames of subroutines have to be removed from the
-application stack before the resumable function/lambda yields back to its caller
-(suspend to its resumption point). Otherwise the stack frames would be corrupted
-(overwritten) by other code using the application stack. Hence a yield from
-nested call stack is not permitted.\\
-The benefit of stackless resumable context switching consists in sharing the
-application stack because a resumable function/lambda does not need to allocate
-memory for the stack frames of subroutines, invoked inside the body of that
-resumable function/lambda.
-\cppf{N4244/simple.cpp}
-The stackless resumable lambda \textit{l} in the example above stores variable 
-\textit{j} in its activation frame (storage of capture list). The stack frames of
-\cpp{std::printf()} are allocated on the application stack and will be removed
-before \yield is executed.
+Stackless coroutines do not need to allocate memory for stack frames for called
+subroutines while (in contrast) stackful context switching permitts suspention
+from nested call stack.\\
 \newline
-Of course even stackless resumable functions/lambdas might fail if the available
-stack space is exceeded by subroutines (for instance recursive invocation).\\
+Resumable functions share the same processor stack, e.g. the stack pointer is
+unchanged and holds an address from the processor stack (\main or thread).\\
+If a subroutine is invoked inside the body of a resumable function, then a stack
+frame is allocated on the processor stack (not on the activation frame)! As a
+consequence stack frames of subroutines have to be removed from the application
+stack before the resumable function yields back to its caller (suspend to its
+resumption point). Otherwise the stack frames would be corrupted (overwritten)
+by other code using the processor stack.\\
+In other words: the calling convention of the ABI\footnote{Application Binary
+Interface} dictates that, after the resumable function returns (suspended), the
+stack pointer contains the same address as before the resumable function was
+resumed.\\
+Hence a yield from nested call stack is not permitted.\\
+The benefit of stackless resumable context switching consists in sharing the
+processor stack because a resumable function does not need to allocate memory
+for the stack frames of subroutines, invoked inside the body of that resumable
+function.\\
+\newline
+Of course even stackless resumable functions might fail if the available stack
+space is exceeded by subroutines (for instance recursive invocation).\\
 \newline
 In the context of stackful context switching each execution context owns a
-distinct side stack. In contrast to resumable functions/lambdas the side stack
-is assigned to the stack pointer (e.g. the stack pointer has to be exchanged
-during each context switch).\\
+distinct side stack. In contrast to resumable functions the side stack is
+assigned to the stack pointer (e.g. the stack pointer has to be exchanged during
+each context switch).\\
 As a consequence, all local variables and all stack frames of subroutines are
 allocated on the side stack. Hence each stackful execution context requires
 enough memory to hold the stack frames of the longest call chain of subroutines.
 Therefore stackful context switching has a higher memory footprint than
-stackless resumable functions/lambdas (but this applies only in the context of
-calling subroutines).\\
+resumable functions (but this applies only in the context of calling
+subroutines).\\
 On the other side, it is benefital to use side stacks because the stack frames
 of subroutines remain intact while the execution context gets suspended. This is
 the reason why stackful context switching permits yielding from nested call
 stack.
-\cppf{simple.cpp}
-Variable \textit{l1} is passed to stackful execution context \textit{l2} via
-the capture list of \textit{l2}. The stack frames of \cpp{std::printf()} are
-allocated on the side stack that \textit{l2} owns.
-\paragraph*{Summary}
-Subroutines called inside stackless resumable functions/lambdas share the
-application stack and do not use space on the activation frame. Hence resumable
-functions/lambdas have in this scenario a lower memory requirement than stackful
-context switching. This introduces the constraint that stack frames of
-subroutines have to be removed from the application stack before the resumable
-function/lambda yields back to its resumption point (point in code were it was
-resumed/invoked). Hence, suspending a resumable function/lambda from nested call
-stack is not possible.\\
-\newline
-Stackful context switching permits stack frames of subroutines on the side stack
-while the execution context is suspended.
+\cppf{N4397/simple.cpp}
+Variable \emph{l1} is passed to stackful execution context \emph{l2} via
+the capture list of \emph{l2}. The stack frames of \cpp{std::printf()} are
+allocated on the side stack that \emph{l2} owns.
 
-\uabschnitt{Resume/suspend operations}
-Resumable functions/lambdas (as proposed in N4134 and N4244) provide two
-operations for context switching (asymmetric transfer of execution control).
-One operation to resume (\cpp{operator()}) and one operation to suspend the
-context (\yield inside the function body). The caller and the resumable
-function/lambda are coupled, e.g. a resumable function/lambda can only jump back
-to the point in the code where it was resumed.\\
+\uabschnitt{Control block}
+The number of registers preserved (in the control block) by a context switch is
+insignificant for the overall performance.\\
 \newline
-For N resumable functions/lambdas 2*N context switches are required.\\
+The number of CPU registers which have to be preserved (e.g. to preserve the
+execution state) are described by the calling convention (part of the ABI).\\
+A load/store operation of CPU register takes usually one CPU cycle and some
+architectures provide instructions to load/store multiple registers at once.\\
+Of course a smart compiler might optimize the context switch by reducing the
+register set due code analyzation. But compared with ordinary code like memory
+allocation, which takes multiple hundreds of CPU cycles, the load/store of
+CPU registers is negligible.
+
+\uabschnitt{Asymmetric vs. symmetric}
+Symmetric transfer of execution control is more efficient than the asymmetric
+mechanism.\\
+\newline
+Resumable functions (as proposed in N4134) provide two operations for context
+switching (asymmetric transfer of execution control). The caller and the
+resumable function are coupled, e.g. a resumable function can only jump back to
+the point in the code where it was resumed.
+\imgc{asymm.pdf}
+For N resumable functionss \emph{2N} context switches are required.\\
+\newline
 This is sufficient in the case of generators but in the context of cooperative
 multitasking it is inefficient.
-%\imgc{asymm.pdf}
-In contrast to resumable functions/lambdas the proposed stackful execution
-context (\ectx) provides only one operation to resume/suspend the context
-(\ectxop). The execution control is directly transfered from one
-execution context to another (symmetric transfer-mechanism) - no jump back to
-the caller. This enables a much more efficient implementation of cooperative
-multitasking (no additional context switch back to caller; direct context switch
-to next task) as well as the implementation of generators. As an consequence,
-the next execution context has to be explicitly specified.\\
+In contrast to resumable functions the proposed stackful execution context
+(\ectx) provides only one operation to resume/suspend the context (\ectxop). The
+execution control is directly transfered from one execution context to another
+(symmetric transfer-mechanism) - no jump back to the caller. This enables a
+efficient implementation of cooperative multitasking (no additional context
+switch back to caller, e.g. direct context switch to next task) as well as the
+implementation of generators.\\
+As an consequence, the next execution context has to be explicitly specified.\\
 \newline
-Resuming N instances of \ectx takes N+1 context switches.
-%\imgc{symm.pdf}
-\paragraph*{Summary}
-Stackful context switching as proposed in this paper, provides only one
-resume/suspend operation (symmetric transfer of execution control). In the use
-case of cooperative multitasking this is more efficient (less context switches
-required).
+\imgc{symm.pdf}
+Resuming N instances of \ectx takes \emph{N+1} context switches.
 
 \uabschnitt{Passing data}
-Because of the asymmetric resume/suspend operations of N4134 and N4244, both
-proposals apply well to generator-examples, e.g. returning data from the
-resumable function/lambda (for instance using \yield).\\
+Because of the asymmetric resume/suspend operations of N4134, the proposal
+applies well to generator-examples, e.g. returning data from the resumable
+function.\\
+\newline
 Passing data into the body of resumable functions (N4123) requires helper
 classes like \channel.
 \cppf{N4134/channel.cpp}
-For resumable lambdas of N4244 the member function \rlwanted has to be used.
-\cppf{N4244/wanted.cpp}
-In both cases the way how data have to be passed into the body is not intuitive
-and provides some problems how returned values should be accessed (because of
-the asymmetric nature of N4134 and N4244). For instance multiple parameters must
-be transported with an container (\tuple) or via multiple invocations of
-\rlwanted (including additional context switches).\\
+In this case the way how data are passed into the body is not intuitive and
+provides some problems.\\
 \newline
-An alternative would be not directly support parameter passing in the API.\\
 During the use of \cpp{execution_context} from boost.context\cite{bcontext} a
 common pattern was to pass lambdas to the execution context and use the capture
 list to transfer data into and to return data from the body. Exceptions are
-transfered via a reference of \excpt and parameters (input/output) are accessed
+transfered via \excpt and parameters (input/output) are accessed
 via captured addresses (reference or pointer).
-\cppf{param.cpp}
+\cppf{N4397/param.cpp}
 Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
 parameter are transfered between a context switch. Member variable
-\textit{callee\_} represents a new execution context and captures the
-\textit{this}-pointer of \cpp{X}. The body converts a integer variable (input)
+\emph{callee\_} represents a new execution context and captures the
+\emph{this}-pointer of \cpp{X}. The body converts a integer variable (input)
 into a string (output). Exceptions, thrown by the conversion, are transported
-via member variable \textit{exptr\_}.
+via member variable \emph{exptr\_}.
 
-\uabschnitt{Summary \textit{stackless} resumable function/lambda}
-\begin{itemize}
-    \item   for each resumable function/lambda an activation frame is allocated
-    \item   activation frame (local variables, control block) and stack are
-            distinct
-    \item   application stack is shared between resumable functions/lambdas
-    \item   N4134/N4244: asymmetric context switching -> tight coupling between
-            caller and invoker
-    \item   returning data from resumable function/lambda via \yield etc.
-    \item   no intuitive passing data into body of resumable function/lambda
-    \item   suspend operation from nested call stack is not permitted
-\end{itemize}
-
-\uabschnitt{Summary \textit{stackful} execution context}
+\uabschnitt{Summary \emph{stackful} execution context}
 \begin{itemize}
     \item   each stackful execution context owns a side stack (fixed-size or
             linked stack)
     \item   activation frame and stack are the same, not distinct
     \item   stack is not shared
-    \item   symmetric context switching -> no coupling between caller and
-            invoker (efficiency)
-    \item   passing data via lambda capture list
     \item   suspend operation from nested call stack is permitted
+    \item   symmetric context switching is preferred because of efficiency
+    \item   passing data via lambda capture list (addresses of lvalues)
 \end{itemize}
 Higher level frameworks based on \ectx can realize more sophisticated APIs
 (like range based for etc.) - as an example the API of N3985\cite{N3985} is

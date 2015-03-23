@@ -51,34 +51,23 @@ Characteristics of resumable functions:
           function to store local data and control block
     \item thight coupling between caller and resumable function (asymmetric
           control transfer-mechanism)
-    \item implicit \textit{return}-statement\cite{N4134} (code transformation)
+    \item implicit \emph{return}-statement\cite{N4134} (code transformation)
 \end{itemize}
 
-\uabschnitt{resumable lambda}
-N4244\cite{N4244} describes resumable lambdas as stackless coroutines -
-introducing new keywords\\
-\resumable, flavours of \yield and \rlthis. Stackless resumable lambdas are
-equivalent to asymmetric coroutines.\\
-Characteristics of resumable lambdas:
+\uabschnitt{processor stack}
+also known as call stack - is a chunk of memory into which the processor's
+stack pointer is pointing. The processor stack might belong to:
 \begin{itemize}
-    \item stackless
-    \item body of a lambda is available to the compiler at the point
-          where the lambda type is defined
-    \item compiler can analyse the lambda body to determine what stack
-          variables need to be accommodated
-    \item space can be made available for the stack variables in exactly the
-          same way as is already done for the capture set
-    \item thight coupling between caller and resumable lambda (asymmetric
-          control transfer-mechanism)
+    \item an application's inital (or only) thread
+    \item an explicitly-launched thread
+    \item a sub-thread execution context (coroutine)
 \end{itemize}
 
-\uabschnitt{application stack}
-also known as call stack - is a chunk of memory assigned to the stack pointer
-and used to store information (for instance local variables) about the active
-subroutines. The stack used by function \main grows on demand while the stack
-assigned to a thread has a fixed size - usually 1MB (Windows) till 2MB (Linux),
-but some platforms use smaller stacks (64KB on HP-UX/PA and 256KB on
-HP-UX/Itanium).
+The stack is used to store data like local variables, content of CPU registers
+(because of subroutine calls) etc. The processor stack assigned to function
+\main grows on demand while the stack assigned to a thread has a fixed size -
+usually 1MB (Windows) till 2MB (Linux), but some platforms use smaller stacks
+(64KB on HP-UX/PA and 256KB on HP-UX/Itanium).
 
 \uabschnitt{side stack}
 is a call stack that is used in the case of stackful context switching, e.g.
@@ -90,13 +79,12 @@ stack remains unchanged.
 is a chunk of memory used by resumable functions to store local (stack)
 variables and the control block. Each resumable function is bound to its own
 activation frame. The stack pointer remains unchanged, e.g. it still points to
-the application stack. Thus stack frames of subroutines are allocated on the 
-application stack.\\
-Resumable lambdas re-use the storage of the capture set for the same purpose.
+the processor stack. Thus stack frames of subroutines are allocated on the 
+processor stack.
 
 \uabschnitt{linked stack}
-also known as \textit{split stack}\cite{gccsplit} or
-\textit{segmented stack}\cite{llvmseg}, represents a on demand growing stack
+also known as \emph{split stack}\cite{gccsplit} or
+\emph{segmented stack}\cite{llvmseg}, represents a on demand growing stack
 with a non-contigous address range.\\
 Applications compiled with support for linked stacks can use (link against)
 libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
