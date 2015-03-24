@@ -74,13 +74,12 @@ private:
 
 int main(){
     std::istringstream is("1+1");
-    bool done=false;
     char c;
     // access current execution context
     auto m=std::execution_context::current();
     // use of linked stack (grows on demand) with initial size of 1KB
     std::execution_context l(
-    auto l=[&is,&m,&done,&c]()resumable(segmented(1024)){
+    auto l=[&is,&m,&c]()resumable(segmented(1024)){
             Parser p(is,
                      // callback, used to signal new symbol
                      [&m,&c](char ch){
@@ -88,11 +87,10 @@ int main(){
                         m(); // resume main-context
                      });
             p.run(); // start parsing
-            done=true; // signal termination
         });
     try{
         // inversion of control: user-code pulls parsed data from parser
-        while(!done){
+        while(l){
             l(); // resume parser-context
             std::cout<<"Parsed: "<<c<<std::endl;
         }

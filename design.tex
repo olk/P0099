@@ -160,7 +160,7 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    void operator()() noexcept & (1)\\
+    {\ttfamily\small\color{black}{\color{blue}void} {\color{blue}operator}()() {\color{blue}noexcept}} & (1)\\
 
     \midrule
 \end{tabular}
@@ -185,13 +185,53 @@ resumed (return of\\
 The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
 returns \emph{*this} (e.g. resuming an already running context).
 
+\subparagraph*{explict bool operator}
+test if context has not reached end of coroutine function\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    {\ttfamily\small\color{black}{\color{blue}explicit} {\color{blue}bool} {\color{blue}operator}() {\color{blue}noexcept}} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns \emph{true} if context is not terminated\\
+\end{description}
+
+{\bfseries Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator!}
+test if context has reached end of coroutine function\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    {\ttfamily\small\color{black}{\color{blue}bool} {\color{blue}operator}!() {\color{blue}noexcept}} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns \emph{true} if context is terminated\\
+\end{description}
+
+{\bfseries Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
 \subparagraph*{current}
 accesses the current active execution context\\
 
 \begin{tabular}{ l l }
     \midrule
 
-    static execution\_context current() & (1)\\
+    \cpp{static execution_context current()} & (1)\\
 
     \midrule
 \end{tabular}
