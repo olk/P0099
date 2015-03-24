@@ -21,7 +21,9 @@ of the side stack tells the compiler to generate a stackful execution context.\\
 Because of the symmetric context switching (only one operation transfers the
 control of execution) the target context must be explicitly specified.\\
 Exchanging data between different execution context's requires the use of lambda
-captures.\\
+captures.
+
+\uabschnitt{Start-up}
 A main execution context is created at startup (entering function \main; same
 applies for threads). The current (active) execution context can be accessed
 through the static member function\\
