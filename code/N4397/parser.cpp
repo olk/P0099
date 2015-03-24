@@ -74,36 +74,24 @@ private:
 
 int main(){
     std::istringstream is("1+1");
-    bool done=false;
     char c;
-    std::exception_ptr except;
     // access current execution context
     auto m=std::execution_context::current();
     // use of linked stack (grows on demand) with initial size of 1KB
     std::execution_context l(
-    auto l=[&is,&m,&done,&except,&c]()resumable(segmented(1024)){
+    auto l=[&is,&m,&c]()resumable(segmented(1024)){
             Parser p(is,
                      // callback, used to signal new symbol
                      [&m,&c](char ch){
                         c=ch;
                         m(); // resume main-context
                      });
-            try{
-                p.run(); // start parsing
-            }catch(...){
-                // store other exceptions in exception-pointer
-                except=std::current_exception();
-            }
-            done=true; // signal termination
-            m(); // resume main-context
+            p.run(); // start parsing
         });
     try{
         // inversion of control: user-code pulls parsed data from parser
-        while(!done){
+        while(l){
             l(); // resume parser-context
-            if(except){
-                std::rethrow_exception(except);
-            }
             std::cout<<"Parsed: "<<c<<std::endl;
         }
     }catch(const std::exception& e){
