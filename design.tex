@@ -16,16 +16,33 @@ Why not construct \ectx with an 'resumable lambda'-like syntax, instead of
 passing a lambda as argument? \ectx is constructed like a lambda but actually it
 is not of this type (because it is constructible from \ectxcurrent too).
 \cppf{N4397/rl1.cpp}
-Because of the symmetric context switching (only one operation transfers the
-control of execution), e.g. the target context must be explicitly specified.\\
 The keyword \resumable together with an hint (attribute) about the type and size
-of the side stack.\\
+of the side stack tells the compiler to generate a stackful execution context.\\
+Because of the symmetric context switching (only one operation transfers the
+control of execution) the target context must be explicitly specified.\\
 Exchanging data between different execution context's requires the use of lambda
 captures.\\
 A main execution context is created at startup (entering function \main; same
 applies for threads). The current (active) execution context can be accessed
 through the static member function\\
 \ectxcurrent.
+
+\uabschnitt{Control block}
+Each instance of \ectx owns one control block and each control block contains a
+pointer to its \emph{parent} control block, e.g. the context who has resumed the
+execution context (\ectxop called).\\
+Static member function \ectxcurrent returns a \ectx pointing to the current
+control block. The current active control block is stored in an internal thread
+local pointer.
+
+\uabschnitt{Termination}
+If the body (lambda) of the coroutine reaches its end, the parent execution
+context is resumed, e.g. function \ectxop returns in the parent context.
+
+\uabschnitt{Exceptions}
+A exception thrown inside the coroutine body (lambda) is catched, the parent
+execution context is resumed and the exception is re-thrown inside the parent
+context (e.g. the exception is re-throw in \ectxop).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -80,10 +97,7 @@ constructs new execution context\\
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
 control block. Resuming one instance modifies the control block of the other
-\ectx too.\\
-As an alternative, if this is behaviour is not permitted, the stack has to be
-copied. That requires identification and modification of local variables
-containing to address of the stack.
+\ectx too.
 
 \subparagraph*{(destructor)}
 destroys a execution context\\
@@ -138,10 +152,7 @@ copies/moves the coroutine object\\
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
 control block. Resuming one instance modifies the control block of the other
-\ectx too.\\
-As an alternative, if this is behaviour is not permitted, the stack has to be
-copied. That requires identification and modification of local variables
-containing to address of the stack.
+\ectx too.
 
 \subparagraph*{operator()}
 jump context of execution\\
@@ -165,10 +176,14 @@ jump context of execution\\
 
 {\bfseries Notes}
 \newline
-If an exception leaves this function \cpp{std::terminate()} is called. When this
-function returns, \cpp{std::exit(0)} is called. The behaviour is undefined if
-\cpp{operator()} is called while \cpp{current()} returns \emph{*this} (e.g.
-resuming an already running context).
+A exception thrown inside the coroutine body (lambda) is catched, the parent
+execution context is resumed and the exception is re-throw in the parent
+context (out of \ectxop).\\
+If the coroutine function terminates (reaches end), the parent context is
+resumed (return of\\
+\ectxop in the parent execution context).\\
+The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
+returns \emph{*this} (e.g. resuming an already running context).
 
 \subparagraph*{current}
 accesses the current active execution context\\
@@ -182,8 +197,8 @@ accesses the current active execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] construct a instance of \ectx associated with the current active
-              execution context\\
+    \item[1)] construct a instance of \ectx pointing to the control block of the
+              current, active execution context\\
 \end{description}
 
 {\bfseries Notes}
