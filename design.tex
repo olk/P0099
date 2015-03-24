@@ -31,8 +31,9 @@ through the static member function\\
 
 \uabschnitt{Control block}
 Each instance of \ectx owns one control block and each control block contains a
-pointer to its \emph{parent} control block, e.g. the context who has resumed the
-execution context (\ectxop called).\\
+pointer to its \emph{parent} control block, e.g. it for a \emph{parent pointer
+tree}. With this data structure the parent context, who has resumed the
+execution context (\ectxop called), is known.\\
 Static member function \ectxcurrent returns a \ectx pointing to the current
 control block. The current active control block is stored in an internal thread
 local pointer.
