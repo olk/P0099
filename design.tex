@@ -5,6 +5,15 @@ coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
 threads (executing tasks in a cooperative multitasking environment,
 boost.fiber\cite{bfiber}).
 
+prolog of \cpp{execution_context::operator()} preserves CPU register set + stack pointer, e.g.
+the content of those registers is stored in the associated control block. additionally the
+control block of \cpp{*this} is resumed, e.g. the prolog loads the CPU register set and stack pointer
+into the CPU.
+
+epilog of \cpp{execution_context::operator()} restores the control block (registers + stack) of
+the outer (resumed) context while the instruction in the epilog preserve the control block
+of the suspended context.
+
 \uabschnitt{Class \ectx}
 Based on the implementation experience with \cpp{execution_context} in
 boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber}, the author
