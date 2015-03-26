@@ -89,9 +89,8 @@ int main(){
             p.run(); // start parsing
         });
     try{
-        // inversion of control: user-code pulls parsed data from parser
-        while(l){
-            l(); // resume parser-context
+        // inversion of control: user-code pulls parsed symbols from parser
+        while(l()){
             std::cout<<"Parsed: "<<c<<std::endl;
         }
     }catch(const std::exception& e){

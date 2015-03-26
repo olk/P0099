@@ -1,16 +1,82 @@
 \abschnitt{Definitions}
+This section gives an overview about the wording used in this proposal.
 
 \uabschnitt{Execution context}
 environment in which program logic is evaluated (CPU registers, stack).
 
-\uabschnitt{Control block}
-holds a set of registers (callee-saved registers, instruction pointer, stack
-pointer) describing the execution context.
+\uabschnitt{Activation record}
+also known as \emph{activation frame}, \emph{control block} (\emph{stack frame}
+is a special activation record).\\
+An \emph{activation record} is a data structure containing the state of a
+particular function call. Folowing data are part of a activation record:
+\begin{itemize}
+    \item a set of registers (defined by the calling convention of the ABI
+        \footnote{Application Binary Interface})
+    \item local variables
+    \item parameters to the function
+    \item eventually return value
+\end{itemize}
+
+\uabschnitt{Stack frame}
+the activation records are allocated in strict last-in-first-out order on the
+processor stack - placed by incrementing/decrementing the stack pointer on
+function call/return.
+
+\uabschnitt{Heap-allocated activation record}
+each activation record is allocated on a separate heap. The activation record
+holds a pointer to its parent activation record (parent pointer tree).
+
+\uabschnitt{Linear stack}
+is a contiguous stack and the traditional stack model of C++. The allocation,
+deallocation and linkage of activation records (stack frames in this context)
+are done by incrementing/decrementing the stack pointer.
+
+\uabschnitt{Non-contiguous stack}
+is a \emph{parent pointer tree}-structure used to store activation records. It
+is a stack with branches, e.g. activation records can outlive the context they
+were created in.
+
+\uabschnitt{Processor stack}
+is a chunk of memory into which the processor's stack pointer is pointing. The
+processor stack might belong to:
+\begin{itemize}
+    \item an application's inital (or only) thread
+    \item an explicitly-launched thread
+    \item a sub-thread execution context (coroutine)
+\end{itemize}
+
+The processor stack assigned to function \main is a linear (contiguous) stack.
+Often, the memory managment system is used to detect a stack overflow (and
+allocate more memory). Stacks assigned to threads can not easily extended if
+an overflow occurs; instead stacks with a fixed size are used - usually 1MBs
+(Windows) till 2MB (Linux), but some platforms use smaller stacks (64KB on
+HP-UX/PA and 256KB on HP-UX/Itanium).
+
+\uabschnitt{Side stack}
+is a call stack that is used in the case of stackful context switching, e.g.
+each execution context gets its own stack (assigned to stack pointer). Thus
+stack frames of subroutines are allocated on the side stack, the application
+stack remains unchanged.
+
+\uabschnitt{Linked stack}
+also known as \emph{split stack}\cite{gccsplit} or
+\emph{segmented stack}\cite{llvmseg}, is a non-contiguous stack, that grows on
+demand. An overflow handler allocates new chunk of memory as necessary. It has a
+low performance penalty - ca. 5-10\% overhead.\\
+Applications compiled with support for linked stacks can use (link against)
+libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
+chapter 'Backward compatibility').
+
+\uabschnitt{Parent pointer tree}
+data structure in which each node has a pointer to its parent, but no pointer to
+its children. Traversion from any node to its ancestors is possible but not to
+any other node.\\
+Used as call stack, the structure is called \emph{cactus stack}.
 
 \uabschnitt{Coroutine}
 enables explicit suspend and resume of its progress via additional operations by
-preserving execution state and thus provides an enhanced control flow.
-Coroutines have following characteristics\cite{N3985}:
+preserving execution state (\emph{activation record}) and thus provides an
+enhanced control flow. Coroutines have following characteristics\cite{N3985}:
 \begin{itemize}
     \item values of local data persist across context switches
     \item execution is suspended as control leaves coroutine and resumed at
@@ -19,6 +85,9 @@ Coroutines have following characteristics\cite{N3985}:
     \item first-class object or compiler-internal structure
     \item stackless or stackful
 \end{itemize}
+
+\uabschnitt{Toplevel context function}
+is a function executed by a coroutine (stackless or stackful).
 
 \uabschnitt{Asymmetric coroutine}
 provides two distinct operations for the context switch - one operation to
@@ -47,50 +116,9 @@ coroutines.\\
 Characteristics of resumable functions:
 \begin{itemize}
     \item stackless
-    \item allocates memory (activation frame) for the body of the resumable
-          function to store local data and control block
+    \item uses heap allocated activation records (referred as activation frames
+          in N4134)
     \item tight coupling between caller and resumable function (asymmetric
-          control transfer-mechanism)
+          control-transfer mechanism)
     \item implicit \emph{return}-statement\cite{N4134} (code transformation)
 \end{itemize}
-
-\uabschnitt{Processor stack}
-also known as call stack - is a chunk of memory into which the processor's
-stack pointer is pointing. The processor stack might belong to:
-\begin{itemize}
-    \item an application's inital (or only) thread
-    \item an explicitly-launched thread
-    \item a sub-thread execution context (coroutine)
-\end{itemize}
-
-The stack is used to store data like local variables, content of CPU registers
-(because of subroutine calls) etc. The processor stack assigned to function
-\main grows on demand while the stack assigned to a thread has a fixed size -
-usually 1MB (Windows) up to 2MB (Linux), but some platforms use smaller stacks
-(64KB on HP-UX/PA and 256KB on HP-UX/Itanium).
-
-\uabschnitt{Side stack}
-is a call stack that is used in the case of stackful context switching, e.g.
-each execution context gets its own stack (assigned to stack pointer). While
-a given side stack is active, every other stack remains unchanged.
-
-\uabschnitt{Activation frame}
-is a chunk of memory used by resumable functions to store local (stack)
-variables and the control block. Each resumable function is bound to its own
-activation frame. The stack pointer remains unchanged, e.g. it still points to
-the processor stack. Stack frames of subroutines are allocated on the 
-processor stack.
-
-\uabschnitt{Linked stack}
-also known as \emph{split stack}\cite{gccsplit} or
-\emph{segmented stack}\cite{llvmseg}, represents a stack that grows on demand
-with a non-contigous address range.\\
-Applications compiled with support for linked stacks can use (link against)
-libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
-chapter 'Backward compatibility').
-
-\uabschnitt{Parent pointer tree}
-data structure in which each node has a pointer to its parent, but no pointer to
-its children. Traversion from any node to its ancestors is possible but not to
-any other node.\\
-Used as call stack, the structure is called \emph{cactus stack}.
