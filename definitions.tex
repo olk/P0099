@@ -1,13 +1,13 @@
 \abschnitt{Definitions}
 
-\uabschnitt{execution context}
+\uabschnitt{Execution context}
 environment where program logic is evaluated in (CPU registers, stack).
 
-\uabschnitt{control block}
+\uabschnitt{Control block}
 holds a set of registers (callee-saved registers, instruction pointer, stack
 pointer) describing the execution context.
 
-\uabschnitt{coroutine}
+\uabschnitt{Coroutine}
 enables explicit suspend and resume of its progress via additional operations by
 preserving execution state and thus provides an enhanced control flow.
 Coroutines have following characteristics\cite{N3985}:
@@ -20,7 +20,7 @@ Coroutines have following characteristics\cite{N3985}:
     \item stackless or stackful
 \end{itemize}
 
-\uabschnitt{asymmetric coroutine}
+\uabschnitt{Asymmetric coroutine}
 provides two distingt operations for the context switch - one operation to
 resume and one operation to suspend the coroutine.\\
 An asymmetric coroutine is tightly coupled with its caller, e.g. suspending the
@@ -28,18 +28,18 @@ coroutine transferes the execution control back to the point in the code were it
 was called. The asymmetric control transfer-mechanism is usually used in the
 context of generators.
 
-\uabschnitt{symmetric coroutine}
+\uabschnitt{Symmetric coroutine}
 only one operation to resume/suspend the context is available.\\
 A symmetric coroutine does not know its caller, e.g. the execution control can
 be transfered to any other symmetric coroutine (must be explicitly specified).
 The symmetric control transfer-mechanism is usually used to implement
 cooperative multitasking.
 
-\uabschnitt{fiber/user-mode thread}
+\uabschnitt{Fiber/user-mode thread}
 execute tasks in a cooperative multitasking environment involving a scheduler.
 Coroutines and fibers are distinct (N4024\cite{N4024}).
 
-\uabschnitt{resumable function}
+\uabschnitt{Resumable function}
 N4134\cite{N4134} describes resumable functions as an efficient language
 supported mechanism for stackless context switching introducing two new keywords
 - \await and \yield. Resumable functions are equivalent to asymmetric
@@ -54,7 +54,7 @@ Characteristics of resumable functions:
     \item implicit \emph{return}-statement\cite{N4134} (code transformation)
 \end{itemize}
 
-\uabschnitt{processor stack}
+\uabschnitt{Processor stack}
 also known as call stack - is a chunk of memory into which the processor's
 stack pointer is pointing. The processor stack might belong to:
 \begin{itemize}
@@ -69,23 +69,29 @@ The stack is used to store data like local variables, content of CPU registers
 usually 1MB (Windows) till 2MB (Linux), but some platforms use smaller stacks
 (64KB on HP-UX/PA and 256KB on HP-UX/Itanium).
 
-\uabschnitt{side stack}
+\uabschnitt{Side stack}
 is a call stack that is used in the case of stackful context switching, e.g.
 each execution context gets its own stack (assigned to stack pointer). Thus
 stack frames of subroutines are allocated on the side stack, the application
 stack remains unchanged.
 
-\uabschnitt{activation frame}
+\uabschnitt{Activation frame}
 is a chunk of memory used by resumable functions to store local (stack)
 variables and the control block. Each resumable function is bound to its own
 activation frame. The stack pointer remains unchanged, e.g. it still points to
 the processor stack. Thus stack frames of subroutines are allocated on the 
 processor stack.
 
-\uabschnitt{linked stack}
+\uabschnitt{Linked stack}
 also known as \emph{split stack}\cite{gccsplit} or
 \emph{segmented stack}\cite{llvmseg}, represents a on demand growing stack
 with a non-contigous address range.\\
 Applications compiled with support for linked stacks can use (link against)
 libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
 chapter 'Backward compatibility').
+
+\uabschnitt{Parent pointer tree}
+data structure in which each node has a pointer to its parent, but no pointer to
+its children. Traversion from any node to its ancestors is possible but not to
+any other node.\\
+Used as call stack, the structure is called \emph{cactus stack}.
