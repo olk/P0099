@@ -1,8 +1,9 @@
 \abschnitt{Design}
 Class \ectx is derived from the work on boost.context\cite{bcontext} - it
 provides a small, basic API, suitable to implement high-level APIs for stackful
-coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
-threads (executing tasks in a cooperative multitasking environment,
+coroutines (N3985\cite{N3985}, working implementation
+boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
+cooperative multitasking environment, working implementation
 boost.fiber\cite{bfiber}).
 
 \uabschnitt{Class \ectx}
@@ -13,8 +14,9 @@ noticed that \cpp{execution_context} is almost always used together with lambdas
 the lambda captures are suitable to transport data between different execution
 context's (address of lvalue, reside on stack/heap).\\
 Why not construct \ectx with an 'resumable lambda'-like syntax, instead of
-passing a lambda as argument? \ectx is constructed like a lambda but actually it
-is not of this type (because it is constructible from \ectxcurrent too).
+passing a lambda as argument? Even if \ectx is constructed like a lambda,
+actually it isn't a lambda (it is constructible from \ectxcurrent too).\\
+\ectx is more like an handle to a \emph{capture record} of an execution context.
 \cppf{N4397/rl1.cpp}
 The keyword \resumable together with an hint (attribute) about the type and size
 of the side stack tells the compiler to generate a stackful execution context.\\
@@ -23,29 +25,53 @@ control of execution) the target context must be explicitly specified.\\
 Exchanging data between different execution context's requires the use of lambda
 captures.
 
-\uabschnitt{Start-up}
-A main execution context is created at startup (entering function \main; same
-applies for threads). The current (active) execution context can be accessed
-through the static member function\\
+\uabschnitt{First-class object}
+As first-class object the execution context can be stored in a variable or
+container.
+
+\uabschnitt{Capture record}
+Each instance of \ectx owns a toplevel activation record, the capture record.
+The capture record is a special activation record that stores addtional data
+like stack pointer, instruction pointer and a link to its parent execution
+context. That means that during a execution context switch, the execution state
+of the running context is captured and stored in the capture record while the
+content of the resumed execution context is loaded (into CPU registers etc.).
+
+\paragraph*{Parent context}
+The pointer to its \emph{parent} execution context allows to traverse the chain
+of ancestor context's, e.g. the execution context which has resumed (\ectxop
+called) the running context.
+
+\paragraph*{Active context}
+Static member function \ectxcurrent returns a \ectx pointing to the current
+capture record (e.g. execution context). The current active capture record is
+stored in an internal, thread local pointer.
+
+\paragraph*{Toplevel capture records}
+At entering \main as well as the \emph{thread-function} of a thread, a execution
+context (capture record) is created and stored in the internally.
 \ectxcurrent.
 
-\uabschnitt{Control block}
-Each instance of \ectx owns one control block and each control block contains a
-pointer to its \emph{parent} control block, e.g. it for a \emph{parent pointer
-tree}. With this data structure the parent context, who has resumed the
-execution context (\ectxop called), is known.\\
-Static member function \ectxcurrent returns a \ectx pointing to the current
-control block. The current active control block is stored in an internal thread
-local pointer.
+\uabschnitt{Suspend-on-call}
+\ectx is designed to suspend on call of \ectxop. The \emph{prolog} of \ectxop
+captures (preserves) the active execution context and loads the data from the
+capture record of the resumed context (e.g. \ectxop called on \emph{*this}) into
+the CPU.\\
+The previous running context becomes the parent of the resumed context and gets
+suspended. Thus forming a parent-child relationship between suspended and
+resumed context. The parent may vary between successive calls of \ectxop.
 
-\uabschnitt{Termination}
-If the body (lambda) of the coroutine reaches its end, the parent execution
-context is resumed, e.g. function \ectxop returns in the parent context.
+\paragraph*{Termination}
+If the body of the toplevel context function reaches its end, the parent
+execution context (pointer in the capture record) is resumed. That means that
+in the parent context the function \ectxop returns. For this purpose the
+\emph{epilog} of \ectxop loads the capture record (instruction pointer, stack
+pointer etc.) of the parent context, so that it is resumed.
 
 \uabschnitt{Exceptions}
-A exception thrown inside the coroutine body (lambda) is catched, the parent
-execution context is resumed and the exception is re-thrown inside the parent
-context (e.g. the exception is re-throw in \ectxop).
+A exception thrown inside the execution context is catched, the parent execution
+context is resumed and the exception is re-thrown inside the parent context
+(e.g. the exception is emitted by \ectxop).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -151,19 +177,13 @@ copies/moves the coroutine object\\
     \item[*this]
 \end{description}
 
-{\bfseries Notes}
-\newline
-If an instance of \ectx is copied, both instances share the same underlying
-control block. Resuming one instance modifies the control block of the other
-\ectx too.
-
 \subparagraph*{operator()}
 jump context of execution\\
 
 \begin{tabular}{ l l }
     \midrule
 
-    {\ttfamily\small\color{black}{\color{blue}void} {\color{blue}operator}()() {\color{blue}noexcept}} & (1)\\
+    {\ttfamily\small\color{black}execution\_context\& {\color{blue}operator}()()} & (1)\\
 
     \midrule
 \end{tabular}
@@ -174,22 +194,22 @@ jump context of execution\\
 
 {\bfseries Exceptions}
 \begin{description}
-    \item[1)] noexcept specification: \cpp{noexcept}\\
+    \item[1)] re-throws the exception of the resumed context in the parent context\\
 \end{description}
 
 {\bfseries Notes}
 \newline
-A exception thrown inside the coroutine body (lambda) is catched, the parent
-execution context is resumed and the exception is re-throw in the parent
-context (out of \ectxop).\\
-If the coroutine function terminates (reaches end), the parent context is
+A exception thrown inside execution context is catched, the parent execution
+context is resumed and the exception is re-throw in the parent context (out of
+\ectxop).\\
+If the toplevel context function terminates (reaches end), the parent context is
 resumed (return of\\
 \ectxop in the parent execution context).\\
 The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
 returns \emph{*this} (e.g. resuming an already running context).
 
-\subparagraph*{explict bool operator}
-test if context has not reached end of coroutine function\\
+\subparagraph*{explicit bool operator}
+test if context has not reached its end\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -209,7 +229,7 @@ test if context has not reached end of coroutine function\\
 \end{description}
 
 \subparagraph*{operator!}
-test if context has reached end of coroutine function\\
+test if context has reached its end\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -240,8 +260,8 @@ accesses the current active execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] construct a instance of \ectx pointing to the control block of the
-              current, active execution context\\
+    \item[1)] construct a instance of \ectx pointing to the capture record of
+              the current, active execution context\\
 \end{description}
 
 {\bfseries Notes}

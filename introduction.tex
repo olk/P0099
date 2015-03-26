@@ -1,0 +1,30 @@
+\abschnitt{Introduction}
+In the past multiple proposals were published to support coroutines in C++.\\
+It is astonishing that each proposal distinguishes coroutines into \emph{two}
+kinds: \emph{stackless} and \emph{stackful}.\\
+\newline
+Traditionally C++ code is compiled on a linear stack, e.g. the activation
+records are allocated in strict \emph{last-in-first-out}-order. This stack
+model allocates activation records on function call/return by
+incrementing/decrementing the stack pointer.\\
+But in the context of coroutines, e.g. switching between different execution
+context's, a linear stack introduces problems. Calling a function creates a
+activation record on the stack which is removed if the function returns.
+But for a suspended coroutine the activation record {\bfseries must not} be
+{\bfseries removed}! Additionaly, if the activation record of a suspended
+coroutine remains on the linear processor stack and other code uses the stack
+in the meanwhile, then all stack frames allocated after suspending the coroutine
+might be corrupted, if the coroutine is resumed.\\
+In order to prevent stack corruption stackless coroutines use one heap-allocated
+activation record (N4134) while stackful coroutines use a side stack. Because
+stackless coroutines use only one heap-allocated activation record for their
+toplevel context function (e.g. body of resumable function) but leave the stack
+pointer unchanged (points still into linear processor stack), called subroutines
+use the linear processor stack.\\
+Because stackful coroutines modify the stack pointer (pointing into coroutines
+own side stack), the activation records of the toplevel context function as well
+as the activation records of called subroutines are allocated on the side stack,
+not on the processor stack.\\
+This is the fundamental difference between stackless and stackful coroutines.\\
+\newline
+Traditional stack management is inadequate for coroutines.
