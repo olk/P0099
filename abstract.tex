@@ -1,0 +1,14 @@
+\abschnitt{Abstract}
+This paper proposes a \emph{unified syntax} for stackless and stackful
+coroutines. The syntax is based on the evaluation of N4397\cite{N4397}.\\
+\newline
+The most important features are:
+\begin{itemize}
+    \item first-class object that can be stored in variables or containers
+    \item introduction of new keyword \resumable together with a lambda-like
+          expression
+    \item symmetric transfer of execution control, e.g. suspend-by-call -
+          enables a richer set of control flows than asymmetric transfer of
+          control
+    \item ordinary function calls and returns not affected
+\end{itemize}

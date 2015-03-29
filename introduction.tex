@@ -1,0 +1,13 @@
+\abschnitt{Introduction}
+Traditionally C++ code is compiled for a linear stack, that means that the
+activation records are allocated in strict \emph{last-in-first-out}-order. This
+stack model allocates activation records on function call/return by
+incrementing/decrementing the stack pointer.\\
+Coroutines enable a more advanced control flow. That requires a coroutine
+outlives the context they was created in. , but a linear stack prevents this.\\
+But for a suspended coroutine the activation record {\bfseries must not} be
+{\bfseries removed}! Additionaly, if the activation record of a suspended
+coroutine remains on the linear processor stack and other code uses the stack
+in the meanwhile, then all stack frames allocated after suspending the coroutine
+might be corrupted, if the coroutine is resumed.\\
+Traditional stack management is inadequate for coroutines.
