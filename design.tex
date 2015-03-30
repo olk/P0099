@@ -1,31 +1,71 @@
 \abschnitt{Design}
-Class \ectx is derived from the work on boost.context\cite{bcontext} - it
-provides a small, basic API, suitable to implement high-level APIs for stackful
-coroutines (N3985\cite{N3985}, boost.coroutine2\cite{bcoroutine2}) and user-mode
-threads (executing tasks in a cooperative multitasking environment,
-boost.fiber\cite{bfiber}).
+The design of \ectx is based on N4397\cite{N4397} with one modification - the
+i\emph{lambda-like expression} does not have the \emph{hint} attribute.\\
+Instead the compiler desides if one activation records is sufficient
+(\emph[stackless} or a side stack is required (\emph{stackful}. The compiler 
+makes the desicion based on the analyzation of the toplevel cotnext function.
+If the compiler can prove, that context switches are only done at the toplevel
+function and not from nested call stack (from subroutines), than a
+\emph{stakcless} execution cotnext is created. Otherwise the compiler constructs
+a \ectx with a non-contiguous, linked side stack. The initial defaul stacksize
+depends on the platform.
 
-\uabschnitt{Class \ectx}
-Based on the implementation experience with \cpp{execution_context} in
-boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber}, the author
-noticed that \cpp{execution_context} is almost always used together with lambdas
-(passed as argument to the constructor of \cpp{execution_context}). Especially
-the lambda captures are suitable to transport data between different execution
-context's (address of lvalue, reside on stack/heap).\\
-Why not construct \ectx with an 'resumable lambda'-like syntax, instead of
-passing a lambda as argument? \ectx is constructed like a lambda but actually it
-is not of this type (because it is constructible from \ectxcurrent too).
-\cppf{N4397/rl1.cpp}
-Because of the symmetric context switching (only one operation transfers the
-control of execution), e.g. the target context must be explicitly specified.\\
-The keyword \resumable together with an hint (attribute) about the type and size
-of the side stack.\\
-Exchanging data between different execution context's requires the use of lambda
-captures.\\
-A main execution context is created at startup (entering function \main; same
-applies for threads). The current (active) execution context can be accessed
-through the static member function\\
+\uabschnitt{First-class object}
+As first-class object the execution context can be stored in a variable or
+container.
+
+\uabschnitt{Capture record}
+Each instance of \ectx owns a toplevel activation record, the capture record.
+The capture record is a special activation record that stores addtional data
+like stack pointer, instruction pointer and a link to its parent execution
+context. That means that during a execution context switch, the execution state
+of the running context is captured and stored in the capture record while the
+content of the resumed execution context is loaded (into CPU registers etc.).
+
+\paragraph*{Parent context}
+The pointer to its \emph{parent} execution context allows to traverse the chain
+of ancestor context's, e.g. the execution context which has resumed (\ectxop
+called) the running context.
+
+\paragraph*{Active context}
+Static member function \ectxcurrent returns a \ectx pointing to the current
+capture record (e.g. execution context). The current active capture record is
+stored in an internal, thread local pointer.
+
+\paragraph*{Toplevel capture records}
+At entering \main as well as the \emph{thread-function} of a thread, a execution
+context (capture record) is created and stored in the internally.
 \ectxcurrent.
+
+\uabschnitt{Suspend-on-call}
+\ectx is designed to suspend on call of \ectxop. The \emph{prolog} of \ectxop
+captures (preserves) the active execution context and loads the data from the
+capture record of the resumed context (e.g. \ectxop called on \emph{*this}) into
+the CPU.\\
+The previous running context becomes the parent of the resumed context and gets
+suspended. Thus forming a parent-child relationship between suspended and
+resumed context. The parent may vary between successive calls of \ectxop.\\
+As described in section Discussion, \ectxop cleans up the stack of the calling
+context. That means that parts, like \emph{parameter list} and \emph{return
+address}, are poped from the caller stack and preserved in the \emph{capture
+record} of the calling context. If this cotnext is resumed, then the preserved
+stack data (\emph{parameter list} and \emph{return address}) are restored (
+pushed to the stack) so that the calling convetion is not violated. For the
+code it looks like returning from \ectxop. The code can not decide if \ectxop
+triggers and \emph{stackless} or \emph{stackful} context switch, nor can the
+code distinghuish \ectxop from ordinary function calls.
+
+\paragraph*{Termination}
+If the body of the toplevel context function reaches its end, the parent
+execution context (pointer in the capture record) is resumed. That means that
+in the parent context the function \ectxop returns. For this purpose the
+\emph{epilog} of \ectxop loads the capture record (instruction pointer, stack
+pointer etc.) of the parent context, so that it is resumed.
+
+\uabschnitt{Exceptions}
+A exception thrown inside the execution context is catched, the parent execution
+context is resumed and the exception is re-thrown inside the parent context
+(e.g. the exception is emitted by \ectxop).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -34,7 +74,7 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable}(hint) {\color{blue}exceptions} attrs -> ret \{body\}} & (1)\\
+    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable} {\color{blue}exceptions} attrs -> ret \{body\}} & (1)\\
 
     \midrule
 
@@ -56,15 +96,6 @@ constructs new execution context\\
                   \item[params]       only empty parameter-list allowed
                   \item[mutable]      allows to modify parameters captured by copy
                   \item[resumable]    identify resumable context
-                  \item[hint]         stack type hint:
-                                      \begin{itemize}
-                                          \item \cpp{fixedsize(x=default_stacksize)}:
-                                              fixed size stack (\cpp{default_stacksize} is
-                                              platform depended)
-                                          \item \cpp{segmented(x=default_stacksize)}:
-                                              stack grows on demand (\cpp{default_stacksize}
-                                              is platform depended)
-                                      \end{itemize}
                   \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
                                       trigger \cpp{std::terminate()}
                   \item[attrs]        attributes for \cpp{operator()}
@@ -75,15 +106,6 @@ constructs new execution context\\
     \item[2)] copies \ectx, e.g. underlying control block is shared
     \item[3)] moves underlying control block to new \ectx
 \end{description}
-
-{\bfseries Notes}
-\newline
-If an instance of \ectx is copied, both instances share the same underlying
-control block. Resuming one instance modifies the control block of the other
-\ectx too.\\
-As an alternative, if this is behaviour is not permitted, the stack has to be
-copied. That requires identification and modification of local variables
-containing to address of the stack.
 
 \subparagraph*{(destructor)}
 destroys a execution context\\
@@ -134,22 +156,13 @@ copies/moves the coroutine object\\
     \item[*this]
 \end{description}
 
-{\bfseries Notes}
-\newline
-If an instance of \ectx is copied, both instances share the same underlying
-control block. Resuming one instance modifies the control block of the other
-\ectx too.\\
-As an alternative, if this is behaviour is not permitted, the stack has to be
-copied. That requires identification and modification of local variables
-containing to address of the stack.
-
 \subparagraph*{operator()}
 jump context of execution\\
 
 \begin{tabular}{ l l }
     \midrule
 
-    void operator()() noexcept & (1)\\
+    {\ttfamily\small\color{black}execution\_context\& {\color{blue}operator}()()} & (1)\\
 
     \midrule
 \end{tabular}
@@ -160,15 +173,64 @@ jump context of execution\\
 
 {\bfseries Exceptions}
 \begin{description}
-    \item[1)] noexcept specification: \cpp{noexcept}\\
+    \item[1)] re-throws the exception of the resumed context in the parent context\\
 \end{description}
 
 {\bfseries Notes}
 \newline
-If an exception leaves this function \cpp{std::terminate()} is called. When this
-function returns, \cpp{std::exit(0)} is called. The behaviour is undefined if
-\cpp{operator()} is called while \cpp{current()} returns \emph{*this} (e.g.
-resuming an already running context).
+The \emph{prolog} preserves the exectuin context of the calling context as well
+as stack parts like \emph{parameter list} and \emph{return address}
+\footnote{required only by some x86 ABIs}. Those data are restored by the
+\emph{epilog} if the callign context is resumed.
+\newline
+A exception thrown inside execution context is catched, the parent execution
+context is resumed and the exception is re-throw in the parent context (out of
+\ectxop).\\
+If the toplevel context function terminates (reaches end), the parent context is
+resumed (return of\\
+\ectxop in the parent execution context).\\
+The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
+returns \emph{*this} (e.g. resuming an already running context).
+
+\subparagraph*{explicit bool operator}
+test if context has not reached its end\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    {\ttfamily\small\color{black}{\color{blue}explicit} {\color{blue}bool} {\color{blue}operator}() {\color{blue}noexcept}} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns \emph{true} if context is not terminated\\
+\end{description}
+
+{\bfseries Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
+
+\subparagraph*{operator!}
+test if context has reached its end\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    {\ttfamily\small\color{black}{\color{blue}bool} {\color{blue}operator}!() {\color{blue}noexcept}} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns \emph{true} if context is terminated\\
+\end{description}
+
+{\bfseries Exceptions}
+\begin{description}
+    \item[1)] noexcept specification: \cpp{noexcept}\\
+\end{description}
 
 \subparagraph*{current}
 accesses the current active execution context\\
@@ -176,14 +238,14 @@ accesses the current active execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    static execution\_context current() & (1)\\
+    \cpp{static execution_context current()} & (1)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] construct a instance of \ectx associated with the current active
-              execution context\\
+    \item[1)] construct a instance of \ectx pointing to the capture record of
+              the current, active execution context\\
 \end{description}
 
 {\bfseries Notes}
