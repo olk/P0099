@@ -1,10 +1,11 @@
-// N4397: stackful execution context
+// N4398: stackless execution context
+// suspend in body of toplevel context function
 #define yield(x) p=x; mctx();
 int main(){
     int n=35;
     int p=0;
     auto mctx(std::execution_context::current());
-    auto ctx([n,&p,mctx]()mutable resumable(fixedsize(1024)){
+    auto ctx([n,&p,mctx]()mutable resumable{
             int a=0,b=1;
             while(n-->0){
                 yield(a);

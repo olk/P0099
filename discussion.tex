@@ -6,13 +6,13 @@ How can this formalism be used to express \emph{stackless} as well
 \emph{suspend-by-calling}.
 
 \uabschnitt{Calling convention}
-The calling convetion is a scheme, part of the ABI\footnote{Application Binary
+A calling convention is a scheme, part of the ABI\footnote{Application Binary
 Interfaces; an executable must be conform to, in order to be executable in the
-specified execution environment}, describing how a subroutine has to be called.
-This includes parameter list, return address, \emph{stack layout} and
+specified execution environment}, that describes how a subroutine has to be
+called. This includes parameter list, return address, \emph{stack layout} and
 cleanup.\\
-Some calling conventions (for instance x86 architecure) require that data like
-\emph{parameter list} as well as \emph{return address} are stored on the
+Some calling conventions (for instance x86 architecture) require that data like
+\emph{parameter list} as well as \emph{return address} are stored on the callers
 stack before the subroutine is invoked. Other calling conventions of other
 architectures (for instance ARM's AAPCS) do not have this restriction
 \footnote{AAPCS64: parameters in registers R0-R7/V0-V7, return address in link
@@ -21,22 +21,73 @@ parameters list requires the stack; but this is negibile as shown in the text}
 \newline
 The proposed syntax for stackless and stackful context switching requires that
 the stack is clean, e.g. no parameter list and no return address, remain on the
-stack if a context switch happens. This is a guarantee of the requirement that
-a coroutien can outlive the context is was created in.\\
+callers stack if a context switch happens. This is a guarantee of the
+requirement that a coroutien can outlive the context is was created in.\\
 In other words, that parts that would remain on the callers stack must be
 preserved and restored by a context switch (member function \ectxop). This also
 a consequence by the \emph{suspend-by-calling} concept. Previous proposals like
 N4134\cite{N4134} describe a \emph{suspend-by-returning} mechanism, e.g. the
 coroutine is suspended by calling \yield etc. (for resumable functions a return
-value transformation happens -> return value is substituded by a future-like
+value transformation happens, e.g. return value is substituted by a future-like
 object).
 
 \uabschnitt{Suspend-by-calling}
-requires symmetric transfer of execution control
-one place for mainpulation (stack and cpature record)
-requires first-calsss object
-enables broader range of control flow as asymmetric -> (oneshot) sift/resume operations
-\paragraph*{Prolog}
-\paragraph*{Epilog}
-multiple invokations and free flow of stackless coroutines
-at source level no modifications required - only implementation (rpolog/epilog) is modified
+A \emph{suspend-by-calling} requires a symmetric transfer of execution control
+as well as first-class objects in order to specify the next context to be
+resumed.\\
+This enables an arbitrary flow of context switches providing a broad range of
+control flows (for instance \emph{shift/reset}-continuations).\\
+As a consequence the part, belonging to the called function, on the caller stack
+must be poped and preserved in the callers \emph{capture record}. The caller
+context becoems suspended by calling\\
+\ectxop of another execution context. Other execution context's are able to use
+the stack in the meanwhile. If the suspended context is resumed, the preserved
+data are pushed to the stack and execution returns from \ectxop.
+
+\paragraph*{Prologue}
+The prologue of \ectxop updates the capture record (CPU registers) and popes
+some parts (part of callee's stack frame) from callers stack and preserves the
+data into callers capture record too.
+
+\paragraph*{Epilogue}
+If the context (caller context from above) is resumed, the \emph{epilogue} of\\
+\ectxop loads the capture record and pushes callee's partial stack frame on
+callers stack. The calling convention remains intact and the code, which as
+called\\
+\ectxop, can not distinguish between an ordinary function and a context switch.
+It's completely transparent for the caller.
+
+\paragraph*{Flow of control}
+Because \ectx uses a symmetric execution control transfer mechanism, the flow
+of control is arbitrary.\\
+As shown in the example below, the context's of \emph{ctx1}, \emph{ctx2} and
+\emph{ctx3} form a cycle of flow of control.\\
+The cycle is started by calling \cpp{ctx3()} (1. resume) in the main context.
+Context \emph{ctx3} starts \emph{ctx2} (2. resume) while \emph{ctx2} resumes
+\emph{ctx1}. Context \emph{ctx1} is suspended by resuming \emph{ctx3} with
+\cpp{(*other)()}. In \emph{ctx3} \cpp{ctx2()} returns and \cpp{ctx1()} resumes
+\emph{ctx1} at next. Context \emph{ctx1} terminates after returning from
+\cpp{(*other)()}. After termination of \emph{ctx1}, \emph{ctx3} is resumed
+because it has become the parent context of \emph{ctx1}) by calling \cpp{ctx1()}.
+As \emph{ctx3} terminates, the main context is resumed.
+\imgc{symm.pdf}
+
+\uabschnitt{Stackless and stackful}
+The compiler allocates for a \emph{stackless context} only one, suitable sized,
+capture record and for a \emph{stackful context} a side stack (linked stack,
+e.g. non-contiguous, on demand growing).\\
+In order to decide what kind of context has to be generated, the compiler has to
+analyse the toplevel context function. Following use cases have to be
+distinguished:
+\begin{itemize}
+    \item no context switch: generate an ordinary function
+    \item context switch at toplevel: create a \emph{stackless} context
+    \item in all other cases: generate a \emph{stackful} context
+\end{itemize}
+\cppf{N4398/fibonacci.cpp}
+In other words, if \ectxop is called inside the body of the toplevel context
+function (as shown in Fibonacci example above) a \emph{stackless} context is
+sufficient.
+\cppf{N4398/parser.cpp}
+Calling a context switch from a nested call stack requires a \emph{stackful}
+context.

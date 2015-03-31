@@ -9,8 +9,8 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="447.40732"
-   height="177.05566"
+   width="484.28137"
+   height="188.30566"
    id="svg3239"
    version="1.1"
    inkscape:version="0.48.5 r10040"
@@ -34,6 +34,76 @@
          transform="matrix(-0.4,0,0,-0.4,-4,0)"
          inkscape:connector-curvature="0" />
     </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-0"
+       style="overflow:visible">
+      <path
+         id="path4176-0"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-7"
+       style="overflow:visible">
+      <path
+         id="path4176-8"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-4"
+       style="overflow:visible">
+      <path
+         id="path4176-3"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-9"
+       style="overflow:visible">
+      <path
+         id="path4176-7"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Mend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Mend-8"
+       style="overflow:visible">
+      <path
+         id="path4176-87"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -43,8 +113,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="1.979899"
-     inkscape:cx="152.75074"
-     inkscape:cy="-6.9248896"
+     inkscape:cx="137.09689"
+     inkscape:cy="59.378436"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -76,147 +146,224 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(-139.19363,-106.95516)">
+     transform="translate(-156.86778,60.225082)">
     <text
        xml:space="preserve"
        style="font-size:10px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="158.24733"
-       y="113.79305"
+       x="217.84633"
+       y="-53.387192"
        id="text3247"
        sodipodi:linespacing="125%"><tspan
          sodipodi:role="line"
          id="tspan3249"
-         x="158.24733"
-         y="113.79305"
+         x="217.84633"
+         y="-53.387192"
          style="font-size:9px">int main() {</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="125.04305"
+         x="217.84633"
+         y="-42.137192"
          id="tspan3253"
-         style="font-size:9px">    auto mctx = std::execution_context::current();</tspan><tspan
+         style="font-size:9px">    std::execution_context * other = nullptr;</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="136.29306"
-         id="tspan3257"
-         style="font-size:9px">    auto ctx1 = [&amp;mctx] () resumable( fixedsize( 1024) ) {</tspan><tspan
+         x="217.84633"
+         y="-30.887192"
+         style="font-size:9px"
+         id="tspan3012">    auto ctx1 = [other] () resumable {</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="147.54306"
+         x="217.84633"
+         y="-19.637192"
+         style="font-size:9px"
+         id="tspan3016">       (* other)(); // suspend ctx1, resume other</tspan><tspan
+         sodipodi:role="line"
+         x="217.84633"
+         y="-8.3871918"
+         style="font-size:9px"
+         id="tspan3018">    });</tspan><tspan
+         sodipodi:role="line"
+         x="217.84633"
+         y="2.8628082"
          id="tspan3259"
-         style="font-size:9px">                                                     ...</tspan><tspan
+         style="font-size:9px">    auto ctx2 = [&amp;ctx1] () resumable {</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="158.79306"
+         x="217.84633"
+         y="14.112808"
          id="tspan3261"
-         style="font-size:9px">                                                     mctx(); // suspend ctx1, resume mctx</tspan><tspan
+         style="font-size:9px">       ctx1(); // suspend ctx2, resume ctx1</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="170.04306"
+         x="217.84633"
+         y="25.362808"
          id="tspan3263"
-         style="font-size:9px">                                                     ...</tspan><tspan
+         style="font-size:9px">       ...</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="181.29306"
+         x="217.84633"
+         y="36.612808"
          id="tspan3265"
-         style="font-size:9px">                                                  });</tspan><tspan
+         style="font-size:9px">    });</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="192.54306"
+         x="217.84633"
+         y="47.862808"
          id="tspan3269"
-         style="font-size:9px">    auto ctx2 = [&amp;ctx1] () resumable( fixedsize(1024) ) {</tspan><tspan
+         style="font-size:9px">    auto ctx3 = [&amp;ctx1,&amp;ctx2] () resumable {</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="203.79306"
-         id="tspan3271"
-         style="font-size:9px">                                                      ...</tspan><tspan
-         sodipodi:role="line"
-         x="158.24733"
-         y="215.04306"
+         x="217.84633"
+         y="59.112808"
          id="tspan3273"
-         style="font-size:9px">                                                      ctx1(); // suspend ctx2, resume ctx1</tspan><tspan
+         style="font-size:9px">       ctx2(); // suspend ctx3, resume ctx2    </tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="226.29306"
+         x="217.84633"
+         y="70.362808"
          id="tspan3275"
-         style="font-size:9px">                                                      ...</tspan><tspan
+         style="font-size:9px">       ctx1(); // suspend ctx3, resume ctx1</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="237.54306"
+         x="217.84633"
+         y="81.612808"
          id="tspan3277"
-         style="font-size:9px">                                                   });</tspan><tspan
+         style="font-size:9px">    });</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="248.79306"
+         x="217.84633"
+         y="92.862808"
          id="tspan3279"
-         style="font-size:9px">     ...</tspan><tspan
+         style="font-size:9px">    other = &amp; ctx3;</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="260.04306"
+         x="217.84633"
+         y="104.11281"
          id="tspan3281"
-         style="font-size:9px">     ctx2(); // suspend mctx, resume ctx2</tspan><tspan
+         style="font-size:9px">    ctx3(); // suspend main context, resume ctx3</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="271.29306"
+         x="217.84633"
+         y="115.36281"
          id="tspan3251"
-         style="font-size:9px">     ...        // ::operator() of ctx2 returned</tspan><tspan
+         style="font-size:9px">    ...        // ::operator() of ctx3 returned</tspan><tspan
          sodipodi:role="line"
-         x="158.24733"
-         y="282.54306"
+         x="217.84633"
+         y="126.61281"
          id="tspan4607"
          style="font-size:9px">}</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.92011088;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.68044331, 0.92011082;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-       d="m 355.02399,256.90699 184.43742,0 0,-55.32124 -183.95333,-0.50507"
+       d="m 437.8565,101.3435 184.43742,0 0,-55.321241 -183.95333,-0.50507"
        id="path6409"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.95936817;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.83747264, 0.95936816;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-       d="m 488.92793,211.93558 91.42504,-0.50508 -1.01016,-66.85032 -223.78929,1.01015"
+       d="m 410.13603,54.856861 221.22964,-4e-6 -10e-6,-55.23356581 -221.26391,-2.54e-6"
        id="path6593"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.9487381;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.79495247, 0.94873812;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
-       d="m 305.59678,156.83632 -158.64521,0 0.50507,112.85859 19.19829,0"
+       d="m 220.74397,-24.991137 -55.60965,0.505076 -1e-5,93.160611 58.08916,0"
        id="path6777"
        inkscape:connector-curvature="0"
        sodipodi:nodetypes="cccc" />
     <text
        xml:space="preserve"
        style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-246.39499"
-       y="547.37714"
+       x="-100.93302"
+       y="634.25024"
        id="text6961"
        sodipodi:linespacing="125%"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan6963"
-         x="-246.39499"
-         y="547.37714">resume</tspan></text>
+         x="-100.93302"
+         y="634.25024">1. resume</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-189.44382"
-       y="586.51599"
+       x="-51.052921"
+       y="641.06421"
        id="text6961-5"
        sodipodi:linespacing="125%"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan6963-0"
-         x="-189.44382"
-         y="586.51599">resume</tspan></text>
+         x="-51.052921"
+         y="641.06421">2. resume</tspan></text>
     <text
        xml:space="preserve"
        style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
-       x="-221.76869"
-       y="142.55399"
+       x="-34.385395"
+       y="161.24181"
        id="text6961-2"
        sodipodi:linespacing="125%"
        transform="matrix(0,-1,1,0,0,0)"><tspan
          sodipodi:role="line"
          id="tspan6963-2"
-         x="-221.76869"
-         y="142.55399">resume</tspan></text>
+         x="-34.385395"
+         y="161.24181">4. resume</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.95936817;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.83747264, 0.95936816;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
+       d="m 410.28829,9.9263695 204.05706,0 -0.50509,-43.6168155 -204.09132,0"
+       id="path6593-9"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="6.6561327"
+       y="622.16901"
+       id="text6961-5-6"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan6963-0-1"
+         x="6.6561327"
+         y="622.16901">3. resume</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.92011088;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.68044331, 0.92011082;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
+       d="m 431.01742,68.783149 173.32574,0 0,-91.686743 -173.34673,7e-6"
+       id="path6409-2"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-43.073383"
+       y="611.60376"
+       id="text6961-5-9"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan6963-0-0"
+         x="-43.073383"
+         y="611.60376">5. resume</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.9487381;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.79495247, 0.94873812;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
+       d="m 203.78874,-10.129388 -25.30507,5e-6 -0.5051,86.594618 26.77444,0"
+       id="path6777-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-36.652618"
+       y="174.58051"
+       id="text6961-5-9-0-5"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan6963-0-0-7-5"
+         x="-36.652618"
+         y="174.58051">6. resume</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.9487381;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3.79495247, 0.94873812;stroke-dashoffset:0;marker-end:url(#Arrow1Mend)"
+       d="m 221.46638,82.526147 -34.90152,3e-6 -2e-5,32.55146 35.36073,0.50507"
+       id="path6777-8-5"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccc" />
+    <text
+       xml:space="preserve"
+       style="font-size:6px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;font-family:Sans"
+       x="-112.04715"
+       y="173.93793"
+       id="text6961-5-9-0-5-7"
+       sodipodi:linespacing="125%"
+       transform="matrix(0,-1,1,0,0,0)"><tspan
+         sodipodi:role="line"
+         id="tspan6963-0-0-7-5-7"
+         x="-112.04715"
+         y="173.93793">7. resume</tspan></text>
   </g>
 </svg>

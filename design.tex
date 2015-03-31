@@ -2,12 +2,12 @@
 The design of \ectx is based on N4397\cite{N4397} with one modification - the
 i\emph{lambda-like expression} does not have the \emph{hint} attribute.\\
 Instead the compiler desides if one activation records is sufficient
-(\emph[stackless} or a side stack is required (\emph{stackful}. The compiler 
-makes the desicion based on the analyzation of the toplevel cotnext function.
+(\emph{stackless} or a side stack is required (\emph{stackful}. The compiler 
+makes the decision based on the analysis of the toplevel context function.
 If the compiler can prove, that context switches are only done at the toplevel
 function and not from nested call stack (from subroutines), than a
-\emph{stakcless} execution cotnext is created. Otherwise the compiler constructs
-a \ectx with a non-contiguous, linked side stack. The initial defaul stacksize
+\emph{stackless} execution context is created. Otherwise the compiler constructs
+a \ectx with a non-contiguous, linked side stack. The initial default stacksize
 depends on the platform.
 
 \uabschnitt{First-class object}
@@ -16,7 +16,7 @@ container.
 
 \uabschnitt{Capture record}
 Each instance of \ectx owns a toplevel activation record, the capture record.
-The capture record is a special activation record that stores addtional data
+The capture record is a special activation record that stores additional data
 like stack pointer, instruction pointer and a link to its parent execution
 context. That means that during a execution context switch, the execution state
 of the running context is captured and stored in the capture record while the
@@ -28,39 +28,22 @@ of ancestor context's, e.g. the execution context which has resumed (\ectxop
 called) the running context.
 
 \paragraph*{Active context}
-Static member function \ectxcurrent returns a \ectx pointing to the current
-capture record (e.g. execution context). The current active capture record is
-stored in an internal, thread local pointer.
+Static member function \ectxcurrent returns a\\
+\ectx pointing to the current capture record (e.g. execution context). The
+current active capture record is stored in an internal, thread local pointer.
 
 \paragraph*{Toplevel capture records}
 At entering \main as well as the \emph{thread-function} of a thread, a execution
 context (capture record) is created and stored in the internally.
 \ectxcurrent.
 
-\uabschnitt{Suspend-on-call}
-\ectx is designed to suspend on call of \ectxop. The \emph{prolog} of \ectxop
-captures (preserves) the active execution context and loads the data from the
-capture record of the resumed context (e.g. \ectxop called on \emph{*this}) into
-the CPU.\\
-The previous running context becomes the parent of the resumed context and gets
-suspended. Thus forming a parent-child relationship between suspended and
-resumed context. The parent may vary between successive calls of \ectxop.\\
-As described in section Discussion, \ectxop cleans up the stack of the calling
-context. That means that parts, like \emph{parameter list} and \emph{return
-address}, are poped from the caller stack and preserved in the \emph{capture
-record} of the calling context. If this cotnext is resumed, then the preserved
-stack data (\emph{parameter list} and \emph{return address}) are restored (
-pushed to the stack) so that the calling convetion is not violated. For the
-code it looks like returning from \ectxop. The code can not decide if \ectxop
-triggers and \emph{stackless} or \emph{stackful} context switch, nor can the
-code distinghuish \ectxop from ordinary function calls.
-
 \paragraph*{Termination}
 If the body of the toplevel context function reaches its end, the parent
 execution context (pointer in the capture record) is resumed. That means that
-in the parent context the function \ectxop returns. For this purpose the
-\emph{epilog} of \ectxop loads the capture record (instruction pointer, stack
-pointer etc.) of the parent context, so that it is resumed.
+in the parent context the function\\
+\ectxop returns. For this purpose the \emph{epilogue} loads the capture record
+(instruction pointer, stack pointer etc.) of the parent context, so that it is
+resumed.
 
 \uabschnitt{Exceptions}
 A exception thrown inside the execution context is catched, the parent execution
@@ -178,10 +161,10 @@ jump context of execution\\
 
 {\bfseries Notes}
 \newline
-The \emph{prolog} preserves the exectuin context of the calling context as well
+The \emph{prologue} preserves the execution context of the calling context as well
 as stack parts like \emph{parameter list} and \emph{return address}
 \footnote{required only by some x86 ABIs}. Those data are restored by the
-\emph{epilog} if the callign context is resumed.
+\emph{epilogue} if the calling context is resumed.
 \newline
 A exception thrown inside execution context is catched, the parent execution
 context is resumed and the exception is re-throw in the parent context (out of

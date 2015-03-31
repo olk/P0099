@@ -18,7 +18,7 @@
         breakatwhitespace=true,
         breaklines=true,
         captionpos=b,
-        commentstyle=\ttfamily\color{gray},
+        commentstyle=\ttfamily\color{cyan},
         keywordstyle=\ttfamily\color{blue},
         language={C++},
         morekeywords={await,fixedsize,from,noexcept,resumable,segmented,yield},
@@ -31,17 +31,11 @@
 \newcommand{\cppf}[1]{\lstinputlisting {code/#1}}
 
 \newcommand{\await}{\cpp{await}}
-\newcommand{\channel}{\cpp{channel<>}}
 \newcommand{\ectx}{\cpp{std::execution_context}}
 \newcommand{\ectxop}{\cpp{std::execution_context::operator()()}}
 \newcommand{\ectxcurrent}{\cpp{std::execution_context::current()}}
-\newcommand{\excpt}{\cpp{std::exception_ptr}}
 \newcommand{\main}{\cpp{main()}}
-\newcommand{\rlop}{\cpp{__resumable_lambda::operator()}}
-\newcommand{\rlthis}{\cpp{[]this}}
-\newcommand{\rlwanted}{\cpp{template<typename T> T* resumable_lambda::wanted()}}
 \newcommand{\resumable}{\cpp{resumable}}
-\newcommand{\tuple}{\cpp{std::tuple<>}}
 \newcommand{\yield}{\cpp{yield}}
 
 \newcommand{\abschnitt}[1]{\addcontentsline{toc}{subsection}{#1}\subsection*{#1}}
