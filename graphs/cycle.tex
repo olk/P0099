@@ -1,0 +1,19 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
+  thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
+
+  \node[main node] (1) {<mctx>};
+  \node[main node] (2) [right of=1] {ctx3};
+  \node[main node] (3) [right of=2] {ctx2};
+  \node[main node] (4) [right of=3] {ctx1};
+
+  \path[every node/.style={font=\sffamily\small}]
+    (1) edge node [left] {0.6} (4)
+        edge [bend right] node[left] {0.3} (2)
+    (2) edge node [right] {0.4} (1)
+        edge node {0.3} (4)
+        edge [bend right] node[left] {0.1} (3)
+    (3) edge node [right] {0.8} (2)
+        edge [bend right] node[right] {0.2} (4)
+    (4) edge node [left] {0.2} (3)
+        edge [bend right] node[right] {0.2} (1);
+\end{tikzpicture}
