@@ -60,7 +60,7 @@ It's completely transparent for the caller.
 \paragraph*{Flow of control}
 Because \ectx uses a symmetric execution control transfer mechanism, the flow
 of control can be arbitrary.
-\cppf{N4398/cycle.cpp}
+\cppf{N4398/cycle}
 As shown in the example, the context's of \emph{ctx1}, \emph{ctx2} and
 \emph{ctx3} form a cycle of flow of control.
 \graphc{cycle}
@@ -88,10 +88,10 @@ distinguished:
     \item context switch at toplevel: create a \emph{stackless} context
     \item in all other cases: generate a \emph{stackful} context
 \end{itemize}
-\cppf{N4398/fibonacci.cpp}
+\cppf{N4398/fibonacci}
 In other words, if \ectxop is called inside the body of the toplevel context
 function (as shown in Fibonacci example above) a \emph{stackless} context is
 sufficient.
-\cppf{N4398/parser.cpp}
+\cppf{N4398/parser}
 Calling a context switch from a nested call stack requires a \emph{stackful}
 context.
