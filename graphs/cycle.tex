@@ -1,19 +1,19 @@
-\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm,
-  thick,main node/.style={circle,fill=blue!20,draw,font=\sffamily\Large\bfseries}]
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
+                    semithick,initial text=]
 
-  \node[main node] (1) {<mctx>};
-  \node[main node] (2) [right of=1] {ctx3};
-  \node[main node] (3) [right of=2] {ctx2};
-  \node[main node] (4) [right of=3] {ctx1};
+  \tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20, font=\bfseries\large]
+  \tikzstyle{every edge}=[draw,font={\tiny}]
 
-  \path[every node/.style={font=\sffamily\small}]
-    (1) edge node [left] {0.6} (4)
-        edge [bend right] node[left] {0.3} (2)
-    (2) edge node [right] {0.4} (1)
-        edge node {0.3} (4)
-        edge [bend right] node[left] {0.1} (3)
-    (3) edge node [right] {0.8} (2)
-        edge [bend right] node[right] {0.2} (4)
-    (4) edge node [left] {0.2} (3)
-        edge [bend right] node[right] {0.2} (1);
+  \node[state,initial] (A)              {$ctx_m$};
+  \node[state]         (B) [right of=A] {$ctx_3$};
+  \node[state]         (C) [right of=B] {$ctx_2$};
+  \node[state]         (D) [right of=C] {$ctx_1$};
+
+  \path (A) edge [bend left]           node {ctx3()}   (B)
+        (B) edge                       node {ctx2()}   (C)
+            edge [bend left]           node {ctx1()}   (D)
+            edge [bend left,dashed]    node {termination} (A)
+        (C) edge                       node {ctx1()}   (D)
+        (D) edge [bend left]           node {(*other)()}   (B)
+            edge [bend left=55,dashed] node {termination} (B);
 \end{tikzpicture}

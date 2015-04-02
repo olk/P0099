@@ -13,13 +13,14 @@
 \newcommand{\pdfimg}[1]{\pdfximage{pics/#1}\pdfrefximage\pdflastximage}
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
-\newcommand{\graphc}[1]{\begin{center}\input{graphs/#1}\end{center}}
+\newcommand{\graph}[1]{\begin{center}\input{graphs/#1}\end{center}}
+\newcommand{\graphc}[1]{\begin{center}\graph{#1}\end{center}}
 
 \lstset{basicstyle=\ttfamily\small\color{black},
         breakatwhitespace=true,
         breaklines=true,
         captionpos=b,
-        commentstyle=\ttfamily\color{cyan},
+        commentstyle=\ttfamily\color{gray},
         keywordstyle=\ttfamily\color{blue},
         language={C++},
         morekeywords={await,fixedsize,from,noexcept,resumable,segmented,yield},

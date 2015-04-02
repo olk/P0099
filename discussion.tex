@@ -59,19 +59,22 @@ It's completely transparent for the caller.
 
 \paragraph*{Flow of control}
 Because \ectx uses a symmetric execution control transfer mechanism, the flow
-of control is arbitrary.
-\imgc{symm.pdf}
+of control can be arbitrary.
+\cppf{N4398/cycle.cpp}
 As shown in the example, the context's of \emph{ctx1}, \emph{ctx2} and
 \emph{ctx3} form a cycle of flow of control.
 \graphc{cycle}
-The cycle is started by calling \cpp{ctx3()} (1. resume) in the main context.
-Context \emph{ctx3} starts \emph{ctx2} (2. resume) while \emph{ctx2} resumes
-\emph{ctx1}. Context \emph{ctx1} is suspended by resuming \emph{ctx3} with
-\cpp{(*other)()}. In \emph{ctx3} \cpp{ctx2()} returns and \cpp{ctx1()} resumes
-\emph{ctx1} at next. Context \emph{ctx1} terminates after returning from
-\cpp{(*other)()}. After termination of \emph{ctx1}, \emph{ctx3} is resumed
-because it has become the parent context of \emph{ctx1}) by calling \cpp{ctx1()}.
-As \emph{ctx3} terminates, the main context is resumed.
+The cycle is started by calling \cpp{ctx3()} from the main context
+(\emph{$ctx_m$}, created on start-up). Context \emph{$ctx_3$} starts
+\emph{$ctx_2$} while \emph{$ctx_2$} resumes \emph{$ctx_1$}. Context
+\emph{$ctx_1$} is suspended by resuming \emph{$ctx_3$} with \cpp{(*other)()}.
+Function \cpp{ctx2()} returns in \emph{$ctx_3$} and \cpp{ctx1()} resumes
+\emph{$ctx_1$} at next. Context \emph{$ctx_1$} terminates after returning from
+\cpp{(*other)()}.\\
+After termination of \emph{$ctx_1$}, \emph{$ctx_3$} is resumed because it has
+become the parent context of \emph{$ctx_1$} (by calling \cpp{ctx1()}). As
+\emph{$ctx_3$} terminates, the main context \emph{$ctx_m$} is resumed (return
+from \cpp{ctx3()}).
 
 \uabschnitt{Stackless and stackful}
 The compiler allocates for a \emph{stackless context} only one, suitable sized,
