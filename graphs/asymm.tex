@@ -1,0 +1,15 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
+                    semithick,initial text=]
+
+  \tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20, font=\bfseries\large]
+  \tikzstyle{every edge}=[draw,font={\tiny}]
+
+  \node[state,initial] (A)                    {$main$};
+  \node[state]         (B) [above right of=A] {$f1$};
+  \node[state]         (C) [below right of=A] {$f2$};
+
+  \path (A) [bend left] edge node {f1()}   (B)
+            [bend left] edge node {f2()}   (C)
+        (B) [bend left] edge node {yield}  (A)
+        (C) [bend left] edge node {yield}  (A);
+\end{tikzpicture}

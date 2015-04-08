@@ -6,7 +6,7 @@ have the same memory requirements for their activation records.\\
 As described in N4134, the compiler analyses the body of the toplevel context
 function and determines the required size and allocates the activation record on
 the heap.
-\cppf{N4134/fib.cpp}
+\cppf{N4134/fibonacci}
 In the example of calculating Fibonacci numbers using a resumable function, the
 compiler reserves space in the activation record for local variables \emph{n},
 \emph{a}, \emph{b} and \emph{next}. Those variables are not accessed via the
@@ -19,7 +19,7 @@ not have this requirement}.\\
 Each stackful coroutine owns a side stack (assigned to the stack pointer). The
 activation record of the toplevel context function is stored on the side
 stack, thus the original stack remains unchanged.
-\cppf{N4397/fib.cpp}
+\cppf{N4397/fibonacci}
 In the case of calculating Fibonacci numbers using a stackful execution
 context, the compiler stores the local variables \emph{n}, \emph{a},
 \emph{b} and \emph{next} on the side stack. The local variables are accessed
@@ -62,7 +62,7 @@ On the other hand, it is beneficial to use side stacks because the stack
 frames of active subroutines remain intact while the execution context is
 suspended. This is the reason why stackful context switching permits
 {\bfseries yielding from nested calls}.
-\cppf{N4397/simple.cpp}
+\cppf{N4397/simple}
 Variable \emph{l1} is passed to stackful execution context \emph{l2} via
 the capture list of \emph{l2}. The stack frames of \cpp{std::printf()} are
 allocated on the side stack owned by \emph{l2}.
@@ -75,7 +75,7 @@ Resumable functions (as proposed in N4134\cite{N4134}) provide two operations
 for context switching: asymmetric control transfer. The caller and the
 resumable function are coupled, that is, a resumable function can only jump back
 to the point in the code where it was entered.
-\imgc{asymm.pdf}
+\graphc{asymm}
 For N resumable functions \emph{2N} context switches are required.\\
 \newline
 This is sufficient in the case of generators, but in the context of cooperative
@@ -89,7 +89,7 @@ cooperative multitasking: no additional context switch back to caller,
 direct context switch to next task.\\
 The next execution context must be explicitly specified.\\
 \newline
-\imgc{symm.pdf}
+\graphc{symm}
 Resuming N instances of \ectx takes \emph{N+1} context switches.
 
 \uabschnitt{Passing data}
@@ -99,16 +99,16 @@ function.\\
 \newline
 Passing data into the body of resumable functions (N4123) requires helper
 classes like \channel.
-\cppf{N4134/channel.cpp}
+\cppf{N4134/channel}
 In this case, the way data are passed into the body is not intuitive and
 introduces some problems.\\
 \newline
 Experience with \cpp{execution_context} from Boost.Context\cite{bcontext}
 turned up a common pattern: to pass a lambda to the \cpp{execution_context},
 using its capture list to transfer data into and to return data from the
-body. Exceptions are transferred via \excpt and parameters (input/output) are
-accessed via captured references or pointers.
-\cppf{N4397/param.cpp}
+body. Parameters (input/output) are accessed via captured references or
+pointers.
+\cppf{N4397/param}
 Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
 parameters are transferred between contexts. Member variable
 \emph{callee\_} represents a new execution context and captures the

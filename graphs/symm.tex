@@ -1,0 +1,14 @@
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=2.8cm,
+                    semithick,initial text=]
+
+  \tikzstyle{every state}=[draw=blue!50,very thick,fill=blue!20, font=\bfseries\large]
+  \tikzstyle{every edge}=[draw,font={\tiny}]
+
+  \node[state,initial] (A)              {$ctx_m$};
+  \node[state]         (B) [right of=A] {$ctx_2$};
+  \node[state]         (C) [right of=B] {$ctx_1$};
+
+  \path (A)             edge node {ctx2()}   (B)
+        (B)             edge node {ctx1()}   (C)
+        (C) [bend left] edge node {mctx()}   (A);
+\end{tikzpicture}

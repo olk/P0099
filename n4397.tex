@@ -21,6 +21,8 @@
 \usepackage{perpage}
 \usepackage{rotating}
 \usepackage{svg}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
 \usepackage{xcolor}
 \usepackage{xspace}
 \usepackage[colorlinks=true,
@@ -29,7 +31,7 @@
             pdfsubject  = {},
             pdfauthor   = {Oliver Kowalke},
             pdfkeywords = {C++,execution,context,coroutine,resumable,function,lambda,N4397},
-            pdftitle    = {A low-level API for a stackful coroutine}]{hyperref}
+            pdftitle    = {A low-level API for stackful coroutines}]{hyperref}
 
 %//////////////////////////////////////////////////////////////////////////////
 
@@ -44,10 +46,10 @@
     Document number: \= N4397\\
     Date:            \> 2015-04-08\\
     Project:         \> WG21, SG1\\
-    Author:          \> Oliver Kowalke (oliver dot kowalke at gmail dot com)\\
+    Author:          \> Oliver Kowalke (oliver.kowalke@gmail.com)\\
 \end{tabbing}
 
-\section*{A low-level API for a stackful coroutine}
+\section*{A low-level API for stackful coroutines}
 
 %//////////////////////////////////////////////////////////////////////////////
 

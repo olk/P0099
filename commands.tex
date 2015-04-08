@@ -13,6 +13,8 @@
 \newcommand{\pdfimg}[1]{\pdfximage{pics/#1}\pdfrefximage\pdflastximage}
 \newcommand{\img}[1]{\mbox{\pdfimg{#1}}}
 \newcommand{\imgc}[1]{\begin{center}\img{#1}\end{center}}
+\newcommand{\graph}[1]{\input{graphs/#1}}
+\newcommand{\graphc}[1]{\begin{center}\graph{#1}\end{center}}
 
 \lstset{basicstyle=\ttfamily\small\color{black},
         breakatwhitespace=true,
@@ -28,7 +30,7 @@
         stringstyle=\ttfamily\color{red}}
 
 \newcommand{\cpp}[1]{{\lstinline !#1!}\xspace}
-\newcommand{\cppf}[1]{\lstinputlisting {code/#1}}
+\newcommand{\cppf}[1]{\lstinputlisting {code/#1.cpp}}
 
 \newcommand{\await}{\cpp{await}}
 \newcommand{\channel}{\cpp{channel<>}}
