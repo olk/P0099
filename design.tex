@@ -10,7 +10,7 @@ In effect, \cpp{execution_context} is a copyable handle to an underlying,
 noncopyable \emph{capture record}.
 
 \cpp{execution_context::operator()} preserves the CPU register set
-\footnote{defined by ABI's calling conveintion} + stack pointer: the content of
+\footnote{defined by ABI's calling convention} + stack pointer: the content of
 those registers is stored in the capture record associated with
 \cpp{execution_context::current()}. Then \cpp{operator()} loads the CPU register
 set and stack pointer from the capture record associated with \cpp{*this}.
