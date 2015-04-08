@@ -3,28 +3,60 @@ In the past multiple proposals were published to support coroutines in C++.\\
 It is astonishing that each proposal distinguishes coroutines into \emph{two}
 kinds: \emph{stackless} and \emph{stackful}.\\
 \newline
-Traditionally C++ code is compiled on a linear stack, e.g. the activation
-records are allocated in strict \emph{last-in-first-out}-order. This stack
+Traditionally C++ code is run on a linear stack, i.e. the activation
+records are allocated in strict \emph{last-in-first-out} order. This stack
 model allocates activation records on function call/return by
 incrementing/decrementing the stack pointer.\\
-But in the context of coroutines, e.g. switching between different execution
-context's, a linear stack introduces problems. Calling a function creates a
+But in the context of coroutines, that is, switching between different execution
+contexts, a linear stack introduces problems. Calling a function creates an
 activation record on the stack which is removed if the function returns.
 But for a suspended coroutine the activation record {\bfseries must not} be
-{\bfseries removed}! Additionaly, if the activation record of a suspended
-coroutine remains on the linear processor stack and other code uses the stack
-in the meanwhile, then all stack frames allocated after suspending the coroutine
-might be corrupted, if the coroutine is resumed.\\
-In order to prevent stack corruption stackless coroutines use one heap-allocated
-activation record (N4134) while stackful coroutines use a side stack. Because
-stackless coroutines use only one heap-allocated activation record for their
-toplevel context function (e.g. body of resumable function) but leave the stack
-pointer unchanged (points still into linear processor stack), called subroutines
-use the linear processor stack.\\
-Because stackful coroutines modify the stack pointer (pointing into coroutines
-own side stack), the activation records of the toplevel context function as well
-as the activation records of called subroutines are allocated on the side stack,
-not on the processor stack.\\
+{\bfseries removed}!
+\newline
+Consider the following scenario:
+\begin{itemize}
+    \item Assume the processor stack is built in descending order: that is, a
+          PUSH instruction decrements the stack pointer register. Call the
+          stack pointer's initial value SP0.
+    \item Function \main enters coroutine \cpp{C()}.
+    \item \cpp{C()}'s prolog allocates a stack frame of
+          size \cpp{sizeof(C::frame)} by decrementing SP. SP is now at SP1 =
+          (SP0 - \cpp{sizeof(C::frame)}).
+    \item \cpp{C()} suspends, returning control to \main. \main must find its
+          stack frame at SP = SP0.
+    \item \main now calls function \cpp{F()}.
+    \item \cpp{F()}'s prolog allocates a stack frame of
+          size \cpp{sizeof(F::frame)} by decrementing SP. SP is now at SP2 =
+          (SP0 - \cpp{sizeof(F::frame)}).
+    \item Unless either \cpp{(sizeof(C::frame) == 0)}
+          or \cpp{(sizeof(F::frame) == 0)}, any data written by \cpp{F()} to
+          its own stack frame will necessarily overwrite any data saved
+          by \cpp{C()} in its stack frame.
+    \item \cpp{F()} returns. SP is back to SP0.
+    \item \main resumes \cpp{C()}. SP is set to SP1.
+    \item \cpp{C()} attempts to access data in its stack frame -- which has
+          been overwritten by \cpp{F()}. We are now in the realm of Undefined
+          Behavior.
+\end{itemize}
+
+In order to prevent stack corruption, a stackless coroutine uses a heap-allocated
+activation record (N4134\cite{N4134}), while stackful coroutines use a side
+stack (N3985\cite{N3985}).\\
+Since an N4134 stackless resumable function uses \emph{suspend by return},
+when it suspends, the stack pointer is restored to its position before the
+resumable function was called. While executing, a resumable function can
+consume additional space in the linear processor stack; it can call
+traditional functions. But they must all return before the resumable function
+suspends. If resumable function A() calls function B(), and B() wishes to
+suspend, B() must also be a resumable function. Thus the
+term \emph{stackless}: a suspended resumable function leaves no activation
+record on the linear processor stack. A single linear stack can be reused by
+an arbitrary number of suspended resumable functions.\\
+Using a side stack permits \emph{stackful} coroutines to use \emph{suspend by
+call}. An arbitrary number of ordinary stack frames can be left on the side
+stack for a suspended coroutine context; arbitrary stack frames can be pushed
+or popped on the currently-active stack, independently of any suspended stack.\\
 This is the fundamental difference between stackless and stackful coroutines.\\
 \newline
-Traditional stack management is inadequate for coroutines.
+Traditional stack management -- a single linear stack per thread -- is
+inadequate for coroutines.

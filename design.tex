@@ -1,28 +1,44 @@
 \abschnitt{Design}
-Class \ectx is derived from the work on boost.context\cite{bcontext} - it
-provides a small, basic API, suitable to implement high-level APIs for stackful
-coroutines (N3985\cite{N3985}, working implementation
-boost.coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in a
-cooperative multitasking environment, working implementation
-boost.fiber\cite{bfiber}).
+Class \ectx is derived from the work on Boost.Context\cite{bcontext}. It
+provides a small, basic API on which to build higher-level APIs such as
+stackful coroutines (N3985\cite{N3985}, working implementation
+Boost.Coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in
+a cooperative multitasking environment, working implementation
+Boost.Fiber\cite{bfiber}).
+
+In effect, \cpp{execution_context} is a copyable handle to an underlying,
+noncopyable \emph{capture record}.
+
+\cpp{execution_context::operator()} preserves the CPU register set + stack pointer:
+the content of those registers is stored in the capture record
+associated with \cpp{execution_context::current()}. Then \cpp{operator()}
+loads the CPU register set and stack pointer from the capture record
+associated with \cpp{*this}.
+
+Finally, \cpp{execution_context::operator()}
+stores \cpp{execution_context::current()} in the capture record
+associated with \cpp{*this} -- to permit backtracking through the history of
+context switches. It makes \cpp{*this} become \cpp{current()}.
 
 \uabschnitt{Class \ectx}
-Based on the implementation experience with \cpp{execution_context} in
-boost.coroutine2\cite{bcoroutine2} and boost.fiber\cite{bfiber}, the author
-noticed that \cpp{execution_context} is almost always used together with lambdas
-(passed as argument to the constructor of \cpp{execution_context}). Especially
-the lambda captures are suitable to transport data between different execution
-context's (address of lvalue, reside on stack/heap).\\
-Why not construct \ectx with an 'resumable lambda'-like syntax, instead of
-passing a lambda as argument? Even if \ectx is constructed like a lambda,
-actually it isn't a lambda (it is constructible from \ectxcurrent too).\\
-\ectx is more like an handle to a \emph{capture record} of an execution context.
+Based on implementation experience with \cpp{execution_context} in
+Boost.Coroutine2\cite{bcoroutine2} and Boost.Fiber\cite{bfiber}, the author
+noticed that \cpp{execution_context} is almost always passed a lambda as its
+constructor argument. Lambda captures are especially useful for transporting
+data between different execution contexts (address of lvalue, residing on
+stack/heap).\\
+Why not implicitly construct \ectx with a 'resumable lambda'-like
+syntax\cite{N4244}, instead of explicitly passing a lambda as a constructor
+argument? Even if \ectx is constructed like a lambda, actually it isn't a
+lambda (it is constructible from \ectxcurrent too).\\
+\ectx is more like a handle to a \emph{capture record} of an execution
+context.
 \cppf{N4397/rl1.cpp}
 The keyword \resumable together with an hint (attribute) about the type and size
 of the side stack tells the compiler to generate a stackful execution context.\\
-Because of the symmetric context switching (only one operation transfers the
-control of execution) the target context must be explicitly specified.\\
-Exchanging data between different execution context's requires the use of lambda
+Because of the symmetric context switching (only one operation transfers
+control), the target \cpp{execution_context} must be explicitly specified.\\
+Exchanging data between different execution contexts requires the use of lambda
 captures.
 
 \uabschnitt{First-class object}
@@ -31,35 +47,35 @@ container.
 
 \uabschnitt{Capture record}
 Each instance of \ectx owns a toplevel activation record, the capture record.
-The capture record is a special activation record that stores addtional data
-like stack pointer, instruction pointer and a link to its parent execution
-context. That means that during a execution context switch, the execution state
+The capture record is a special activation record that stores additional data
+such as stack pointer, instruction pointer and a link to its parent execution
+context. That means that during a context switch, the execution state
 of the running context is captured and stored in the capture record while the
 content of the resumed execution context is loaded (into CPU registers etc.).
 
 \paragraph*{Parent context}
-The pointer to its \emph{parent} execution context allows to traverse the chain
-of ancestor context's, e.g. the execution context which has resumed (\ectxop
-called) the running context.
+An \cpp{execution_context}'s pointer to
+its \emph{parent} \cpp{execution_context} allows one to traverse the chain of
+ancestor contexts, that is, to locate the \cpp{execution_context} which resumed
+(called \ectxop on) the currently active \cpp{execution_context}.
 
 \paragraph*{Active context}
-Static member function \ectxcurrent returns a \ectx pointing to the current
-capture record (e.g. execution context). The current active capture record is
-stored in an internal, thread local pointer.
+The static member function \ectxcurrent returns a \ectx pointing to the
+current capture record. The current active capture record is stored in an
+internal, thread local pointer.
 
 \paragraph*{Toplevel capture records}
-At entering \main as well as the \emph{thread-function} of a thread, a execution
-context (capture record) is created and stored in the internally.
-\ectxcurrent.
+On entering \main as well as the \emph{thread-function} of a thread, an execution
+context (capture record) is created and stored in the internal pointer underlying
+\ectxcurrent. (In practice, this could be lazily instantiated.)
 
 \uabschnitt{Suspend-on-call}
 \ectx is designed to suspend on call of \ectxop. The \emph{prolog} of \ectxop
 captures (preserves) the active execution context and loads the data from the
-capture record of the resumed context (e.g. \ectxop called on \emph{*this}) into
-the CPU.\\
+capture record of the resumed context (\emph{*this}) into the CPU.\\
 The previous running context becomes the parent of the resumed context and gets
-suspended. Thus forming a parent-child relationship between suspended and
-resumed context. The parent may vary between successive calls of \ectxop.
+suspended. This forms a parent-child relationship between the suspended and
+the resumed context. The parent may vary between successive calls of \ectxop.
 
 \paragraph*{Termination}
 If the body of the toplevel context function reaches its end, the parent
@@ -69,9 +85,9 @@ in the parent context the function \ectxop returns. For this purpose the
 pointer etc.) of the parent context, so that it is resumed.
 
 \uabschnitt{Exceptions}
-A exception thrown inside the execution context is catched, the parent execution
+An uncaught exception thrown from the execution context is caught, the parent execution
 context is resumed and the exception is re-thrown inside the parent context
-(e.g. the exception is emitted by \ectxop).
+(that is, the exception is emitted by \ectxop).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -118,18 +134,18 @@ constructs new execution context\\
                                       (use of capture list instead)
                   \item[body]         function body\\
               \end{description}
-    \item[2)] copies \ectx, e.g. underlying control block is shared
-    \item[3)] moves underlying control block to new \ectx
+    \item[2)] copies \ectx, e.g. underlying capture record is shared
+    \item[3)] moves underlying capture record to new \ectx
 \end{description}
 
 {\bfseries Notes}
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
-control block. Resuming one instance modifies the control block of the other
+capture record. Resuming one instance modifies the capture record of the other
 \ectx too.
 
 \subparagraph*{(destructor)}
-destroys a execution context\\
+destroys an execution context\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -141,7 +157,7 @@ destroys a execution context\\
 
 \begin{description}
     \item[1)] destroys a \ectx. If associated with a context of execution and
-              holds the last reference to the internal control block, then the
+              holds the last reference to the internal capture record, then the
               context of execution is destroyed too. Specifically, the stack is
               unwound.\\
 \end{description}
@@ -163,8 +179,8 @@ copies/moves the coroutine object\\
 
 \begin{description}
     \item[1)] assigns the state of \emph{other} to \emph{*this} using move semantics
-    \item[2)] copies the state of \emph{other} to \emph{*this}, state (control block)
-              is shared
+    \item[2)] copies the state of \emph{other} to \emph{*this}, state (capture
+              record) is shared
 \end{description}
 
 {\bfseries Parameters}
@@ -199,14 +215,14 @@ jump context of execution\\
 
 {\bfseries Notes}
 \newline
-A exception thrown inside execution context is catched, the parent execution
-context is resumed and the exception is re-throw in the parent context (out of
+An exception thrown inside execution context is caught, the parent execution
+context is resumed and the exception is re-thrown in the parent context (out of
 \ectxop).\\
 If the toplevel context function terminates (reaches end), the parent context is
 resumed (return of\\
 \ectxop in the parent execution context).\\
 The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
-returns \emph{*this} (e.g. resuming an already running context).
+returns \emph{*this} (attempting to resume an already running context).
 
 \subparagraph*{explicit bool operator}
 test if context has not reached its end\\
@@ -260,11 +276,11 @@ accesses the current active execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] construct a instance of \ectx pointing to the capture record of
+    \item[1)] construct an instance of \ectx pointing to the capture record of
               the current, active execution context\\
 \end{description}
 
 {\bfseries Notes}
 \newline
 The current active execution context is thread-specific, e.g. for each thread
-(including \main) a execution context is created at start-up.
+(including \main) an execution context is created at start-up.
