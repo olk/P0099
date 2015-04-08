@@ -5,8 +5,8 @@ This section gives an overview about the wording used in this proposal.
 environment in which program logic is evaluated (CPU registers, stack).
 
 \uabschnitt{Activation record}
-also known as \emph{activation frame} (\emph{stack frame}
-is a special activation record).\\
+also known as \emph{activation frame} or \emph{stack frame} (a special
+activation record).\\
 An \emph{activation record} is a data structure containing the state of a
 particular function call. The following data are part of an activation record:
 \begin{itemize}
@@ -23,8 +23,8 @@ allocated in strict last-in-first-out order - placed by
 incrementing/decrementing the stack pointer register on function call/return.
 
 \uabschnitt{Heap-allocated activation record}
-an activation record allocated in heap storage; every heap activation record
-holds a pointer to its parent activation record (parent pointer tree).
+an activation record allocated in heap storage; every heap allocated activation
+record holds a pointer to its parent activation record (parent pointer tree).
 
 \uabschnitt{Processor stack}
 is a chunk of memory into which the processor's stack pointer register is
@@ -32,14 +32,15 @@ pointing. The processor stack might belong to:
 \begin{itemize}
     \item an application's initial (or only) thread
     \item an explicitly-launched thread
-    \item a sub-thread execution context (e.g. a coroutine)
+    \item a sub-thread execution context (e.g. a coroutine or fiber)
 \end{itemize}
 
 \uabschnitt{Application stack}
 The processor stack assigned to function \main is generally a \emph{linear
 stack}. Often, the memory management system is used to detect stack
-overflow and allocate more memory. This stack is ideally placed well away from
-any other data in the process's address space so it can be extended as needed.
+overflow and to allocate more memory. This stack is ideally placed well away
+from any other data in the process's address space so it can be extended as
+needed.
 
 \uabschnitt{Thread stack}
 The processor stack assigned to an explicitly-launched thread is generally

@@ -14,7 +14,7 @@ stack pointer. The processor stack is not used and the stack pointer is not
 changed\footnote{Depending on the calling convention, typical \emph{x86} code
 stores parameters and return address on the stack. This must be cleaned off by
 the time control is returned to the caller. Other architectures/ABIs do
-not have this requirement}.\\
+not have this requirement.}.\\
 \newline
 Each stackful coroutine owns a side stack (assigned to the stack pointer). The
 activation record of the toplevel context function is stored on the side
@@ -39,9 +39,9 @@ traditional function is allocated on the processor stack (so it is called a
 stack frame). As a consequence, stack frames of called functions must be
 removed from the processor stack before the resumable function yields back to
 its caller.\\
-In other words: the calling convention of the ABI dictates that, after the
-resumable function returns (suspends), the stack pointer contains the same
-address as before the resumable function was entered.\\
+In other words: the calling convention of the {\bfseries ABI dictates} that,
+after the resumable function returns (suspends), the stack pointer contains the
+same address as before the resumable function was entered.\\
 Hence a yield from nested call is {\bfseries not permitted} -- unless every
 called function down to the yield point is also a resumable function.\\
 The benefit of stackless coroutines consists in reusing the processor stack
@@ -76,22 +76,21 @@ for context switching: asymmetric control transfer. The caller and the
 resumable function are coupled, that is, a resumable function can only jump back
 to the point in the code where it was entered.
 \graphc{asymm}
-For {\bfseries{N}} resumable functions {\bfseries{2N}} context switches are
-required.\\
+For {\bfseries N} resumable functions {\bfseries 2N} context switches are
+required. This is sufficient in the case of generators, but in the context of
+cooperative multitasking it is inefficient.\\
 \newline
-This is sufficient in the case of generators, but in the context of cooperative
-multitasking it is inefficient.
 In contrast to resumable functions, the proposed stackful execution context
 (\ectx) provides only one operation to resume/suspend the context (\ectxop).
 Control is directly transferred from one execution context to
 another (symmetric control transfer) - no jump back to the caller. In addition
 to supporting generators, this enables an efficient implementation of
-cooperative multitasking: no additional context switch back to caller,
-direct context switch to next task.\\
+cooperative multitasking: {\bfseries no additional context switch} back to
+caller, direct context switch to next task.\\
 The next execution context must be explicitly specified.\\
 \newline
 \graphc{symm}
-Resuming {\bfseries{N}} instances of \ectx takes {\bfseries{N+1}} context
+Resuming {\bfseries N} instances of \ectx takes {\bfseries N+1} context
 switches.
 
 \uabschnitt{Passing data}
@@ -116,7 +115,7 @@ parameters are transferred between contexts. Member variable
 \emph{callee\_} represents a new execution context and captures the
 \emph{this}-pointer of \cpp{X}. The body converts a integer variable (input)
 into a string (output). Any exception thrown by the conversion is transported
-via member variable \emph{exptr\_}.
+and re-thrown in main().
 
 \uabschnitt{Stack strategies}
 For stackful coroutines two strategies are typical: a contiguous, fixed-size
@@ -134,4 +133,5 @@ When calling a library function not compiled for linked stacks (expecting a
 traditional contiguous stack), GCC's implementation uses link-time code
 generation to change the instructions in the caller. The effect is that a
 reasonably large contiguous stack chunk is temporarily linked in to handle the
-deepest expected chain of traditional function stack frames.
+deepest expected chain of traditional function stack frames (see GCC's
+documentation\cite{gccsplit}).

@@ -1,19 +1,19 @@
 \abschnitt{Design}
 Class \ectx is derived from the work on Boost.Context\cite{bcontext}. It
-provides a small, basic API on which to build higher-level APIs such as
-stackful coroutines (N3985\cite{N3985}, working implementation
-Boost.Coroutine2\cite{bcoroutine2}) and user-mode threads (executing tasks in
-a cooperative multitasking environment, working implementation
-Boost.Fiber\cite{bfiber}).
+provides a {\bfseries small, basic API} on which to build {\bfseries
+higher-level APIs} such as stackful coroutines (N3985\cite{N3985}, working
+implementation Boost.Coroutine2\cite{bcoroutine2}) and user-mode threads
+(executing tasks in a cooperative multitasking environment, working
+implementation Boost.Fiber\cite{bfiber}).
 
 In effect, \cpp{execution_context} is a copyable handle to an underlying,
 noncopyable \emph{capture record}.
 
-\cpp{execution_context::operator()} preserves the CPU register set + stack pointer:
-the content of those registers is stored in the capture record
-associated with \cpp{execution_context::current()}. Then \cpp{operator()}
-loads the CPU register set and stack pointer from the capture record
-associated with \cpp{*this}.
+\cpp{execution_context::operator()} preserves the CPU register set
+\footnote{defined by ABI's calling conveintion} + stack pointer: the content of
+those registers is stored in the capture record associated with
+\cpp{execution_context::current()}. Then \cpp{operator()} loads the CPU register
+set and stack pointer from the capture record associated with \cpp{*this}.
 
 Finally, \cpp{execution_context::operator()}
 stores \cpp{execution_context::current()} in the capture record
@@ -65,12 +65,12 @@ current capture record. The current active capture record is stored in an
 internal, thread local pointer.
 
 \paragraph*{Toplevel capture records}
-On entering \main as well as the \emph{thread-function} of a thread, an execution
+On entering \main as well as the \emph{entry-function} of a thread, an execution
 context (capture record) is created and stored in the internal pointer underlying
 \ectxcurrent. (In practice, this could be lazily instantiated.)
 
 \uabschnitt{Suspend-on-call}
-\ectx is designed to suspend on call of \ectxop. The \emph{prolog} of \ectxop
+\ectx is designed to suspend on call of \ectxop. The \emph{prologue} of \ectxop
 captures (preserves) the active execution context and loads the data from the
 capture record of the resumed context (\emph{*this}) into the CPU.\\
 The previous running context becomes the parent of the resumed context and gets
@@ -81,13 +81,13 @@ the resumed context. The parent may vary between successive calls of \ectxop.
 If the body of the toplevel context function reaches its end, the parent
 execution context (pointer in the capture record) is resumed. That means that
 in the parent context the function \ectxop returns. For this purpose the
-\emph{epilog} of \ectxop loads the capture record (instruction pointer, stack
+\emph{epilogue} of \ectxop loads the capture record (instruction pointer, stack
 pointer etc.) of the parent context, so that it is resumed.
 
 \uabschnitt{Exceptions}
-An uncaught exception thrown from the execution context is caught, the parent execution
-context is resumed and the exception is re-thrown inside the parent context
-(that is, the exception is emitted by \ectxop).
+An uncaught exception thrown from the execution context is caught, the parent
+execution context is resumed and the exception is re-thrown inside the parent
+context (that is, the exception is emitted by \ectxop).
 
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -96,7 +96,7 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable}(hint) {\color{blue}exceptions} attrs -> ret \{body\}} & (1)\\
+    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable}(hint) attrs -> ret \{body\}} & (1)\\
 
     \midrule
 
@@ -127,10 +127,8 @@ constructs new execution context\\
                                               stack grows on demand (\cpp{default_stacksize}
                                               is platform depended)
                                       \end{itemize}
-                  \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
-                                      trigger \cpp{std::terminate()}
                   \item[attrs]        attributes for \cpp{operator()}
-                  \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
+                  \item[ret]          only \cpp{void} allowed
                                       (use of capture list instead)
                   \item[body]         function body\\
               \end{description}
@@ -141,8 +139,7 @@ constructs new execution context\\
 {\bfseries Notes}
 \newline
 If an instance of \ectx is copied, both instances share the same underlying
-capture record. Resuming one instance modifies the capture record of the other
-\ectx too.
+capture record.
 
 \subparagraph*{(destructor)}
 destroys an execution context\\
@@ -205,7 +202,7 @@ jump context of execution\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] resumes the execution context\\
+    \item[1)] suspends the active context, resumes the execution context\\
 \end{description}
 
 {\bfseries Exceptions}

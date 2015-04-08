@@ -1,8 +1,4 @@
 \abschnitt{Introduction}
-In the past multiple proposals were published to support coroutines in C++.\\
-It is astonishing that each proposal distinguishes coroutines into \emph{two}
-kinds: \emph{stackless} and \emph{stackful}.\\
-\newline
 Traditionally C++ code is run on a linear stack, i.e. the activation
 records are allocated in strict \emph{last-in-first-out} order. This stack
 model allocates activation records on function call/return by
@@ -47,9 +43,9 @@ when it suspends, the stack pointer is restored to its position before the
 resumable function was called. While executing, a resumable function can
 consume additional space in the linear processor stack; it can call
 traditional functions. But they must all return before the resumable function
-suspends. If resumable function A() calls function B(), and B() wishes to
-suspend, B() must also be a resumable function. Thus the
-term \emph{stackless}: a suspended resumable function leaves no activation
+suspends. If resumable function \cpp{A()} calls function \cpp{B()}, and
+\cpp{B()} wishes to suspend, \cpp{B()} must also be a resumable function. Thus
+the term \emph{stackless}: a suspended resumable function leaves no activation
 record on the linear processor stack. A single linear stack can be reused by
 an arbitrary number of suspended resumable functions.\\
 Using a side stack permits \emph{stackful} coroutines to use \emph{suspend by
@@ -59,4 +55,5 @@ or popped on the currently-active stack, independently of any suspended stack.\\
 This is the fundamental difference between stackless and stackful coroutines.\\
 \newline
 Traditional stack management -- a single linear stack per thread -- is
-inadequate for coroutines.
+inadequate for coroutines because coroutines must outlive the context hey were
+created in.
