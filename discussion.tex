@@ -76,7 +76,8 @@ for context switching: asymmetric control transfer. The caller and the
 resumable function are coupled, that is, a resumable function can only jump back
 to the point in the code where it was entered.
 \graphc{asymm}
-For N resumable functions \emph{2N} context switches are required.\\
+For {\bfseries{N}} resumable functions {\bfseries{2N}} context switches are
+required.\\
 \newline
 This is sufficient in the case of generators, but in the context of cooperative
 multitasking it is inefficient.
@@ -90,7 +91,8 @@ direct context switch to next task.\\
 The next execution context must be explicitly specified.\\
 \newline
 \graphc{symm}
-Resuming N instances of \ectx takes \emph{N+1} context switches.
+Resuming {\bfseries{N}} instances of \ectx takes {\bfseries{N+1}} context
+switches.
 
 \uabschnitt{Passing data}
 Because of the asymmetric resume/suspend operations of N4134, the proposal
