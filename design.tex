@@ -57,7 +57,10 @@ content of the resumed execution context is loaded (into CPU registers etc.).
 An \cpp{execution_context}'s pointer to
 its \emph{parent} \cpp{execution_context} allows one to traverse the chain of
 ancestor contexts, that is, to locate the \cpp{execution_context} which resumed
-(called \ectxop on) the currently active \cpp{execution_context}.
+(called \ectxop on) the currently active \cpp{execution_context}. Of course
+the algorithm must prevent a cylce of parents. The main context (created
+on entry of \main or thread's \emph{entry-function}) will never have a parent
+because if the main context terminates the application or the thread terminates.
 
 \paragraph*{Active context}
 The static member function \ectxcurrent returns a \ectx pointing to the
