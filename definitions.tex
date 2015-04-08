@@ -5,97 +5,132 @@ This section gives an overview about the wording used in this proposal.
 environment in which program logic is evaluated (CPU registers, stack).
 
 \uabschnitt{Activation record}
-also known as \emph{activation frame}, \emph{control block} (\emph{stack frame}
+also known as \emph{activation frame} (\emph{stack frame}
 is a special activation record).\\
 An \emph{activation record} is a data structure containing the state of a
-particular function call. Folowing data are part of a activation record:
+particular function call. The following data are part of an activation record:
 \begin{itemize}
     \item a set of registers (defined by the calling convention of the ABI
-        \footnote{Application Binary Interface})
+        \footnote{Application Binary Interface}, e.g. the return address)
     \item local variables
     \item parameters to the function
     \item eventually return value
 \end{itemize}
 
 \uabschnitt{Stack frame}
-the activation records are allocated in strict last-in-first-out order on the
-processor stack - placed by incrementing/decrementing the stack pointer on
-function call/return.
+an activation record allocated on the processor stack; stack frames are
+allocated in strict last-in-first-out order - placed by
+incrementing/decrementing the stack pointer register on function call/return.
 
 \uabschnitt{Heap-allocated activation record}
-each activation record is allocated on a separate heap. The activation record
+an activation record allocated in heap storage; every heap activation record
 holds a pointer to its parent activation record (parent pointer tree).
 
-\uabschnitt{Linear stack}
-is a contiguous stack and the traditional stack model of C++. The allocation,
-deallocation and linkage of activation records (stack frames in this context)
-are done by incrementing/decrementing the stack pointer.
-
-\uabschnitt{Non-contiguous stack}
-is a \emph{parent pointer tree}-structure used to store activation records. It
-is a stack with branches, e.g. activation records can outlive the context they
-were created in.
-
 \uabschnitt{Processor stack}
-is a chunk of memory into which the processor's stack pointer is pointing. The
-processor stack might belong to:
+is a chunk of memory into which the processor's stack pointer register is
+pointing. The processor stack might belong to:
 \begin{itemize}
-    \item an application's inital (or only) thread
+    \item an application's initial (or only) thread
     \item an explicitly-launched thread
-    \item a sub-thread execution context (coroutine)
+    \item a sub-thread execution context (e.g. a coroutine)
 \end{itemize}
 
-The processor stack assigned to function \main is a linear (contiguous) stack.
-Often, the memory managment system is used to detect a stack overflow (and
-allocate more memory). Stacks assigned to threads can not easily extended if
-an overflow occurs; instead stacks with a fixed size are used - usually 1MBs
-(Windows) till 2MB (Linux), but some platforms use smaller stacks (64KB on
-HP-UX/PA and 256KB on HP-UX/Itanium).
+\uabschnitt{Application stack}
+The processor stack assigned to function \main is generally a \emph{linear
+stack}. Often, the memory management system is used to detect stack
+overflow and allocate more memory. This stack is ideally placed well away from
+any other data in the process's address space so it can be extended as needed.
+
+\uabschnitt{Thread stack}
+The processor stack assigned to an explicitly-launched thread is generally
+a \emph{linear stack}. In a 32-bit (or smaller) address space, the operating
+system cannot, in general, guarantee that such a stack can be arbitrarily
+extended on overflow: the range of available addresses is constrained by the
+next adjacent allocated memory block. Instead, stacks with a fixed size are
+used - usually 1MB (Windows) up to 2MB (Linux), but some platforms use smaller
+stacks (64KB on HP-UX/PA and 256KB on HP-UX/Itanium).
 
 \uabschnitt{Side stack}
-is a call stack that is used in the case of stackful context switching, e.g.
-each execution context gets its own stack (assigned to stack pointer). Thus
-stack frames of subroutines are allocated on the side stack, the application
-stack remains unchanged.
+is a processor stack that is used for \emph{stackful} context switching. Each
+execution context gets its own stack. The stack belonging to an inactive
+context remains unchanged, while function calls and returns push and pop stack
+frames on the currently-active stack.
+
+A side stack is generally allocated by the running process (library code)
+rather than by the operating system. It might either be a \emph{linear stack}
+or a \emph{linked stack}.
+
+\uabschnitt{Linear stack}
+is a contiguous memory area into which the processor's stack pointer register
+points. On a processor with a stack pointer register, this is the traditional
+stack model for C++. Allocation and deallocation of activation records
+(stack frames in this context) is performed by incrementing/decrementing the
+stack pointer.
 
 \uabschnitt{Linked stack}
-also known as \emph{split stack}\cite{gccsplit} or
-\emph{segmented stack}\cite{llvmseg}, is a non-contiguous stack, that grows on
-demand. An overflow handler allocates new chunk of memory as necessary. It has a
-low performance penalty - ca. 5-10\% overhead.\\
+also known as \emph{split stack}\cite{gccsplit} or \emph{segmented
+stack}\cite{llvmseg}. This is a linked list of contiguous memory blocks of
+intermediate size, each of which might hold several function stack frames. The
+processor's stack pointer points into the head block on this list; normally a
+new stack frame is allocated by adjusting the stack pointer, as usual. When
+compiler-generated code detects near overflow, it links on a new head block.
+Thus, the effective stack space can grow arbitrarily without requiring a
+single contiguous address range.
+
+This mechanism has a low performance penalty - typically adding around 5-10\%
+overhead to the instruction sequence implementing a function call. Only an
+application consisting solely of empty functions would see that impact
+overall. Small functions would see the most overhead -- but modern C++
+compilers work really hard to inline small functions, and of course the
+overhead vanishes entirely for inline functions.
+
 Applications compiled with support for linked stacks can use (link against)
-libraries not supporting linked stacks (see GCC's documentation\cite{gccsplit},
-chapter 'Backward compatibility').
+libraries not supporting linked stacks. (See GCC's documentation\cite{gccsplit},
+chapter 'Backward compatibility'.)
+
+\uabschnitt{Non-contiguous stack}
+is a \emph{parent pointer tree}-structure used to store heap-allocated
+activation records. It is a stack with branches; an activation record can
+outlive the context in which it was created. With this mechanism, the
+processor's stack pointer register does not point to (or into) any of these
+activation records. Compare to \emph{Linked stack}.
+
+A heap activation record is allocated on entry to a function and freed on
+return, as with N4134\cite{N4134}.
+
+This structure is also called \emph{cactus stack}\cite{cactusstack}
+or \emph{spaghetti stack}.
 
 \uabschnitt{Parent pointer tree}
 data structure in which each node has a pointer to its parent, but no pointer to
-its children. Traversion from any node to its ancestors is possible but not to
-any other node.\\
-Used as call stack, the structure is called \emph{cactus stack}.
+its children. Traversal from any node to its ancestors is possible but not to
+any other node.
 
 \uabschnitt{Coroutine}
-enables explicit suspend and resume of its progress via additional operations by
-preserving execution state (\emph{activation record}) and thus provides an
-enhanced control flow. Coroutines have following characteristics\cite{N3985}:
+function that enables explicit suspend and resume of its progress by
+preserving execution state (\emph{activation record}), thus providing an
+enhanced control flow. Coroutines have the following characteristics\cite{N3985}:
 \begin{itemize}
     \item values of local data persist across context switches
     \item execution is suspended as control leaves coroutine and resumed at
           certain time later
-    \item symmetric or asymmetric control transfer-mechanism
+    \item symmetric or asymmetric control-transfer mechanism
     \item first-class object or compiler-internal structure
     \item stackless or stackful
 \end{itemize}
 
 \uabschnitt{Toplevel context function}
-is a function executed by a coroutine (stackless or stackful).
+is a function executed as a coroutine (stackless or stackful). This term is
+particularly useful when discussing library-supported context switching, as
+the execution context must be constructed explicitly and passed a function.
 
 \uabschnitt{Asymmetric coroutine}
 provides two distinct operations for the context switch - one operation to
 resume and one operation to suspend the coroutine.\\
-An asymmetric coroutine is tightly coupled with its caller, e.g. suspending the
-coroutine transfers the execution control back to the point in the code where it
-was called. The asymmetric control-transfer mechanism is usually used in the
-context of generators.
+An asymmetric coroutine is tightly coupled with its caller, i.e. suspending
+the coroutine transfers execution control back to the point in the code
+from which the coroutine was last resumed. The asymmetric control-transfer
+mechanism is usually used in the context of generators.
 
 \uabschnitt{Symmetric coroutine}
 only one operation to resume/suspend the context is needed.\\
@@ -108,11 +143,17 @@ cooperative multitasking.
 execute tasks in a cooperative multitasking environment involving a scheduler.
 Coroutines and fibers are distinct (N4024\cite{N4024}).
 
+Code running in a user-mode thread (or ``fiber'') suspends by passing control
+to the scheduler, which selects the next fiber to resume. Such code is not
+inherently coupled to the code that launched the fiber (as with an asymmetric
+coroutine); nor must it explicitly select the next fiber (as with a symmetric
+coroutine).
+
 \uabschnitt{Resumable function}
-N4134\cite{N4134} describes resumable functions as an efficient 
-language-supported mechanism for stackless context switching introducing two new keywords
-- \await and \yield. Resumable functions are equivalent to asymmetric
-coroutines.\\
+N4134\cite{N4134} describes resumable functions as an efficient
+language-supported mechanism for stackless context switching introducing two
+new keywords - \await and \yield. A resumable function is a kind of asymmetric
+coroutine: suspending passes control back to its caller.\\
 Characteristics of resumable functions:
 \begin{itemize}
     \item stackless
@@ -122,3 +163,19 @@ Characteristics of resumable functions:
           control-transfer mechanism)
     \item implicit \emph{return}-statement\cite{N4134} (code transformation)
 \end{itemize}
+
+\uabschnitt{Suspend by return}
+The terms \emph{stackless} and \emph{stackful} can become confusing as
+different implementations are discussed. An N4134\cite{N4134} ``stackless''
+resumable function might consume a bit of the current processor stack on
+entry, cleaning it off on suspension. A \emph{cactus stack} coroutine
+implementation might provide ``stackful'' semantics while completely avoiding
+the processor stack.
+
+\emph{Suspend by return} describes a mechanism such as described in N4134\cite{N4134} and
+N4244\cite{N4244}, in which suspending is implemented by returning from the
+function body.
+
+\uabschnitt{Suspend by call}
+describes a mechanism such as described in N3985\cite{N3985}, in which
+suspending is implemented by calling some other (library) function.
