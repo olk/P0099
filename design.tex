@@ -1,3 +1,4 @@
+\newpage
 \abschnitt{Design}
 Class \ectx is derived from the work on Boost.Context\cite{bcontext}. It
 provides a {\bfseries small, basic API} on which to build {\bfseries
@@ -34,7 +35,7 @@ lambda (it is constructible from \ectxcurrent too).\\
 \ectx is more like a handle to a \emph{capture record} of an execution
 context.
 \cppf{N4397/rl1}
-The keyword \resumable together with an hint (attribute) about the type and size
+The keyword \resumable together with a hint (attribute) about the type and size
 of the side stack tells the compiler to generate a stackful execution context.\\
 Because of the symmetric context switching (only one operation transfers
 control), the target \cpp{execution_context} must be explicitly specified.\\
@@ -58,7 +59,7 @@ An \cpp{execution_context}'s pointer to
 its \emph{parent} \cpp{execution_context} allows one to traverse the chain of
 ancestor contexts, that is, to locate the \cpp{execution_context} which resumed
 (called \ectxop on) the currently active \cpp{execution_context}. Of course
-the algorithm must prevent a cylce of parents. The main context (created
+the algorithm must prevent a cycle of parents. The main context (created
 on entry of \main or thread's \emph{entry-function}) will never have a parent
 because if the main context terminates the application or the thread terminates.
 
@@ -91,7 +92,7 @@ pointer etc.) of the parent context, so that it is resumed.
 An uncaught exception thrown from the execution context is caught, the parent
 execution context is resumed and the exception is re-thrown inside the parent
 context (that is, the exception is emitted by \ectxop).
-
+\newpage
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
 constructs new execution context\\
@@ -119,20 +120,20 @@ constructs new execution context\\
               \begin{description}
                   \item[captures]     list of captures
                   \item[params]       only empty parameter-list allowed
-                  \item[mutable]      allows to modify parameters captured by copy
+                  \item[mutable]      is ignored: it is moot, since no params are allowed
                   \item[resumable]    identify resumable context
                   \item[hint]         stack type hint:
                                       \begin{itemize}
                                           \item \cpp{fixedsize(x=default_stacksize)}:
                                               fixed size stack (\cpp{default_stacksize} is
-                                              platform depended)
-                                          \item \cpp{segmented(x=default_stacksize)}:
-                                              stack grows on demand (\cpp{default_stacksize}
-                                              is platform depended)
+                                              platform dependent)
+                                          \item \cpp{segmented(x=default_segmented_stacksize)}:
+                                              stack grows on demand (\cpp{default_segmented_stacksize}
+                                              is platform dependent)
                                       \end{itemize}
                   \item[attrs]        attributes for \cpp{operator()}
                   \item[ret]          only \cpp{void} allowed
-                                      (use of capture list instead)
+                                      (use capture list instead)
                   \item[body]         function body\\
               \end{description}
     \item[2)] copies \ectx, e.g. underlying capture record is shared

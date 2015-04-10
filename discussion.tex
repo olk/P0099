@@ -1,3 +1,4 @@
+\newpage
 \abschnitt{Discussion}
 \uabschnitt{Memory requirements}
 In the case of a simple toplevel context-function, stackless and stackful coroutines
@@ -95,10 +96,10 @@ switches.
 
 \uabschnitt{Passing data}
 Because of the asymmetric resume/suspend operations of N4134, the proposal
-applies well to generator examples, e.g. returning data from the resumable
+works well for generator examples, returning data from the resumable
 function.\\
 \newline
-Passing data into the body of resumable functions (N4123) requires helper
+Passing data into the body of resumable functions (N4134) requires helper
 classes like \channel.
 \cppf{N4134/channel}
 In this case, the way data are passed into the body is not intuitive and

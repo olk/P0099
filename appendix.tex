@@ -1,3 +1,4 @@
+\newpage
 \abschnitt{A. recursive descent parser using \ectx}\label{appendix}
 This example (taken from Boost.Context\cite{bcontext}) uses a recursive descent
 parser for processing a stream of characters.\\
@@ -6,6 +7,6 @@ equivalent) uses callbacks to push parsed data to the user code. With \ectx the
 user code inverts the control-flow. In this case, the user code \emph{pulls}
 data from the parser.
 \cppf{N4397/parser}
-Code like this example is not possible without transforming all functions in the
-call chain into resumable functions - which is impossible for closed source code
-or for a too large/complex code base.
+You cannot use resumable functions for this example without transforming all
+functions in the call chain into resumable functions - which is impossible for
+closed source code, impractical at best for a large, complex code base.
