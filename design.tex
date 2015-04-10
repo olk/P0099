@@ -38,7 +38,7 @@ context.
 The keyword \resumable together with a hint (attribute) about the type and size
 of the side stack tells the compiler to generate a stackful execution context.\\
 Because of the symmetric context switching (only one operation transfers
-control), the target \cpp{execution_context} must be explicitly specified.\\
+control), the target execution context must be explicitly specified.\\
 Exchanging data between different execution contexts requires the use of lambda
 captures.
 
@@ -125,11 +125,11 @@ constructs new execution context\\
                   \item[hint]         stack type hint:
                                       \begin{itemize}
                                           \item \cpp{fixedsize(x=default_stacksize)}:
-                                              fixed size stack (\cpp{default_stacksize} is
-                                              platform dependent)
+                                              fixed size stack, \cpp{x} determines the stack size\\
+                                              (\cpp{default_stacksize} is platform dependent)
                                           \item \cpp{segmented(x=default_segmented_stacksize)}:
-                                              stack grows on demand (\cpp{default_segmented_stacksize}
-                                              is platform dependent)
+                                              stack grows on demand, \cpp{x} determines the initial stack size\\
+                                              (\cpp{default_segmented_stacksize} is platform dependent)
                                       \end{itemize}
                   \item[attrs]        attributes for \cpp{operator()}
                   \item[ret]          only \cpp{void} allowed
