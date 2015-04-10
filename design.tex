@@ -1,4 +1,3 @@
-\newpage
 \abschnitt{Design}
 Class \ectx is derived from the work on Boost.Context\cite{bcontext}. It
 provides a {\bfseries small, basic API} on which to build {\bfseries
@@ -92,7 +91,7 @@ pointer etc.) of the parent context, so that it is resumed.
 An uncaught exception thrown from the execution context is caught, the parent
 execution context is resumed and the exception is re-thrown inside the parent
 context (that is, the exception is emitted by \ectxop).
-\newpage
+
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
 constructs new execution context\\
@@ -215,6 +214,11 @@ jump context of execution\\
 \end{description}
 
 {\bfseries Notes}
+\newline
+The \emph{prologue} preserves the execution context of the calling context as well
+as stack parts like \emph{parameter list} and \emph{return address}
+\footnote{required only by some x86 ABIs}. Those data are restored by the
+\emph{epilogue} if the calling context is resumed.
 \newline
 An exception thrown inside execution context is caught, the parent execution
 context is resumed and the exception is re-thrown in the parent context (out of
