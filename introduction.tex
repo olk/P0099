@@ -11,11 +11,14 @@ essentially makes normal stack operations unworkable.\\
 Traditional stack management is inadequate for coroutines.\\
 \newline
 N4397\cite{N4397} describes the \emph{first-class} construct \ectx, representing
-an execution state. A program implicitly contains at least one execution context. As
-explained in N4397, \ectx can be used to implement stackful coroutines as
-proposed in N3985\cite{N3985} or might be the building block of \emph{oneshot
-shift/reset}
+an execution state. A program implicitly contains at least one execution
+context. As explained in N4397, \ectx can be used to implement stackful
+coroutines as proposed in N3985\cite{N3985} or might be the building block of
+\emph{oneshot delimited continuations}
 operators\footnote{\href{https://www.gnu.org/software/guile/manual/html_node/Shift-and-Reset.html}
-{Shift, Reset, and All That}}.\\
+{Shift, Reset, and All That}\\
+A delimited continuation marks a
+part of the continuation frame so that the compiler can reify it in into a functor
+(closure). Delimited continuations returns a value and might be composed.}.\\
 In the remaining chapters the proposal describes under which constraints \ectx
 can be used for stackless and stackful context switching.

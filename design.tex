@@ -36,7 +36,7 @@ current active capture record is stored in an internal, thread local pointer.
 \paragraph*{Toplevel capture records}
 On entering \main as well as the \emph{thread-function} of a thread, an execution
 context (capture record) is created and stored in the internal thread-local
-pointer underlying \ectxcurrent.
+pointer underlying\\\ectxcurrent.
 
 \paragraph*{Termination}
 If the body of the toplevel context function reaches its end, the parent
@@ -49,7 +49,7 @@ resumed.
 \uabschnitt{Exceptions}
 An exception thrown inside the execution context is caught, the parent execution
 context is resumed and the exception is re-thrown inside the parent context:
-the exception is emitted by \ectxop.
+the exception is emitted by\\\ectxop.
 \newpage
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
@@ -58,7 +58,7 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
-    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable} {\color{blue}exceptions} attrs -> ret \{body\}} & (1)\\
+    {\ttfamily\small\color{black}[captures](params) {\color{blue}mutable} {\color{blue}resumable} attrs -> ret \{body\}} & (1)\\
 
     \midrule
 
@@ -78,10 +78,10 @@ constructs new execution context\\
               \begin{description}
                   \item[captures]     list of captures
                   \item[params]       only empty parameter-list allowed
-                  \item[mutable]      is ignored: it is moot, since no params are allowed
+                  \item[mutable]      parameters captured by copy can be modified by \emph{body}
                   \item[resumable]    identify resumable context
                   \item[attrs]        attributes for \cpp{operator()}
-                  \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
+                  \item[ret]          only \cpp{void} allowed
                                       (use capture list instead)
                   \item[body]         function body\\
               \end{description}
@@ -150,7 +150,7 @@ jump context of execution\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] resumes the execution context\\
+    \item[1)] suspends the active context, resumes the execution context\\
 \end{description}
 
 {\bfseries Exceptions}

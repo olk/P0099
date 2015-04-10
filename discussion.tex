@@ -37,7 +37,7 @@ object).
 as well as first-class objects in order to specify the next context to be
 resumed.\\
 This enables an arbitrary flow of context switches providing a broad range of
-control flows (for instance \emph{shift/reset}-continuations).\\
+control flows (for instance \emph{delimited continuations}).\\
 As a consequence the part belonging to the called function on the caller's stack
 must be popped and preserved in the caller's \emph{capture record}. The caller
 context suspends by calling\\
