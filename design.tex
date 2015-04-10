@@ -1,41 +1,42 @@
+\newpage
 \abschnitt{Design}
 The design of \ectx is based on N4397\cite{N4397} with one modification - the
 \emph{lambda-like expression} does not have the \emph{hint} attribute.\\
-Instead the compiler desides if one activation records is sufficient
-(\emph{stackless} or a side stack is required (\emph{stackful}. The compiler 
+Instead the compiler desides if one activation record is sufficient
+(\emph{stackless}) or a side stack is required (\emph{stackful}). The compiler 
 makes the decision based on the analysis of the toplevel context function.
-If the compiler can prove, that context switches are only done at the toplevel
+If the compiler can prove that context switches are only done at the toplevel
 function and not from nested call stack (from subroutines), than a
 \emph{stackless} execution context is created. Otherwise the compiler constructs
 a \ectx with a non-contiguous, linked side stack. The initial default stacksize
 depends on the platform.
 
 \uabschnitt{First-class object}
-As first-class object the execution context can be stored in a variable or
+As a first-class object, the execution context can be stored in a variable or
 container.
 
 \uabschnitt{Capture record}
 Each instance of \ectx owns a toplevel activation record, the capture record.
 The capture record is a special activation record that stores additional data
 like stack pointer, instruction pointer and a link to its parent execution
-context. That means that during a execution context switch, the execution state
+context. That means that during an execution context switch, the execution state
 of the running context is captured and stored in the capture record while the
 content of the resumed execution context is loaded (into CPU registers etc.).
 
 \paragraph*{Parent context}
-The pointer to its \emph{parent} execution context allows to traverse the chain
-of ancestor context's, e.g. the execution context which has resumed (\ectxop
-called) the running context.
+The pointer to its \emph{parent} execution context allows traversing the chain
+of ancestor contexts, i.e. the execution context which has resumed (called \ectxop
+on) the running context.
 
 \paragraph*{Active context}
 Static member function \ectxcurrent returns a\\
-\ectx pointing to the current capture record (e.g. execution context). The
+\ectx pointing to the current capture record (execution context). The
 current active capture record is stored in an internal, thread local pointer.
 
 \paragraph*{Toplevel capture records}
-At entering \main as well as the \emph{thread-function} of a thread, a execution
-context (capture record) is created and stored in the internally.
-\ectxcurrent.
+On entering \main as well as the \emph{thread-function} of a thread, an execution
+context (capture record) is created and stored in the internal thread-local
+pointer underlying \ectxcurrent.
 
 \paragraph*{Termination}
 If the body of the toplevel context function reaches its end, the parent
@@ -46,10 +47,10 @@ in the parent context the function\\
 resumed.
 
 \uabschnitt{Exceptions}
-A exception thrown inside the execution context is catched, the parent execution
-context is resumed and the exception is re-thrown inside the parent context
-(e.g. the exception is emitted by \ectxop).
-
+An exception thrown inside the execution context is caught, the parent execution
+context is resumed and the exception is re-thrown inside the parent context:
+the exception is emitted by \ectxop.
+\newpage
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
 constructs new execution context\\
@@ -77,17 +78,15 @@ constructs new execution context\\
               \begin{description}
                   \item[captures]     list of captures
                   \item[params]       only empty parameter-list allowed
-                  \item[mutable]      allows to modify parameters captured by copy
+                  \item[mutable]      is ignored: it is moot, since no params are allowed
                   \item[resumable]    identify resumable context
-                  \item[exceptions]   only \cpp{noexcept} allowed; emitted exceptions
-                                      trigger \cpp{std::terminate()}
                   \item[attrs]        attributes for \cpp{operator()}
                   \item[ret]          only \cpp{void} allowed; resumable lambda returns nothing
-                                      (use of capture list instead)
+                                      (use capture list instead)
                   \item[body]         function body\\
               \end{description}
-    \item[2)] copies \ectx, e.g. underlying control block is shared
-    \item[3)] moves underlying control block to new \ectx
+    \item[2)] copies \ectx, e.g. underlying capture record is shared
+    \item[3)] moves underlying capture record to new \ectx
 \end{description}
 
 \subparagraph*{(destructor)}
@@ -102,8 +101,8 @@ destroys a execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] destroys a \ectx. If associated with a context of execution and
-              holds the last reference to the internal control block, then the
+    \item[1)] destroys an \ectx. If associated with a context of execution and
+              holds the last reference to the internal capture record, then the
               context of execution is destroyed too. Specifically, the stack is
               unwound.\\
 \end{description}
@@ -125,7 +124,7 @@ copies/moves the coroutine object\\
 
 \begin{description}
     \item[1)] assigns the state of \emph{other} to \emph{*this} using move semantics
-    \item[2)] copies the state of \emph{other} to \emph{*this}, state (control block)
+    \item[2)] copies the state of \emph{other} to \emph{*this}, state (capture record)
               is shared
 \end{description}
 
@@ -166,8 +165,8 @@ as stack parts like \emph{parameter list} and \emph{return address}
 \footnote{required only by some x86 ABIs}. Those data are restored by the
 \emph{epilogue} if the calling context is resumed.
 \newline
-A exception thrown inside execution context is catched, the parent execution
-context is resumed and the exception is re-throw in the parent context (out of
+An exception thrown inside execution context is caught, the parent execution
+context is resumed and the exception is re-thrown in the parent context (out of
 \ectxop).\\
 If the toplevel context function terminates (reaches end), the parent context is
 resumed (return of\\
@@ -233,5 +232,5 @@ accesses the current active execution context\\
 
 {\bfseries Notes}
 \newline
-The current active execution context is thread-specific, e.g. for each thread
-(including \main) a execution context is created at start-up.
+The current active execution context is thread-specific: for each thread
+(including \main) an execution context is effectively created at start-up.
