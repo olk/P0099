@@ -97,7 +97,7 @@ processor's stack pointer register does not point to (or into) any of these
 activation records. Compare to \emph{Linked stack}.
 
 A heap activation record is allocated on entry to a function and freed on
-return, as with N4134\cite{N4134}.
+return, as with N4402\cite{N4402}.
 
 This structure is also called \emph{cactus stack}\cite{cactusstack}
 or \emph{spaghetti stack}.
@@ -151,7 +151,7 @@ coroutine); nor must it explicitly select the next fiber (as with a symmetric
 coroutine).
 
 \uabschnitt{Resumable function}
-N4134\cite{N4134} describes resumable functions as an efficient
+N4402\cite{N4402} describes resumable functions as an efficient
 language-supported mechanism for stackless context switching introducing two
 new keywords - \await and \yield. A resumable function is a kind of asymmetric
 coroutine: suspending passes control back to its caller.\\
@@ -159,23 +159,23 @@ Characteristics of resumable functions:
 \begin{itemize}
     \item stackless
     \item uses heap allocated activation records (referred as activation frames
-          in N4134)
+          in N4402)
     \item tight coupling between caller and resumable function (asymmetric
           control-transfer mechanism)
-    \item implicit \emph{return}-statement\cite{N4134} (code transformation)
+    \item implicit \emph{return}-statement\cite{N4402} (code transformation)
 \end{itemize}
 
 \uabschnitt{Suspend by return}
-The terms \emph{stackless} and \emph{stackful} can become confusing as
-different implementations are discussed. An N4134\cite{N4134} ``stackless''
+The terms \emph{stackless} and \emph{stackful} may become confusing as
+different implementations are discussed. An N4402\cite{N4402} ``stackless''
 resumable function might consume a bit of the current processor stack on
 entry, cleaning it off on suspension. A \emph{cactus stack} coroutine
 implementation might provide ``stackful'' semantics while completely avoiding
 the processor stack.
 
-\emph{Suspend by return} describes a mechanism such as described in N4134\cite{N4134} and
-N4244\cite{N4244}, in which suspending is implemented by returning from the
-function body.
+We use the phrase \emph{suspend by return} to discuss a mechanism such as
+described in N4402\cite{N4402} and N4244\cite{N4244}, in which suspending is
+implemented by returning from the function body.
 
 \uabschnitt{Suspend by call}
 describes a mechanism such as described in N3985\cite{N3985}, in which

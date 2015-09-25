@@ -1,4 +1,4 @@
-// N4397: stackful execution context
+// P0099: stackful execution context
 // grammar:
 //   P ---> E '\0'
 //   E ---> T {('+'|'-') T}
@@ -77,9 +77,8 @@ int main(){
     char c;
     // access current execution context
     auto m=std::execution_context::current();
-    // use of linked stack (grows on demand) with initial size of 1KB
     std::execution_context l(
-    auto l=[&is,&m,&c]()resumable(segmented(1024)){
+        [&is,&m,&c](){
             Parser p(is,
                      // callback, used to signal new symbol
                      [&m,&c](char ch){

@@ -1,20 +1,16 @@
 \abschnitt{Abstract}
 This paper proposes a \emph{low-level} API for a stackful execution context,
 suitable to act as {\bfseries building-block} for {\bfseries high-level}
-constructs like stackful coroutines from N3985\cite{N3985}
-(Boost.Coroutine2\cite{bcoroutine2}) as well as to implement effective
+constructs such as stackful coroutines from N3985\cite{N3985}
+(Boost.Coroutine2\cite{bcoroutine2}) as well as to implement
 cooperative multitasking (Boost.Fiber\cite{bfiber}).\\
-Based on the proposed low-level API, the follow-up proposal N4398\cite{N4398}
-introduces a unified syntax for stackless and stackful coroutines.\\
 \newline
 The most important features are:
 \begin{itemize}
     \item first-class object that can be stored in variables or containers
-    \item introduction of new keyword \resumable together with a lambda-like
-          expression
     \item symmetric transfer of execution control, i.e. suspend-by-call -
           enables a richer set of control flows than asymmetric transfer of
-          control (i.e. suspend-by-return as described in N4134)
+          control (i.e. suspend-by-return as described in N4402\cite{N4402} et al.)
     \item benefits of traditional stack management retained
     \item ordinary function calls and returns not affected
     \item working implementation in Boost.Context\cite{bcontext}

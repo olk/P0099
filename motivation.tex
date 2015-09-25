@@ -1,0 +1,29 @@
+\abschnitt{Motivation}
+This paper proposes \cpp{std::execution\_context}. \cpp{execution\_context} is
+the crucial foundation on which a number of valuable higher-level facilities
+can be built using pure C++.\\
+\newline
+\cpp{execution\_context} itself is, however, impossible to code in portable
+C++. Having it provided with the runtime library will be enabling technology
+for both third-party libraries and user applications.\\
+\newline
+As a library-only facility,
+\cpp{boost::context::execution\_context}\cite{bcontext} is existing practice.
+\cpp{execution\_context} is used to implement
+Boost.Coroutine2\cite{bcoroutine2} and the candidate Boost.Fiber
+library\cite{bfiber}.\\
+\newline
+This facility adds significant semantics beyond resumable functions. For
+instance, you cannot build cooperative user-mode threads (such as those
+supported by Boost.Fiber) on resumable functions.\\
+\newline
+These libraries based on Boost.Context can seamlessly interoperate with
+Boost.Asio\cite{basio}: Asio's \cpp{async\_result} mechanism (proposed for
+standardization in N4045\cite{N4045}) supports adapters that can, using a
+natural syntax, suspend the caller for the duration of an asynchronous network
+call. Libraries based on \cpp{std::execution\_context} will similarly
+interoperate cleanly with the proposed standard Networking Library\cite{N4478}.\\
+\newline
+The authors intend to bring future papers to propose a cooperative fiber
+library and ``stackful'' coroutines. \cpp{execution\_context} is foundational
+for all such evolutionary work.

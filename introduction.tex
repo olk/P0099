@@ -36,10 +36,10 @@ Consider the following scenario:
 \end{itemize}
 
 In order to prevent stack corruption, a stackless coroutine uses a heap-allocated
-activation record (N4134\cite{N4134}), while stackful coroutines use a side
+activation record (N4402\cite{N4402}), while stackful coroutines use a side
 stack (N3985\cite{N3985}).\\
-Since an N4134 stackless resumable function uses \emph{suspend by return},
-when it suspends, the stack pointer is restored to its position before the
+Since an N4402 stackless resumable function uses \emph{suspend by return},
+when it suspends, the stack pointer is restored to its value before the
 resumable function was called. While executing, a resumable function can
 consume additional space in the linear processor stack; it can call
 traditional functions. But they must all return before the resumable function

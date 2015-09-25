@@ -29,9 +29,9 @@
             urlcolor=blue,
             pdftex,
             pdfsubject  = {},
-            pdfauthor   = {Oliver Kowalke},
-            pdfkeywords = {C++,execution,context,coroutine,resumable,function,lambda,N4397},
-            pdftitle    = {A low-level API for stackful coroutines}]{hyperref}
+            pdfauthor   = {Oliver Kowalke, Nat Goodspeed},
+            pdfkeywords = {C++,execution,context,coroutine,P0099},
+            pdftitle    = {A low-level API for stackful context switching}]{hyperref}
 
 %//////////////////////////////////////////////////////////////////////////////
 
@@ -43,13 +43,14 @@
 
 \small
 \begin{tabbing}
-    Document number: \= N4397\\
-    Date:            \> 2015-04-09\\
+    Document number: \= P0099R0\\
+    Supersedes:      \> N4397\\
+    Date:            \> 2015-09-25\\
     Project:         \> WG21, SG1\\
-    Author:          \> Oliver Kowalke (oliver.kowalke@gmail.com)\\
+    Author:          \> Oliver Kowalke (oliver.kowalke@gmail.com), Nat Goodspeed (nat@lindenlab.com)\\
 \end{tabbing}
 
-\section*{A low-level API for stackful coroutines}
+\section*{A low-level API for stackful context switching}
 
 %//////////////////////////////////////////////////////////////////////////////
 
@@ -58,10 +59,20 @@
 %//////////////////////////////////////////////////////////////////////////////
 
 \paragraph*{Revision History}
-This document supersedes N3985 and elaborates a low-level API for stackful
-coroutines.
+This document supersedes N4397. It elaborates a low-level API for stackful
+context switching.\\
+\newline
+Changes since N4397:
+
+\begin{itemize}
+    \item \cpp{std::execution\_context} presented as pure library facility.
+    \item Motivation section added.
+    \item \cpp{std::execution\_context} no longer tracks parent relationships.
+    \item Removed \cpp{operator bool()} and \cpp{operator!()}.
+\end{itemize}
 
 \input{abstract}
+\input{motivation}
 \input{background}
 \input{definitions}
 \input{introduction}

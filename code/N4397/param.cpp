@@ -1,4 +1,4 @@
-// N4397: stackful execution context
+// P0099: stackful execution context
 class X{
 private:
     int* inp_;
@@ -10,7 +10,7 @@ public:
     X():
         inp_(nullptr),outp_(),
         caller_(std::execution_context::current()),
-        callee_([=]()resumable(segmented(1024)){
+        callee_([=](){
                        outp_=lexical_cast<std::string>(*inp_);
                        caller_(); // context switch to main()
                 })

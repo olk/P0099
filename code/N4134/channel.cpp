@@ -1,4 +1,4 @@
-// N4134: stackless resumable function
+// N4402: stackless resumable function
 goroutine pusher(channel<int>& left, channel<int>& right){
     for(;;){
         auto val=await left.pull();
