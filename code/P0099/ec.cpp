@@ -3,7 +3,11 @@ public:
     static execution_context current() noexcept;
 
     template<typename StackAlloc, typename Fn, typename ... Args>
-    explicit execution_context(StackAlloc salloc, Fn&& fn, Args&& ... args);
+    execution_context(std::allocator_arg_t, StackAlloc salloc,
+                      Fn&& fn, Args&& ... args);
+
+    template<typename Fn, typename ... Args>
+    explicit execution_context(Fn&& fn, Args&& ... args);
 
     execution_context( execution_context const&)=default;
     execution_context( execution_context &&)=default;

@@ -75,25 +75,34 @@ private:
 int main(){
     std::istringstream is("1+1");
     char c;
+    std::exception_ptr excp;
     // access current execution context
     auto m=std::execution_context::current();
     std::execution_context l(
+        std::allocator_arg,
         segmented(1024),
-        [&is,&m,&c](){
+        [&is,&m,&c,&excp](){
             Parser p(is,
                      // callback, used to signal new symbol
                      [&m,&c](char ch){
                         c=ch;
                         m(); // resume main-context
                      });
-            p.run(); // start parsing
+            try {
+                p.run(); // start parsing
+            } catch (...) {
+                excp = std::current_exception();
+            }
         });
-    try{
+    try {
         // inversion of control: user-code pulls parsed symbols from parser
         while(l()){
+            if (excp) {
+                std::rethrow_exception(excp);
+            }
             std::cout<<"Parsed: "<<c<<std::endl;
         }
-    }catch(const std::exception& e){
+    } catch(const std::exception& e){
         std::cerr<<"exception: "<<e.what()<<std::endl;
     }
 }

@@ -3,7 +3,6 @@
 auto l1=std::execution_context::current();
 // create stackful execution context l2
 std::execution_context l2(
-    fixedsize(),
     [&l1](){
         std::printf("inside l2\n");
         // suspend l2 and resume l1
