@@ -1,47 +1,18 @@
 \abschnitt{Discussion}
-\uabschnitt{Memory requirements}
-In the case of a simple toplevel context-function, stackless and stackful coroutines
-have the same memory requirements for their activation records.\\
-\newline
-As described in N4134, the compiler analyses the body of the toplevel context
-function and determines the required size and allocates the activation record on
-the heap.
-\cppf{N4134/fibonacci}
-In the example of calculating Fibonacci numbers using a resumable function, the
-compiler reserves space in the activation record for local variables \emph{n},
-\emph{a}, \emph{b} and \emph{next}. Those variables are not accessed via the
-stack pointer. The processor stack is not used and the stack pointer is not
-changed\footnote{Depending on the calling convention, typical \emph{x86} code
-stores parameters and return address on the stack. This must be cleaned off by
-the time control is returned to the caller. Other architectures/ABIs do
-not have this requirement.}.\\
-\newline
-Each stackful coroutine owns a side stack (assigned to the stack pointer). The
-activation record of the toplevel context function is stored on the side
-stack, thus the original stack remains unchanged.
-\cppf{N4397/fibonacci}
-In the case of calculating Fibonacci numbers using a stackful execution
-context, the compiler stores the local variables \emph{n}, \emph{a},
-\emph{b} and \emph{next} on the side stack. The local variables are accessed
-via the stack pointer.\\
-\newline
-The memory requirements for both types of coroutines are equal.
-
 \uabschnitt{Calling subroutines}
 The advantage of stackless coroutines is that they reuse the same linear
 processor stack for stack frames for called subroutines. The advantage of
 stackful context switching is that it permits {\bfseries suspending from
 nested calls}.\\
 \newline
-If a traditional function (not another resumable function) is invoked inside
-the body of a resumable function, then the activation record belonging to the
-traditional function is allocated on the processor stack (so it is called a
-stack frame). As a consequence, stack frames of called functions must be
-removed from the processor stack before the resumable function yields back to
-its caller.\\
+If a resumable function calls a traditional function (rather than another
+resumable function), then the activation record belonging to the traditional
+function is allocated on the processor stack (so it is called a stack frame).
+As a consequence, stack frames of called functions must be removed from the
+processor stack before the resumable function yields back to its caller.\\
 In other words: the calling convention of the {\bfseries ABI dictates} that,
-after the resumable function returns (suspends), the stack pointer contains the
-same address as before the resumable function was entered.\\
+when the resumable function returns (suspends), the stack pointer must contain
+the same address as before the resumable function was entered.\\
 Hence a yield from nested call is {\bfseries not permitted} -- unless every
 called function down to the yield point is also a resumable function.\\
 The benefit of stackless coroutines consists in reusing the processor stack
@@ -71,22 +42,20 @@ allocated on the side stack owned by \emph{l2}.
 As a building block for user-mode threads, symmetric control transfer is more
 efficient than the asymmetric mechanism.\\
 \newline
-Resumable functions (as proposed in N4134\cite{N4134}) provide two operations
-for context switching: asymmetric control transfer. The caller and the
-resumable function are coupled, that is, a resumable function can only jump back
-to the point in the code where it was entered.
+Asymmetric coroutines provide two operations for context switching. The caller
+and the coroutine are coupled, that is, such a coroutine can only jump back to
+the code that most recently resumed it.
 \graphc{asymm}
-For {\bfseries N} resumable functions {\bfseries 2N} context switches are
+For {\bfseries N} asymmetric coroutines, {\bfseries 2N} context switches are
 required. This is sufficient in the case of generators, but in the context of
 cooperative multitasking it is inefficient.\\
 \newline
-In contrast to resumable functions, the proposed stackful execution context
-(\ectx) provides only one operation to resume/suspend the context (\ectxop).
-Control is directly transferred from one execution context to
-another (symmetric control transfer) - no jump back to the caller. In addition
-to supporting generators, this enables an efficient implementation of
-cooperative multitasking: {\bfseries no additional context switch} back to
-caller, direct context switch to next task.\\
+The proposed stackful execution context (\ectx) provides only one operation to
+resume/suspend the context (\ectxop). Control is directly transferred from one
+execution context to another (symmetric control transfer) - no jump back to
+the caller. In addition to supporting generators, this enables an efficient
+implementation of cooperative multitasking: {\bfseries no additional context
+switch} back to caller, direct context switch to next task.\\
 The next execution context must be explicitly specified.\\
 \newline
 \graphc{symm}
@@ -94,18 +63,18 @@ Resuming {\bfseries N} instances of \ectx takes {\bfseries N+1} context
 switches.
 
 \uabschnitt{Passing data}
-Because of the asymmetric resume/suspend operations of N4134, the proposal
+Because of the asymmetric resume/suspend operations of N4402, the proposal
 works well for generator examples, returning data from the resumable
 function.\\
 \newline
-Passing data into the body of resumable functions (N4134) requires helper
+Passing data into the body of resumable functions (N4402) requires helper
 classes like \channel.
 \cppf{N4134/channel}
 In this case, the way data are passed into the body is not intuitive and
 introduces some problems.\\
 \newline
-Experience with \cpp{execution_context} from Boost.Context\cite{bcontext}
-turned up a common pattern: to pass a lambda to the \cpp{execution_context},
+Experience with \cpp{execution\_context} from Boost.Context\cite{bcontext}
+turned up a common pattern: to pass a lambda to the \cpp{execution\_context},
 using its capture list to transfer data into and to return data from the
 body. Parameters (input/output) are accessed via captured references or
 pointers.
@@ -113,7 +82,7 @@ pointers.
 Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
 parameters are transferred between contexts. Member variable
 \emph{callee\_} represents a new execution context and captures the
-\emph{this}-pointer of \cpp{X}. The body converts a integer variable (input)
+\emph{this}-pointer of \cpp{X}. The body converts an integer variable (input)
 into a string (output). Any exception thrown by the conversion is transported
 and re-thrown in main().
 
@@ -121,14 +90,14 @@ and re-thrown in main().
 For stackful coroutines two strategies are typical: a contiguous, fixed-size
 stack (as used by threads), or a linked stack (grows on demand).\\
 The advantage of a fixed-size stack is the fast allocation/deallocation of 
-activation records. A disadvantage is that the required stacksize has to
+activation records. A disadvantage is that the required stacksize must
 be guessed.\\
 The benefit of using a linked stack is that only the initial size of the stack
-is required. The stack itself grows on demand, by means of an overflow handler.
-The performance penalty is low. The disadvantage is that
-code executed inside a stackful coroutine must be rebuilt for this
-purpose. In the case of GCC's split stacks, special compiler/linker flags must
-be specified - no changes to source code are required.\\
+is required. The stack itself grows on demand, by means of an overflow
+handler. The performance penalty is low. The disadvantage is that code
+executed inside a stackful coroutine must be compiled for this stack model. In
+the case of GCC's split stacks, special compiler/linker flags must be
+specified - no changes to source code are required.\\
 When calling a library function not compiled for linked stacks (expecting a
 traditional contiguous stack), GCC's implementation uses link-time code
 generation to change the instructions in the caller. The effect is that a

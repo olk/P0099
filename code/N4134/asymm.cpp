@@ -1,4 +1,4 @@
-// N4134: stackless resumable function
+// N4402: stackless resumable function
 generator<void> f1(){
     yield; // suspend f1
 }
