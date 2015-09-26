@@ -33,7 +33,7 @@ On the other hand, it is beneficial to use side stacks because the stack
 frames of active subroutines remain intact while the execution context is
 suspended. This is the reason why stackful context switching permits
 {\bfseries yielding from nested calls}.
-\cppf{N4397/simple}
+\cppf{P0099/simple}
 Variable \emph{l1} is passed to stackful execution context \emph{l2} via
 the capture list of \emph{l2}. The stack frames of \cpp{std::printf()} are
 allocated on the side stack owned by \emph{l2}.
@@ -78,7 +78,7 @@ turned up a common pattern: to pass a lambda to the \cpp{execution\_context},
 using its capture list to transfer data into and to return data from the
 body. Parameters (input/output) are accessed via captured references or
 pointers.
-\cppf{N4397/param}
+\cppf{P0099/param}
 Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
 parameters are transferred between contexts. Member variable
 \emph{callee\_} represents a new execution context and captures the

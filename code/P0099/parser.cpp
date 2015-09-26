@@ -78,6 +78,7 @@ int main(){
     // access current execution context
     auto m=std::execution_context::current();
     std::execution_context l(
+        segmented(1024),
         [&is,&m,&c](){
             Parser p(is,
                      // callback, used to signal new symbol

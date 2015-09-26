@@ -10,7 +10,8 @@ public:
     X():
         inp_(nullptr),outp_(),
         caller_(std::execution_context::current()),
-        callee_([=](){
+        callee_(fixedsize(),
+                [=](){
                        outp_=lexical_cast<std::string>(*inp_);
                        caller_(); // context switch to main()
                 })
@@ -18,7 +19,7 @@ public:
 
     std::string operator()(int i){
         inp_=&i;
-        callee_(); // context switch for conversion
+        callee_(); // context switch to coroutine (lambda)
         return outp_;
     }
 };
