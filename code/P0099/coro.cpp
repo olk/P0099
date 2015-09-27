@@ -1,4 +1,4 @@
-void ready_msg(yield_context yield) {
+void read_msg(yield_context yield) {
     try {
         array< char, 64 > bf1;
         async_read(socket, buffer(b1), yield);

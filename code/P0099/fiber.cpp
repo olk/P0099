@@ -1,4 +1,4 @@
-void ready_msg() {
+void read_msg() {
     try {
         array< char, 64 > bf1;
         async_read(socket, buffer(b1), boost::fibers::asio::yield);
