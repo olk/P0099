@@ -9,12 +9,11 @@ noncopyable \emph{capture record}.
 
 \cpp{execution\_context::operator()} preserves the CPU register
 set\footnote{defined by ABI's calling convention} + stack pointer: the content
-of those registers is stored in the capture record associated with
-\cpp{execution\_context::current()}. Then \cpp{operator()} loads the CPU
-register set and stack pointer from the capture record associated with
-\cpp{*this}.
+of those registers is stored in the capture record.
+Then \cpp{operator()} loads the CPU register set and stack pointer from the
+capture record associated with \cpp{*this}.
 
-Finally, \cpp{execution\_context::operator()}
+FIXME: Finally, \cpp{execution\_context::operator()}
 makes \cpp{*this} become \cpp{current()}.
 
 \uabschnitt{Class \ectx}
@@ -22,8 +21,6 @@ is like a handle to a \emph{capture record} of an execution context.
 \cppf{P0099/rl1}
 Because of the symmetric context switching (only one operation transfers
 control), the target execution context must be explicitly specified.\\
-Exchanging data between different execution contexts requires the use of lambda
-captures.
 
 \uabschnitt{First-class object}
 As first-class object the execution context can be stored in a variable or
@@ -53,7 +50,8 @@ captures (preserves) the active execution context and loads the data from the
 capture record of the resumed context (\emph{*this}) into the CPU.
 
 \paragraph*{Termination}
-If the toplevel context function returns, \cpp{std::exit(0)} is called.
+The toplevel context function has to return the context which is resumed after
+the current context has terminated.
 
 \uabschnitt{Exceptions}
 If an uncaught exception escapes from the toplevel context

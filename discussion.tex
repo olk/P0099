@@ -34,9 +34,10 @@ frames of active subroutines remain intact while the execution context is
 suspended. This is the reason why stackful context switching permits
 {\bfseries yielding from nested calls}.
 \cppf{P0099/simple}
-Variable \emph{l1} is passed to stackful execution context \emph{l2} via
-the capture list of \emph{l2}. The stack frames of \cpp{std::printf()} are
-allocated on the side stack owned by \emph{l2}.
+Variable \emph{l1} is passed to stackful execution context \emph{l2} as
+an argument of \emph{l2}. \emph{l1} represents the suspended context that has
+resumed \emph{l2}. The stack frames of \cpp{std::printf()} are allocated on the
+side stack owned by \emph{l2}. On return the lambda resumed contet \emph{l1}. 
 
 \uabschnitt{Asymmetric vs. symmetric}
 As a building block for user-mode threads, symmetric control transfer is more

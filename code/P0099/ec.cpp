@@ -1,19 +1,48 @@
+template< typename ... Args >
 class execution_context {
 public:
-    static execution_context current() noexcept;
+    execution_context() noexcept;
 
-    template<typename StackAlloc, typename Fn, typename ... Args>
-    execution_context(std::allocator_arg_t, StackAlloc salloc,
-                      Fn&& fn, Args&& ... args);
+    template< typename Fn,
+              typename ... Params,
+              typename = detail::disable_overload< execution_context, Fn >
+    >
+    execution_context( Fn && fn, Params && ... params);
 
-    template<typename Fn, typename ... Args>
-    explicit execution_context(Fn&& fn, Args&& ... args);
+    template< typename StackAlloc,
+              typename Fn,
+              typename ... Params
+    >
+    execution_context( std::allocator_arg_t, StackAlloc salloc, Fn && fn, Params && ... params);
 
-    execution_context( execution_context const&)=default;
-    execution_context( execution_context &&)=default;
+    ~execution_context();
 
-    execution_context& operator=( execution_context const&)=default;
-    execution_context& operator=( execution_context &)=default;
+    execution_context( execution_context && other) noexcept;
+    execution_context & operator=( execution_context && other) noexcept;
 
-    void operator()() noexcept;
+    execution_context( execution_context const& other) noexcept = delete;
+    execution_context & operator=( execution_context const& other) noexcept = delete;
+
+    std::tuple< execution_context, Args ... > operator()( Args ... args);
+
+    template< typename Fn >
+    std::tuple< execution_context, Args ... > operator()( exec_ontop_arg_t, Fn && fn, Args ... args);
+
+    explicit operator bool() const noexcept;
+
+    bool operator!() const noexcept;
+
+    bool operator==( execution_context const& other) const noexcept;
+
+    bool operator!=( execution_context const& other) const noexcept;
+
+    bool operator<( execution_context const& other) const noexcept;
+
+    bool operator>( execution_context const& other) const noexcept;
+
+    bool operator<=( execution_context const& other) const noexcept;
+
+    bool operator>=( execution_context const& other) const noexcept;
+
+    void swap( execution_context & other) noexcept;
 };

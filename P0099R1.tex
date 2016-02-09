@@ -41,9 +41,9 @@
 \begin{document}
 \small
 \begin{tabbing}
-    Document number: \= P0099R0\\
-    Supersedes:      \> N4397\\
-    Date:            \> 2015-09-27\\
+    Document number: \= P0099R1\\
+    Supersedes:      \> P0099R0\\
+    Date:            \> 2016-02-09\\
     Project:         \> WG21, SG1\\
     Author:          \> Oliver Kowalke (oliver.kowalke@gmail.com), Nat Goodspeed (nat@lindenlab.com)\\
 \end{tabbing}
@@ -57,22 +57,21 @@
 %//////////////////////////////////////////////////////////////////////////////
 
 \paragraph*{Revision History}
-This document supersedes N4397. It elaborates a low-level API for stackful
+This document supersedes P0099R0. It elaborates a low-level API for stackful
 context switching.\\
 \newline
-Changes since N4397:
+Changes since P0099R0:
 
 \begin{itemize}
-    \item \cpp{std::execution\_context} presented as pure library facility.
-    \item Motivation section added.
-    \item \cpp{std::execution\_context} no longer tracks parent relationships.
-    \item Removed \cpp{operator bool()} and \cpp{operator\!()}.
+    \item \cpp{std::execution\_context} with new call sequence
+    \item type-safe transfer of data
+    \item removed static member function \cpp{current()}.
 \end{itemize}
 
 \input{abstract}
 \input{motivation}
 \input{background}
-\input{definitions}
+%\input{definitions}
 \input{introduction}
 \input{discussion}
 \input{design}
