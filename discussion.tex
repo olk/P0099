@@ -74,18 +74,10 @@ classes like \channel.
 In this case, the way data are passed into the body is not intuitive and
 introduces some problems.\\
 \newline
-Experience with \cpp{execution\_context} from Boost.Context\cite{bcontext}
-turned up a common pattern: to pass a lambda to the \cpp{execution\_context},
-using its capture list to transfer data into and to return data from the
-body. Parameters (input/output) are accessed via captured references or
-pointers.
+\cpp{execution\_context} provides only one (symmetric) resume/suspend operation.
+Passing parameter between context' becomes very simple, e.g. semantically no
+difference between suspend and resume:
 \cppf{P0099/param}
-Class \cpp{X} (rudimentary coroutine) demonstrates how input and output
-parameters are transferred between contexts. Member variable
-\emph{callee\_} represents a new execution context and captures the
-\emph{this}-pointer of \cpp{X}. The body converts an integer variable (input)
-into a string (output). Any exception thrown by the conversion is transported
-and re-thrown in main().
 
 \uabschnitt{Stack strategies}
 For stackful coroutines two strategies are typical: a contiguous, fixed-size

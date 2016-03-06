@@ -1,11 +1,11 @@
-template< typename ... Args >
+template<typename ... Args>
 class execution_context {
 public:
     execution_context() noexcept;
 
-    template< typename Fn,
-              typename ... Params,
-              typename = detail::disable_overload< execution_context, Fn >
+    template<typename Fn,
+             typename ... Params,
+             typename = detail::disable_overload<execution_context, Fn>
     >
     execution_context( Fn && fn, Params && ... params);
 
@@ -23,10 +23,10 @@ public:
     execution_context( execution_context const& other) noexcept = delete;
     execution_context & operator=( execution_context const& other) noexcept = delete;
 
-    std::tuple< execution_context, Args ... > operator()( Args ... args);
+    std::tuple<execution_context, Args ...> operator()( Args ... args);
 
-    template< typename Fn >
-    std::tuple< execution_context, Args ... > operator()( exec_ontop_arg_t, Fn && fn, Args ... args);
+    template<typename Fn>
+    std::tuple<execution_context, Args ...> operator()( exec_ontop_arg_t, Fn && fn, Args ... args);
 
     explicit operator bool() const noexcept;
 
