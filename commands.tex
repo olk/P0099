@@ -34,13 +34,17 @@
 
 \newcommand{\await}{\cpp{await}}
 \newcommand{\channel}{\cpp{channel<>}}
-\newcommand{\ectx}{\cpp{std::execution\_context}}
+\newcommand{\ectx}{\cpp{std::execution\_context<>}}
 \newcommand{\ectxop}{\cpp{operator()()}}
-\newcommand{\ectxcurrent}{\cpp{current()}}
 \newcommand{\excpt}{\cpp{std::exception\_ptr}}
 \newcommand{\main}{\cpp{main()}}
 \newcommand{\resumable}{\cpp{resumable}}
 \newcommand{\yield}{\cpp{yield}}
+
+\newcommand{\susup}{\emph{suspend-up}\xspace}
+\newcommand{\susdown}{\emph{suspend-down}\xspace}
+\newcommand{\susreturn}{\emph{suspend-on-return}\xspace}
+\newcommand{\suscall}{\emph{suspend-on-call}\xspace}
 
 \newcommand{\abschnitt}[1]{\addcontentsline{toc}{subsection}{#1}\subsection*{#1}}
 \newcommand{\uabschnitt}[1]{\addcontentsline{toc}{subsubsection}{#1}\paragraph*{#1}}
