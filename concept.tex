@@ -1,0 +1,22 @@
+\abschnitt{Concept (ToE)}
+\begin{itemize}
+\item \ectx represents a ToE
+\item asymmetric coroutine == interaction of two \ectx (two ToEs)
+    \begin{itemize}
+        \item strong coupled
+        \item direct exchange of data (bidirectional)
+        \item unidirectional exchange of data == generator
+    \end{itemize}
+\item fibers == many \ectx (many ToEs)
+    \begin{itemize}
+        \item loosly coupled
+        \item no data exchange
+        \item simply resuming next ready fiber (== next \ectx)
+    \end{itemize}
+\item shift/reset operators == few \ectx interact (few ToEs)
+    \begin{itemize}
+        \item coupled
+        \item data exchanged
+        \item interwoven transfer of execution
+    \end{itemize}
+\end{itemize}
