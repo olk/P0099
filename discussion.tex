@@ -33,13 +33,8 @@ On the other hand, it is beneficial to use side stacks because the stack
 frames of active subroutines remain intact while the execution context is
 suspended. This is the reason why stackful context switching permits
 {\bfseries yielding from nested calls}.
-\cppf{P0099/simple}
-Variable \emph{l1} is passed to stackful execution context \emph{l2} as
-an argument of \emph{l2}. \emph{l1} represents the suspended context that has
-resumed \emph{l2}. The stack frames of \cpp{std::printf()} are allocated on the
-side stack owned by \emph{l2}. On return the lambda resumed contet \emph{l1}. 
 
-\uabschnitt{Asymmetric vs. symmetric}
+\uabschnitt{Why symmetric transfer of control matters}
 As a building block for user-mode threads, symmetric control transfer is more
 efficient than the asymmetric mechanism.\\
 \newline
@@ -63,6 +58,12 @@ The next execution context must be explicitly specified.\\
 Resuming {\bfseries N} instances of \ectx takes {\bfseries N+1} context
 switches.
 
+\uabschnitt{Toplevel functions: main() and thread entry-functions}
+\main and \emph{thread-entry functions} are represented by \ectx too.
+\cppf{P0099/simple}
+Inst \cpp{l1} represents the execution context of \main.
+
+
 \uabschnitt{Passing data}
 Because of the asymmetric resume/suspend operations of N4402, the proposal
 works well for generator examples, returning data from the resumable
@@ -75,9 +76,8 @@ In this case, the way data are passed into the body is not intuitive and
 introduces some problems.\\
 \newline
 \cpp{execution\_context} provides only one (symmetric) resume/suspend operation.
-Passing parameter between context' becomes very simple, e.g. semantically no
-difference between suspend and resume:
-\cppf{P0099/param}
+Passing parameter between context', as for instance back and forth, is
+straightforward.
 
 \uabschnitt{Stack strategies}
 For stackful coroutines two strategies are typical: a contiguous, fixed-size
