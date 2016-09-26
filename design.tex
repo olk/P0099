@@ -3,6 +3,7 @@ Class \ectx provides a {\bfseries small, basic API} on which to build {\bfseries
 higher-level APIs} such as stackful coroutines (N3985\cite{N3985}) and user-mode
 threads (cooperative multitasking).
 
+
 \uabschnitt{Suspend-on-call}
 \cpp{execution\_context<>::operator()} preserves the CPU register
 set\footnote{defined by ABI's calling convention}: the content of those
@@ -11,6 +12,7 @@ stack-pointer). Then \ectxop swaps the stack-pointer of the context associated
 with \cpp{*this} and pops the CPU register set from the stack.
 Because the context state is preserved on context' stack, \ectx needs only to
 manage internally the stack-pointer.
+
 
 \uabschnitt{Call semantics}
 The stack-pointer of the suspended context, that contains the preserved CPU
@@ -22,40 +24,43 @@ invalidated, e.g. the internal pointer, that has had used to store the stack
 pointer, is set to \cpp{nullptr}.
 This is necessary in order to:
 \begin{itemize}
-    \item   deallocate the allocated stack using RAII
     \item   only one instance of \ectx can represent the execution context
+    \item   deallocate the allocated stack using RAII
 \end{itemize}
-
-Part of \cpp{execution\_context<>::operator()} might be implemented as shown in
-Appendix A.
 
 Because of the symmetric context switching (only one operation transfers
 control), the target execution context must be explicitly specified.
 
-\uabschnitt{Top-level functions}
-\main as well as the \emph{entry-function} of a thread can be represented by an
-execution context.
 
 \uabschnitt{Passing data}
-
 \paragraph*{passsing none}
 \paragraph*{single parameter}
 \paragraph*{multiple parameter}
 \paragraph*{unidirectional parameter}
 \paragraph*{bidirectional with different parameter types}
 
+
+\uabschnitt{Top-level functions}
+\main as well as the \emph{entry-function} of a thread can be represented by an
+execution context.
+
+
 \uabschnitt{Termination}
 The toplevel context function has to return the context which is resumed after
 the current context has terminated.
+
 
 \uabschnitt{Exceptions}
 If an uncaught exception escapes from the toplevel context function,
 \cpp{std::terminate} is called.
 
+
+\uabschnitt{Executiing function on top of context}
+
+
 \uabschnitt{API}
 declaration of class \ectx
 \cppf{P0099/ec}
-
 \paragraph*{member functions}
 \subparagraph*{(constructor)}
 constructs new execution context\\
@@ -74,11 +79,11 @@ constructs new execution context\\
 
     \midrule
 
-    \cpp{execution\_context(execution\_context&& other)} & (4)\\
+    \cpp{execution\_context(execution\_context&& other)} & (3)\\
 
     \midrule
 
-    \cpp{execution\_context(const execution\_context& other)=delete} & (3)\\
+    \cpp{execution\_context(const execution\_context& other)=delete} & (4)\\
 
     \midrule
 \end{tabular}
@@ -182,10 +187,10 @@ jump context of execution\\
 
 {\bfseries Notes}
 \newline
-The \emph{prologue} preserves the execution context of the calling context as well
-as stack parts like \emph{parameter list} and \emph{return
-address}.\footnote{required only by some x86 ABIs} Those data are restored by the
-\emph{epilogue} if the calling context is resumed.
+The \emph{prologue} preserves the execution context of the calling context as
+well as stack parts like \emph{parameter list} and \emph{return
+address}.\footnote{required only by some x86 ABIs} Those data are restored by
+the \emph{epilogue} if the calling context is resumed.
 \newline
 If an uncaught exception escapes from the execution context,
 \cpp{std::terminate} is called.\\

@@ -29,7 +29,7 @@
             pdftex,
             pdfsubject  = {},
             pdfauthor   = {Oliver Kowalke, Nat Goodspeed},
-            pdfkeywords = {C++,execution,context,coroutine,P0099},
+            pdfkeywords = {C++,execution,context,coroutine,fiber,P0099},
             pdftitle    = {A low-level API for stackful context switching}]{hyperref}
 
 %//////////////////////////////////////////////////////////////////////////////
@@ -62,9 +62,9 @@ This document supersedes P0099R0.\\
 Changes since P0099R0:
 
 \begin{itemize}
-    \item \ectx with new call semantic
+    \item \ectx with new API
     \item type-safe transfer of data
-    \item removed static member function \cpp{current()}
+    \item static member function \cpp{current()} removed
     \item execute a function on top of a resumed execution context.
 \end{itemize}
 
@@ -72,9 +72,9 @@ Changes since P0099R0:
 \input{motivation}
 \input{definitions}
 \input{discussion}
-\input{concept}
 \input{design}
-\input{appendix}
+\input{appendix_a}
+\input{appendix_b}
 
 %//////////////////////////////////////////////////////////////////////////////
 

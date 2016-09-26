@@ -61,20 +61,10 @@ switches.
 \uabschnitt{Toplevel functions: main() and thread entry-functions}
 \main and \emph{thread-entry functions} are represented by \ectx too.
 \cppf{P0099/simple}
-Inst \cpp{l1} represents the execution context of \main.
+Instance \cpp{l1} represents the execution context of \main.
 
 
 \uabschnitt{Passing data}
-Because of the asymmetric resume/suspend operations of N4402, the proposal
-works well for generator examples, returning data from the resumable
-function.\\
-\newline
-Passing data into the body of resumable functions (N4402) requires helper
-classes like \channel.
-\cppf{N4134/channel}
-In this case, the way data are passed into the body is not intuitive and
-introduces some problems.\\
-\newline
 \cpp{execution\_context} provides only one (symmetric) resume/suspend operation.
 Passing parameter between context', as for instance back and forth, is
 straightforward.
