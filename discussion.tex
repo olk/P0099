@@ -58,9 +58,14 @@ The next execution context must be explicitly specified.\\
 Resuming {\bfseries N} instances of \ectx takes {\bfseries N+1} context
 switches.
 
+\uabschnitt{First class object}
+Symmetric control transfer requires that the context is represented by a
+{\bfseries first class object} (context that has to be resumed next must be
+selectable).
+
 \uabschnitt{Toplevel functions: main() and thread entry-functions}
 \main and \emph{thread-entry functions} are represented by \ectx too.
-\cppf{P0099/simple}
+\cppf{simple}
 Instance \cpp{l1} represents the execution context of \main.
 
 
