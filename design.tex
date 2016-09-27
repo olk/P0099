@@ -88,6 +88,14 @@ the context stack (in front of \cpp{f1()}). \cpp{f2()} returns argument -1 that
 will returned by the second invocation of \cpp{ctx(data+1)} in \cpp{f1()}.
 
 
+\uabschnitt{Stack destruction}
+On construction of \cpp{execution\_context} a stack is allocated. If the
+context-function returns the stack will be destructed. If the context-function
+has not yet returned and the destructor of an valid \cpp{execution\_context}
+instance (e.g. \cpp{execution\_context::operator bool()} returns true) is
+called, the stack will be destructed too.
+
+
 \uabschnitt{API}
 declaration of class \ectx
 \cppf{ec}
