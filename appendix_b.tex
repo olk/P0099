@@ -6,14 +6,13 @@ Multiple \ectx might interact in following manner:
 \begin{itemize}
 \item asymmetric coroutine == interaction of two \ectx
     \begin{itemize}
-        \item strong coupled, callee \ectx can only resume caller)
+        \item strong coupled, callee \ectx can only resume caller
         \item direct exchange of data (in general bidirectional; generator
               restricts data flow in one direction)
     \end{itemize}
 \item fiber == one \ectx
     \begin{itemize}
         \item loosly coupled (algorithm selects simply next ready fiber)
-        \item which next fiber will be resumed is 
         \item no direct data transfer
     \end{itemize}
 \item shift/reset operators == few interacting \ectx
