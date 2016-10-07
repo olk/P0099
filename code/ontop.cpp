@@ -18,7 +18,7 @@ std::tie(ctx,data)=ctx(data+1);
 std::cout << "f1: returned first time: " << data << std::endl;
 std::tie(ctx,data)=ctx(data+1);
 std::cout << "f1: returned second time: " << data << std::endl;
-std::tie(ctx,data)=ctx(ctx::exec_ontop_arg,f2,data+1);
+std::tie(ctx,data)=ctx(std::invoke_ontop_arg,f2,data+1);
 
 output:
     f1: entered first time: 1
