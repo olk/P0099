@@ -106,36 +106,41 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
+    \cpp{execution\_context() noexcept} & (1)\\
+
+    \midrule
+
     \cpp{template<typename StackAlloc, typename Fn, typename ... Args>}\\
     \cpp{execution\_context(std::allocator\_arg\_t, StackAlloc salloc,}\\
-    \cpp{                   Fn&& fn, Args&& ... args)} & (1)\\
+    \cpp{                   Fn&& fn, Args&& ... args)} & (2)\\
 
     \midrule
 
     \cpp{template<typename Fn, typename ... Args>}\\
-    \cpp{explicit execution\_context(Fn&& fn, Args&& ... args)} & (2)\\
+    \cpp{explicit execution\_context(Fn&& fn, Args&& ... args)} & (3)\\
 
     \midrule
 
-    \cpp{execution\_context(execution\_context&& other)} & (3)\\
+    \cpp{execution\_context(execution\_context&& other)} & (4)\\
 
     \midrule
 
-    \cpp{execution\_context(const execution\_context& other)=delete} & (4)\\
+    \cpp{execution\_context(const execution\_context& other)=delete} & (5)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] this constructor takes (e.g.) a lambda as argument, stack is
+    \item[1)] this constructor represents \emph{not-a-context}
+    \item[2)] this constructor takes (e.g.) a lambda as argument, stack is
               constructed using \emph{salloc}
-    \item[2)] takes (e.g.) lambda as argument,
+    \item[3)] takes (e.g.) lambda as argument,
               stack is constructed using either \cpp{fixedsize}
               or \cpp{segmented}. An implementation may infer which of these
               best suits the code in \cpp{fn}. If it cannot
               infer, \cpp{fixedsize} will be used.
-    \item[3)] moves underlying capture record to new \ectx
-    \item[4)] copy constructor deleted
+    \item[4)] moves underlying capture record to new \ectx
+    \item[5)] copy constructor deleted
 \end{description}
 
 {\bfseries Notes}
