@@ -1,32 +1,42 @@
 \abschnitt{Design}
 Class \ectx provides a {\bfseries small, basic API} on which to build {\bfseries
 higher-level APIs} such as stackful coroutines (N3985\cite{N3985}) and user-mode
-threads (cooperative multitasking).
+threads (such as Boost.Fiber\cite{bfiber}).
 
 
-\uabschnitt{Suspend-on-call}
-\cpp{execution\_context<>::operator()} preserves the CPU register
-set\footnote{defined by ABI's calling convention}: the content of those
-registers is pushed at the end of the stack of the current context (e.g. current
-stack-pointer). Then \ectxop swaps the stack-pointer of the context associated
-with \cpp{*this} and pops the CPU register set from the stack.
-Because the context state is preserved on context' stack, \ectx needs only to
-manage internally the stack-pointer.
+\uabschnitt{Suspend-by-call}
+\ectxop preserves the CPU register set\footnote{defined by ABI's calling
+convention}: the content of those registers is pushed at the end of the stack
+of the current context (at the current stack-pointer). Then \op restores the
+stack-pointer register stored in \cpp{*this} and pops the CPU register set
+from the newly-restored stack.
+Because the context state is preserved on the context's stack, a \ectx
+instance need only store the stack-pointer register.
 
 
 \uabschnitt{Call semantics}
-The stack-pointer of the suspended context, that contains the preserved CPU
-register set, is used to synthesize a new instance of \ectx that is passed to
-the resumed context (as first argument of the entry-function or as a return
-value of \ectxop).
-While entring \cpp{execution\_context<>::operator()}, \cpp{*this} gets
-invalidated, e.g. the internal pointer, that has had used to store the stack
-pointer, is set to \cpp{nullptr}.
-This is necessary in order to:
-\begin{itemize}
-    \item   only one instance of \ectx can represent the execution context
-    \item   deallocate the allocated stack using RAII
-\end{itemize}
+When \ectxop is called, a new instance of \ectx is synthesized representing
+the current state of the running context (e.g. the stack-pointer). This new
+instance is passed to the resumed context. On initial entry, it is passed as
+the first argument to the top-level function. On every subsequent resumption,
+it is returned by the suspended \op call.
+
+On completion of a successful context switch, the
+\ectx instance on which \op was called is invalidated. The data member from
+which the stack pointer was just restored is set to \cpp{nullptr}.
+
+At most one instance of \ectx can represent a given execution context. The
+currently-running execution context is not represented by \emph{any} \ectx
+instance. Only when \op is called on some \emph{other} \ectx instance is the
+state of the running execution context captured in a synthesized \ectx
+instance.
+
+As mentioned in the section below on stack
+destruction, \cpp{\~execution\_context<>()} on a suspended (not terminated)
+instance destroys the stack managed by that instance. Thus, the stack must be
+managed by only one \ectx instance.\footnote{An earlier design used reference
+counting, but that subverts the intended role of this facility as an extremely
+fast substrate for higher-level libraries.}
 
 Because of the symmetric context switching (only one operation transfers
 control), the target execution context must be explicitly specified.
