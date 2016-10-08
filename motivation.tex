@@ -8,7 +8,7 @@ with the runtime library will be enabling technology for both third-party
 libraries and user applications.
 
 \uabschnitt{Why Bother?}
-Given N4402 resumable functions, why should we even consider a completely
+Given P0057 resumable functions, why should we even consider a completely
 different mechanism for suspending and resuming a function? Isn't this
 completely redundant with that?\\
 \newline
@@ -21,16 +21,16 @@ N4453,\cite{N4453} sections 4.1 and 4.2.}
           propagates virally through a code base. Resumable functions suspend
           by returning. Every caller must therefore distinguish between
           ``callee returned value'' and ``callee suspended, you must also
-          suspend.'' The new \cpp{await} keyword makes that distinction,
+          suspend.'' The new \cpp{co\_await} keyword makes that distinction,
           suspending the containing function until the callee produces a
           value. Every call to a resumable function must itself
-          use \cpp{await} -- which then imposes the same requirement
+          use \cpp{co\_await} -- which then imposes the same requirement
           on \emph{its} caller, and so on.
     \item Forgetting to annotate a call to a resumable function
-          with \cpp{await} (perhaps because the caller is unaware of its
+          with \cpp{co\_await} (perhaps because the caller is unaware of its
           nature, perhaps because the callee changed its nature) can result in
           subtle timing bugs. Suppose function \cpp{f()} returns
-          a \cpp{std::future<void>}. The statement \cpp{await f();} suspends
+          a \cpp{std::future<void>}. The statement \cpp{co\_await f();} suspends
           the containing function until the \cpp{future} returned by \cpp{f()}
           is fulfilled. Coding simply \cpp{f();} merely \emph{discards} that
           future. Both forms are perfectly legal; both are likely to survive
@@ -38,11 +38,11 @@ N4453,\cite{N4453} sections 4.1 and 4.2.}
           if \cpp{f()} \emph{usually} fulfills its \cpp{future} by the time it
           returns, only \emph{occasionally} taking longer. That way the error
           will survive most QA as well, and escape into production.
-    \item The need to \cpp{await} called functions means that we must evolve a
-          whole new family of \cpp{await}-aware STL
+    \item The need to \cpp{co\_await} called functions means that we must evolve a
+          whole new family of \cpp{co\_await}-aware STL
           algorithms.\footnote{N4453\cite{N4453} section 4.2 explains this
           more fully.}
-    \item Even if one is willing to accept the viral \cpp{await} markup of
+    \item Even if one is willing to accept the viral \cpp{co\_await} markup of
           resumable functions, using normal encapsulation to manage layers of
           abstraction could become expensive in runtime. Every entry to a
           resumable function requires a heap allocation, freed on return. By
