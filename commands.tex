@@ -24,7 +24,7 @@
         commentstyle=\ttfamily\color{gray},
         keywordstyle=\ttfamily\color{blue},
         language={C++},
-        morekeywords={await,from,noexcept,resumable,yield},
+        morekeywords={co\_await,from,noexcept,resumable,co\_yield},
         showspaces=false,
         showstringspaces=false,
         showtabs=false,
@@ -38,14 +38,14 @@
         commentstyle=\ttfamily\color{gray},
         keywordstyle=\ttfamily\color{blue},
         language={C++},
-        morekeywords={await,from,noexcept,resumable,yield},
+        morekeywords={co\_await,from,noexcept,resumable,co\_yield},
         showspaces=false,
         showstringspaces=false,
         showtabs=false,
         stringstyle=\ttfamily\color{red}
 ] {code/#1.cpp}}
 
-\newcommand{\await}{\cpp{await}}
+\newcommand{\await}{\cpp{co\_await}}
 \newcommand{\channel}{\cpp{channel<>}}
 \newcommand{\ectx}{\cpp{std::execution\_context<>}}
 \newcommand{\ectxop}{\cpp{operator()()}}

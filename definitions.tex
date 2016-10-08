@@ -1,19 +1,34 @@
-\abschnitt{Notes on wording \susup and \susdown}
-The wording of \susup and \susdown, introduced in paper P0158\cite{P0158}, as
-introduced to distinguish stackless (\emph{suspend-up}) and stackful (\susdown)
-context switching.\\
-\susup means \emph{removing the stack frame of the stackless context} while
-\susdown corresponds to \emph{the frame of the context remains on the stack} on
-suspention.\\
-The autors believe that this wording is bit missleading, because \emph{up} and
-\emph{down} imply that the stack grows from higher to lower addresses (which is
-not true for some architectures).\\
-\newline
-Instead \susup and \susdown, the authros suggest to use the wording \susreturn
-for stackless and \suscall for stackful context switching (described in
-N4397\cite{N4397}).\\
-\susreturn means \emph{remove the frame of the coroutien from the stack} as the
-keyword \emph{return} already stands for in the C++ standard. \suscall does
-suspend the current context by calling function\\
-\cpp{std::execution\_context<>::operator()} while the frame remains on
-context' stack.
+\abschnitt{Notes on \susup and \susdown terminology}
+The terms \susup and \susdown were introduced in paper N4232\cite{N4232} and
+carried forward in P0158\cite{P0158} to distinguish stackless
+(\susup) and stackful (\susdown) context switching.
+
+These terms rely on a particular visualization of the C++ function call
+operation in which calling a function passes control ``downwards,'' whereas
+returning from a function passes control ``upwards.''
+
+The authors recommend the terms \susreturn instead of \susup, and \suscall
+instead of \susdown. The recommended terminology directly references the
+underlying C++ operations, without requiring a particular visualization.
+
+\susreturn (\susup, or ``stackless'' context switching) is based on returning
+control from a called function to its caller, along with some indication as to
+whether the called function has completed and is returning a result or is
+merely suspending and expects to be called again. The called function's body
+is coded in such a way that -- if it suspended -- calling it again will direct
+control to the point from which it last returned.
+
+This describes both P0057\cite{P0057} resumable functions and earlier
+technologies such as Boost.Asio coroutines\cite{basiocoro}.
+
+\suscall (\susdown, or ``stackful'' context switching) is based on calling a
+function which, transparently to its caller, switches to some other logical
+chain of function activation records. (This may or may not be a contiguous
+stack area. The processor's stack pointer register, if any, may or may not
+be involved.)
+
+This describes N4397\cite{N4397} coroutines as well as
+Boost.Context\cite{bcontext}, Boost.Coroutine2\cite{bcoroutine2} and
+Boost.Fiber\cite{bfiber}.
+
+\cpp{std::execution\_context<>::operator()} requires \suscall semantics.
