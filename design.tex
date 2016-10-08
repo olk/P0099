@@ -78,11 +78,11 @@ If an uncaught exception escapes from the toplevel context function,
 \uabschnitt{Executing function on top of a context}
 Sometimes it is useful to execute a new function (for instance trigger unwinding
 the stack) on top of a resumed context. For this purpose
-\cpp{execution\_context::operator()} with first argument \cpp{exec\_ontop\_arg}
+\cpp{execution\_context::operator()} with first argument \cpp{invoke\_ontop\_arg}
 has to be used. The function passed as argument must return a tuple of
 \cpp{execution\_context} and arguments.
 \cppf{ontop}
-The expression \cpp{ctx(ctx::exec\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
+The expression \cpp{ctx(invoke\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
 top of context \cpp{ctx}, e.g. an additional stack frame is allocated on top of
 the context stack (in front of \cpp{f1()}). \cpp{f2()} returns argument -1 that
 will returned by the second invocation of \cpp{ctx(data+1)} in \cpp{f1()}.
@@ -209,13 +209,13 @@ jump context of execution\\
 
     \cpp{template<typename Fn>}\\
     \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (3)\\
+    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (3)\\
 
     \midrule
 
     \cpp{template<typename Fn>}\\
     \cpp{execution\_context<void>}\\
-    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn)} & (4)\\
+    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn)} & (4)\\
 
     \midrule
 \end{tabular}
