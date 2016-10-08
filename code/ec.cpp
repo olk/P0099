@@ -33,7 +33,7 @@ public:
 
     template<typename Fn>
     std::tuple<execution_context, Args ...>
-    operator()(exec_ontop_arg_t, Fn&& fn, Args ... args);
+    operator()(std::invoke_ontop_arg_t, Fn&& fn, Args ... args);
 
     explicit operator bool() const noexcept;
 

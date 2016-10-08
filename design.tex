@@ -78,11 +78,11 @@ If an uncaught exception escapes from the toplevel context function,
 \uabschnitt{Executing function on top of a context}
 Sometimes it is useful to execute a new function (for instance trigger unwinding
 the stack) on top of a resumed context. For this purpose
-\cpp{execution\_context::operator()} with first argument \cpp{exec\_ontop\_arg}
+\cpp{execution\_context::operator()} with first argument \cpp{invoke\_ontop\_arg}
 has to be used. The function passed as argument must return a tuple of
 \cpp{execution\_context} and arguments.
 \cppf{ontop}
-The expression \cpp{ctx(ctx::exec\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
+The expression \cpp{ctx(invoke\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
 top of context \cpp{ctx}, e.g. an additional stack frame is allocated on top of
 the context stack (in front of \cpp{f1()}). \cpp{f2()} returns argument -1 that
 will returned by the second invocation of \cpp{ctx(data+1)} in \cpp{f1()}.
@@ -106,36 +106,41 @@ constructs new execution context\\
 \begin{tabular}{ l l }
     \midrule
 
+    \cpp{execution\_context() noexcept} & (1)\\
+
+    \midrule
+
     \cpp{template<typename StackAlloc, typename Fn, typename ... Args>}\\
     \cpp{execution\_context(std::allocator\_arg\_t, StackAlloc salloc,}\\
-    \cpp{                   Fn&& fn, Args&& ... args)} & (1)\\
+    \cpp{                   Fn&& fn, Args&& ... args)} & (2)\\
 
     \midrule
 
     \cpp{template<typename Fn, typename ... Args>}\\
-    \cpp{explicit execution\_context(Fn&& fn, Args&& ... args)} & (2)\\
+    \cpp{explicit execution\_context(Fn&& fn, Args&& ... args)} & (3)\\
 
     \midrule
 
-    \cpp{execution\_context(execution\_context&& other)} & (3)\\
+    \cpp{execution\_context(execution\_context&& other)} & (4)\\
 
     \midrule
 
-    \cpp{execution\_context(const execution\_context& other)=delete} & (4)\\
+    \cpp{execution\_context(const execution\_context& other)=delete} & (5)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
-    \item[1)] this constructor takes (e.g.) a lambda as argument, stack is
+    \item[1)] this constructor represents \emph{not-a-context}
+    \item[2)] this constructor takes (e.g.) a lambda as argument, stack is
               constructed using \emph{salloc}
-    \item[2)] takes (e.g.) lambda as argument,
+    \item[3)] takes (e.g.) lambda as argument,
               stack is constructed using either \cpp{fixedsize}
               or \cpp{segmented}. An implementation may infer which of these
               best suits the code in \cpp{fn}. If it cannot
               infer, \cpp{fixedsize} will be used.
-    \item[3)] moves underlying capture record to new \ectx
-    \item[4)] copy constructor deleted
+    \item[4)] moves underlying capture record to new \ectx
+    \item[5)] copy constructor deleted
 \end{description}
 
 {\bfseries Notes}
@@ -194,34 +199,45 @@ copies/moves the context object\\
 \end{description}
 
 \subparagraph*{operator()}
-jump context of execution\\
+resume context of execution\\
 
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(Args ... args)} & (1)\\
+    \cpp{std::tuple<execution\_context, Args ...> operator()(Args ... args)} & (1)\\
+
+    \midrule
+
+    \cpp{execution\_context<void> operator()()} & (2) \\
 
     \midrule
 
     \cpp{template<typename Fn>}\\
     \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (2)\\
+    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (3)\\
+
+    \midrule
+
+    \cpp{template<typename Fn>}\\
+    \cpp{execution\_context<void>}\\
+    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn)} & (4)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] suspends the active context, resumes the execution context
-    \item[2)] suspends the active context, resumes the execution context but
+    \item[2)] specialization of (1) for \cpp{execution\_context<void>}
+    \item[3)] suspends the active context, resumes the execution context but
         executes \cpp{fn(args ...)} in the resumed context (e.g. on top of the
         last stack frame)
+    \item[4)] specialization of (3) for \cpp{execution\_context<void>}
 \end{description}
 
 {\bfseries Parameters}
 \begin{description}
     \item[... args] passed to current context  returned by the most recent call
-                    to \cpp{execution\_context::operator()} in the same thread\\
+                    to \cpp{execution\_context::operator()}\\
 \end{description}
 
 {\bfseries Return value}
@@ -244,17 +260,14 @@ well as stack parts like \emph{parameter list} and \emph{return
 address}.\footnote{required only by some x86 ABIs} Those data are restored by
 the \emph{epilogue} if the calling context is resumed.
 \newline
-If an uncaught exception escapes from the execution context,
-\cpp{std::terminate} is called.\\
-If the toplevel context function returns (reaches end), \cpp{std::exit(0)}
-is called.\\
-The only way to leave an \cpp{execution\_context} without terminating the
-calling process is to call
-another \cpp{execution\_context}'s \cpp{operator()()}.\\
 A suspended \cpp{execution\_context} can be destroyed. Its resources will be
-cleaned up at that time.\\
-The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
-returns \emph{*this} (attempting to resume an already running context).
+cleaned up at that time.
+\newline
+The returned \cpp{execution\_context} indicates if the suspended context has
+terminated (return from context-function) via \cpp{bool operator()}.
+If the returned \cpp{execution\_context} has terminated no data are transferred
+in the returned tuple.
+
 
 \subparagraph*{operator bool}
 test context if valid\\
