@@ -199,7 +199,7 @@ copies/moves the context object\\
 \end{description}
 
 \subparagraph*{operator()}
-jump context of execution\\
+resume context of execution\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -237,7 +237,7 @@ jump context of execution\\
 {\bfseries Parameters}
 \begin{description}
     \item[... args] passed to current context  returned by the most recent call
-                    to \cpp{execution\_context::operator()} in the same thread\\
+                    to \cpp{execution\_context::operator()}\\
 \end{description}
 
 {\bfseries Return value}
@@ -260,17 +260,14 @@ well as stack parts like \emph{parameter list} and \emph{return
 address}.\footnote{required only by some x86 ABIs} Those data are restored by
 the \emph{epilogue} if the calling context is resumed.
 \newline
-If an uncaught exception escapes from the execution context,
-\cpp{std::terminate} is called.\\
-If the toplevel context function returns (reaches end), \cpp{std::exit(0)}
-is called.\\
-The only way to leave an \cpp{execution\_context} without terminating the
-calling process is to call
-another \cpp{execution\_context}'s \cpp{operator()()}.\\
 A suspended \cpp{execution\_context} can be destroyed. Its resources will be
-cleaned up at that time.\\
-The behaviour is undefined if \cpp{operator()} is called while \cpp{current()}
-returns \emph{*this} (attempting to resume an already running context).
+cleaned up at that time.
+\newline
+The returned \cpp{execution\_context} indicates if the suspended context has
+terminated (return from context-function) via \cpp{bool operator()}.
+If the returned \cpp{execution\_context} has terminated no data are transferred
+in the returned tuple.
+
 
 \subparagraph*{operator bool}
 test context if valid\\
