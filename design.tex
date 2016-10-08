@@ -199,23 +199,34 @@ jump context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(Args ... args)} & (1)\\
+    \cpp{std::tuple<execution\_context, Args ...> operator()(Args ... args)} & (1)\\
+
+    \midrule
+
+    \cpp{execution\_context<void> operator()()} & (2) \\
 
     \midrule
 
     \cpp{template<typename Fn>}\\
     \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (2)\\
+    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (3)\\
+
+    \midrule
+
+    \cpp{template<typename Fn>}\\
+    \cpp{execution\_context<void>}\\
+    \cpp{operator()(exec\_ontop\_arg\_t, Fn&& fn)} & (4)\\
 
     \midrule
 \end{tabular}
 
 \begin{description}
     \item[1)] suspends the active context, resumes the execution context
-    \item[2)] suspends the active context, resumes the execution context but
+    \item[2)] specialization of (1) for \cpp{execution\_context<void>}
+    \item[3)] suspends the active context, resumes the execution context but
         executes \cpp{fn(args ...)} in the resumed context (e.g. on top of the
         last stack frame)
+    \item[4)] specialization of (3) for \cpp{execution\_context<void>}
 \end{description}
 
 {\bfseries Parameters}
