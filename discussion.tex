@@ -38,9 +38,10 @@ suspended. This is the reason why stackful context switching permits
 As a building block for user-mode threads, symmetric control transfer is more
 efficient than the asymmetric mechanism.\\
 \newline
-Asymmetric coroutines provide two operations for context switching. The caller
-and the coroutine are coupled, that is, such a coroutine can only jump back to
-the code that most recently resumed it.
+Asymmetric coroutines (as implied with keywords like \resumable, \await or
+\yield) provide two operations for context switching. The caller and the
+coroutine are coupled, that is, such a coroutine can only jump back to the code
+that most recently resumed it.
 \graphc{asymm}
 For {\bfseries N} asymmetric coroutines, {\bfseries 2N} context switches are
 required. This is sufficient in the case of generators, but in the context of
