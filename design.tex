@@ -75,8 +75,8 @@ If an uncaught exception escapes from the toplevel context function,
 \cpp{std::terminate} is called.
 
 
-\uabschnitt{Executing function on top of a context}
-Sometimes it is useful to execute a new function (for instance trigger unwinding
+\uabschnitt{Invoking a function on top of a context}
+Sometimes it is useful to invoke a new function (for instance trigger unwinding
 the stack) on top of a resumed context. For this purpose
 \cpp{execution\_context::operator()} with first argument \cpp{invoke\_ontop\_arg}
 has to be used. The function passed as argument must return a tuple of
