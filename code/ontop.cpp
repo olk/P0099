@@ -1,4 +1,4 @@
-std::execution_context<int> f1(std::execution_context<int> && ctx,int data) {
+std::execution_context<int> f1(std::execution_context<int> ctx,int data) {
     std::cout << "f1: entered first time: " << data << std::endl;
     std::tie(ctx,data)=ctx(data+1);
     std::cout << "f1: entered second time: " << data << std::endl;
@@ -7,7 +7,7 @@ std::execution_context<int> f1(std::execution_context<int> && ctx,int data) {
     return std::move(ctx);
 }
 
-std::tuple<std::execution_context<int>,int> f2(std::execution_context<int> && ctx,int data) {
+std::tuple<std::execution_context<int>,int> f2(std::execution_context<int> ctx,int data) {
     std::cout << "f2: entered: " << data << std::endl;
     return std::make_tuple(std::move(ctx),-1);
 }
