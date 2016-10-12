@@ -3,7 +3,7 @@ int main() {
     std::execution_context<void> l2(
         // l1 represents suspended context
         [](std::execution_context<void> && l1){
-            std::printf("inside l2\n");
+            std::cout << "inside l2" << std::endl;
             // resume context l1
             return std::move(l1);
         });
