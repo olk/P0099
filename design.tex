@@ -118,7 +118,7 @@ applications.\\
 We can extend the example to multiple arguments.
 \cppf{passing_multiple}
 \op accepts the parameters specified by \ectx's template parameters. It
-returns a \cpp{std::tuple} of that \ectx specialization prepended to those
+returns a \cpp{std::tuple} of that \ectx specialization, prepended to those
 types.
 
 
@@ -128,9 +128,36 @@ execution context. That \ectx instance is synthesized when the running context
 suspends, and is passed into the newly-resumed context.
 
 
+\uabschnitt{\ectx and std::thread}
+The context represented by a \ectx instance is necessarily suspended. It is
+valid to resume a \ectx instance on any thread -- \emph{except} that you must
+not attempt to resume a \ectx instance representing \main, or
+the \emph{entry-function} of some other \cpp{std::thread}, on any thread other
+than its own.
+
+\ectx provides a method to test for this.
+If \cpp{std::execution\_context<>::any\_thread()} returns \cpp{false}, it is
+only valid to resume that \ectx instance on the thread on which it was
+initially launched.
+
+
 \uabschnitt{Termination}
-The toplevel context function has to return the context which is resumed after
-the current context has terminated.
+When you explicitly construct a particular \cpp{std::execution\_context<args...>}
+specialization, passing its constructor a function or lambda, that callable
+must accept that same\\
+\cpp{std::execution\_context<args...>} specialization as
+its first parameter. It must return that
+same \cpp{std::execution\_context<args...>} specialization as well.
+
+When that toplevel callable returns a \ectx instance, the running context is
+voluntarily terminated. Control switches to the context indicated by the
+returned \ectx instance.
+
+If the toplevel callable returns the same \ectx instance it was originally
+passed (or rather, the most recently updated instance returned from the
+original instance's \op), control returns to the context that originally
+resumed the running callable. However, the callable may return (switch to)
+any reachable valid \ectx instance with the correct type signature.
 
 
 \uabschnitt{Exceptions}
@@ -139,16 +166,77 @@ If an uncaught exception escapes from the toplevel context function,
 
 
 \uabschnitt{Executing function on top of a context}
-Sometimes it is useful to execute a new function (for instance trigger unwinding
-the stack) on top of a resumed context. For this purpose
-\cpp{execution\_context::operator()} with first argument \cpp{invoke\_ontop\_arg}
-has to be used. The function passed as argument must return a tuple of
-\cpp{execution\_context} and arguments.
+Sometimes it is useful to execute a new function (for instance, to trigger
+unwinding the stack) on top of a suspended context. For this purpose you may
+pass to \ectxop:
+
+\begin{itemize}
+  \item the special argument \cpp{invoke\_ontop\_arg}
+  \item the function to execute
+  \item any additional arguments required by the \ectx specialization.
+\end{itemize}
+
+The function passed in this case must accept as parameters the \ectx
+specialization for that context plus any arguments specified by that
+specialization. It must return a tuple of that \ectx specialization plus the
+same set of arguments.\footnote{But in the case
+of \cpp{std::execution\_context<void>}, the return type is
+simply \cpp{std::execution\_context<void>}.}
+
+For purposes of discussion, consider two \cpp{std::execution\_context<void>}
+instances: \cpp{mainctx} and \cpp{fctx}. Suppose that code running
+on the program's main context instantiates \cpp{fctx} with function\\
+\cpp{f(std::execution\_context<void> mainctx)} and calls \cpp{fctx()}, thereby
+entering \cpp{f()}. This is the point at which \cpp{mainctx} is synthesized
+and passed into \cpp{f()}.
+
+Suppose further that after doing some work, \cpp{f()} calls \cpp{mainctx()},
+thereby switching context back to the main context. \cpp{f()} remains
+suspended in the call to \cpp{mainctx.operator()()}.
+
+At this point the main context calls \cpp{fctx(std::invoke\_ontop\_arg, g);}
+where \cpp{g()} is declared as:
+\newline
+\cpp{std::execution\_context<void> g(std::execution\_context<void> gmctx);}
+\newline
+\cpp{g()} is entered in the context of \cpp{f()}. It is as if \cpp{f()}'s call
+to \cpp{mainctx.operator()()} directly called \cpp{g()}.
+
+However, as usual, the \cpp{fctx.operator()()} call synthesizes a \ectx
+instance representing the main context and passes it to \cpp{g()}
+as \cpp{gmctx}.
+
+Function \cpp{g()} has the same range of possibilities as any function called
+on \cpp{f()}'s context. It can context-switch back to the main context, or to
+any other reachable context. Its special invocation only matters when control
+leaves it in either of two ways:
+
+\begin{enumerate}
+  \item If \cpp{g()} throws an exception, that exception unwinds all previous
+  stack entries in that context (such as \cpp{f()}'s) as well, back to a
+  matching \cpp{catch} clause.
+  \item If \cpp{g()} returns, its return value becomes the value returned
+  by \cpp{f()}'s suspended \cpp{mainctx.operator()()} call.
+\end{enumerate}
+
+Consider the following example:
+
 \cppf{ontop}
-The expression \cpp{ctx(invoke\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
-top of context \cpp{ctx}, e.g. an additional stack frame is allocated on top of
-the context stack (in front of \cpp{f1()}). \cpp{f2()} returns argument -1 that
-will returned by the second invocation of \cpp{ctx(data+1)} in \cpp{f1()}.
+
+Control passes from (a) to (b) to (c), and so on.
+
+The \cpp{ctx(std::invoke\_ontop\_arg, f2, data+1)} call at (l) passes control
+to \cpp{f2()} on the context originally created for \cpp{f1()}.
+
+The \cpp{return} statement at (n) causes the \op call at (i) to return,
+executing the assignment at (o). The \cpp{std::tuple} returned by \cpp{f2()}
+is directly returned to that assignment at (o).
+
+So in this example, the call at (l) synthesizes a \ectx instance representing
+the main context and passes it to \cpp{f2()} as \cpp{ctx}. \cpp{f2()} returns
+that \cpp{ctx} instance, which is received by \cpp{f1()} and assigned
+to \emph{its} \cpp{ctx} variable. Finally, \cpp{f1()} returns its
+own \cpp{ctx} variable, switching back to the main context.
 
 
 \uabschnitt{Stack destruction}
