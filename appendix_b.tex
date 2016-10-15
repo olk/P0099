@@ -1,8 +1,8 @@
 \abschnitt{B. \emph{std::execution\_context<>} as Thread of Execution (ToE)}\label{appendixb}
-As described in P0073\cite{P0073}, a \ectx represents a ToE; each \ectx has
-its own execution path (sequence of instructions).\footnote{In the terminology
-used by P0072\cite{P0072}, this ToE runs on a ``weakly parallel'' execution
-agent.} An operating system thread
+As described in P0073\cite{P0073}, a \ectx represents a ToE.\\
+Each \ectx has its own execution path (sequence of instructions).\footnote{In
+the terminology used by P0072\cite{P0072}, this ToE runs on a
+``weakly parallel'' execution agent.} An operating system thread
 (\cpp{std::thread}) consists of at least one \ectx representing the
 main-stack/thread-stack.\\
 Multiple \ectx instances might interact in following manner:
