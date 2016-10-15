@@ -214,7 +214,7 @@ leaves it in either of two ways:
 \begin{enumerate}
   \item If \cpp{g()} throws an exception, that exception unwinds all previous
   stack entries in that context (such as \cpp{f()}'s) as well, back to a
-  matching \cpp{catch} clause.
+  matching \cpp{catch} clause (or calls \cpp{std::terminate} if not catched).
   \item If \cpp{g()} returns, its return value becomes the value returned
   by \cpp{f()}'s suspended \cpp{mainctx.operator()()} call. This is
   why \cpp{g()}'s return type must be the same as that of \op, rather than
