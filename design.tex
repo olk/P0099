@@ -255,13 +255,14 @@ with \cpp{catch (...)}.}
 
 The stack on which \cpp{main()} is executed, as well as the stack on which
 the \emph{thread-function} passed to \cpp{std::thread}'s constructor is
-executed, is allocated by the operating system. These stacks are recognized
-by \ectx, and are not deallocated by its destructor.
+executed, is allocated by the operating system. Such stacks are recognized by\\
+\ectx, and are not deallocated by its destructor.
 
 \uabschnitt{Stack allocators}
 are used to create stacks. Stack allocators might implement arbitrary stack
-strategies. For instance append a guard page at the end of the stack or
-cache stacks or create on demand growing stacks.
+strategies. For instance, a stack allocator might append a guard page at the
+end of the stack or cache stacks for reuse or create stacks that grow on
+demand.
 
 \paragraph*{\emph{protected\_fixedsize}}
 Constructs a linear stack of specified size,
