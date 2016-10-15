@@ -67,13 +67,16 @@ selectable).
 \uabschnitt{Toplevel functions: main() and thread entry-functions}
 \main and \emph{thread-entry functions} are represented by \ectx too.
 \cppf{simple}
-Instance \cpp{l1} represents the execution context of \main.
+The \cpp{ctx1()} call at (a) enters the lambda in context ctx1.\\
+The \ectx \cpp{ctx2} at (b) represents the execution context of \main.\\
+Returning \cpp{ctx2} at (c) resumes the original context (switch back to
+\main).
 
 
 \uabschnitt{Stack strategies}
 For stackful coroutines two strategies are typical: a contiguous, fixed-size
 stack (as used by threads), or a linked stack (grows on demand).\\
-The advantage of a fixed-size stack is the fast allocation/deallocation of 
+The advantage of a fixed-size stack is the fast allocation/deallocation of
 activation records. A disadvantage is that the required stacksize must
 be guessed.\\
 The benefit of using a linked stack is that only the initial size of the stack
