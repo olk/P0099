@@ -508,7 +508,6 @@ terminated (return from context-function) via \cpp{bool operator()}.
 If the returned \cpp{execution\_context} has terminated no data are transferred
 in the returned tuple.
 
-
 \subparagraph*{operator bool}
 test context if valid\\
 
@@ -538,5 +537,21 @@ test context if not valid\\
 
 \begin{description}
     \item[1)] returns \cpp{true} if \cpp{*this} refers not to an valid \ectx,
+              \cpp{false}\xspace otherwise
+\end{description}
+
+\subparagraph*{any\_thread}
+test if suspended context might be resumed on another thread\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{bool any\_thread() const noexcept} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] returns \cpp{true} if \cpp{*this} might be resumed on another thread,
               \cpp{false}\xspace otherwise
 \end{description}

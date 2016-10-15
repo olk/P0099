@@ -36,6 +36,8 @@ public:
 
     bool operator!() const noexcept;
 
+    bool any_thread() const noexcept;
+
     bool operator==(const execution_context& other) const noexcept;
 
     bool operator!=(const execution_context& other) const noexcept;
