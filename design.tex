@@ -21,9 +21,9 @@ instance is passed to the resumed context. On initial entry, it is passed as
 the first argument to the top-level function. On every subsequent resumption,
 it is returned by the suspended \op call.
 
-On completion of a successful context switch, the
-\ectx instance on which \op was called is invalidated. The data member from
-which the stack pointer was just restored is set to \cpp{nullptr}.
+On completion of a successful context switch, the \ectx instance on which\\
+\op was called is invalidated. The data member from which the stack pointer was
+just restored is set to \cpp{nullptr}.
 
 At most one instance of \ectx can represent a given execution context. The
 currently-running execution context is not represented by \emph{any} \ectx
@@ -70,10 +70,10 @@ That function or lambda switches context back to the original context by
 calling the passed\\
 \ectxop, passing appropriate arguments.
 
-The \emph{original} context's call to \op returns
-a \cpp{std::tuple<std::execution\_context<args...>, args...>}. The
-returned \ectx is a synthesized instance representing the context that just
-suspended. The rest of the \cpp{args...} are as passed by that context to \op.
+A \cpp{std::tuple<std::execution\_context<args...>, args...>} is returned by
+the \emph{original} context's call to \op. The returned \ectx is a synthesized
+instance representing the context that just suspended. The rest of the
+\cpp{args...} are as passed by that context to \op.
 
 So, for instance:
 \cppf{passing_single}
@@ -116,7 +116,7 @@ It may seem tricky to keep track of which \ectx instance is currently
 mind that this facility is intended as a high-performance foundation for
 higher-level libraries. It is not intended to be directly consumed by
 applications.\\
-\newline
+\newpage
 We can extend the example to multiple arguments.
 \cppf{passing_multiple}
 \op accepts the parameters specified by \ectx's template parameters. It
@@ -131,16 +131,16 @@ suspends, and is passed into the newly-resumed context.
 
 
 \uabschnitt{\ectx and std::thread}
-The context represented by a \ectx instance is necessarily suspended. It is
+The \ectx instance representing a context necessarily suspended.\\
+It is
 valid to resume a \ectx instance on any thread -- \emph{except} that you must
 not attempt to resume a \ectx instance representing \main, or
 the \emph{entry-function} of some other \cpp{std::thread}, on any thread other
 than its own.
-
 \ectx provides a method to test for this.
 If \cpp{std::execution\_context<>::any\_thread()} returns \cpp{false}, it is
-only valid to resume that \ectx instance on the thread on which it was
-initially launched.
+only valid to resume that
+\ectx instance on the thread on which it was initially launched.
 
 
 \uabschnitt{Termination}
@@ -170,7 +170,8 @@ If an uncaught exception escapes from the toplevel context function,
 \uabschnitt{Invoke function on top of a context}
 Sometimes it is useful to invoke a new function (for instance, to trigger
 unwinding the stack) on top of a suspended context. For this purpose you may
-pass to \ectxop:
+pass to\\
+\ectxop:
 
 \begin{itemize}
   \item the special argument \cpp{invoke\_ontop\_arg}
@@ -183,7 +184,7 @@ specialization for that context plus any arguments specified by that
 specialization. It must return a tuple of that \ectx specialization plus the
 same set of arguments.\footnote{But in the case
 of \cpp{std::execution\_context<void>}, the return type is
-simply \cpp{std::execution\_context<void>}.}
+simply\\\cpp{std::execution\_context<void>}.}
 
 For purposes of discussion, consider two \cpp{std::execution\_context<void>}
 instances: \cpp{mainctx} and \cpp{fctx}. Suppose that code running
@@ -255,9 +256,9 @@ Portable consumer code \emph{must} permit \cpp{std::execution\_context\_unwind}
 exceptions to propagate, even if all other exceptions are caught
 with \cpp{catch (...)}.}
 
-The stack on which \cpp{main()} is executed, as well as the stack on which
-the \emph{thread-function} passed to \cpp{std::thread}'s constructor is
-executed, is allocated by the operating system. Such stacks are recognized by\\
+The stack on which \cpp{main()}, as well as the stack on which the
+\emph{thread-function} passed to \cpp{std::thread}'s constructor is executed,
+is allocated by the operating system. Such stacks are recognized by\\
 \ectx, and are not deallocated by its destructor.
 
 
