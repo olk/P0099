@@ -124,10 +124,15 @@ returns a \cpp{std::tuple} of that \ectx specialization, prepended to those
 types.
 
 
-\uabschnitt{Top-level thread functions}
+\uabschnitt{Toplevel functions: main() and thread functions}
 \main as well as the \emph{entry-function} of a thread can be represented by an
 execution context. That \ectx instance is synthesized when the running context
 suspends, and is passed into the newly-resumed context.
+\cppf{simple}
+The \cpp{ctx1()} call at (a) enters the lambda in context ctx1.\\
+The \ectx \cpp{ctx2} at (b) represents the execution context of \main.\\
+Returning \cpp{ctx2} at (c) resumes the original context (switch back to
+\main).
 
 
 \uabschnitt{\ectx and std::thread}
