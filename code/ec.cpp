@@ -3,15 +3,15 @@ class execution_context {
 public:
     execution_context() noexcept;
 
+    template<typename Fn,
+             typename ...Params>
+    execution_context(Fn&& fn, Params&& ...params);
+
     template<typename StackAlloc,
              typename Fn,
              typename ...Params>
     execution_context(std::allocator_arg_t, StackAlloc salloc,
                       Fn&& fn, Params&& ...params);
-
-    template<typename Fn,
-             typename ...Params>
-    execution_context(Fn&& fn, Params&& ...params);
 
     ~execution_context();
 

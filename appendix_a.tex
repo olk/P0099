@@ -1,23 +1,26 @@
 \abschnitt{A. Existing practice}\label{appendixa}
 As a library-only facility,
-\cpp{boost::context::execution\_context<>}\cite{bcontext} is existing practice
-and is used to implement Boost.Coroutine2\cite{bcoroutine2} and the
+\cpp{boost::context::execution\_context<>}\cite{bcontext} is existing practice,
+used to implement Boost.Coroutine2\cite{bcoroutine2} and the
 Boost.Fiber library\cite{bfiber}.\\
 \newline
-This facility adds significant semantics beyond resumable functions. For
-instance, you cannot build cooperative user-mode threads on resumable
-functions.\\
+The facility described in this proposal adds significant semantics beyond
+resumable functions. For instance, you cannot build cooperative user-mode
+threads on resumable functions.\\
 \newline
 These libraries based on Boost.Context can seamlessly interoperate with
 Boost.Asio\cite{basio}: Asio's \cpp{async\_result} mechanism (proposed for
-standardization in P0112\cite{P0112}) supports adapters that can, using a
+standardization in N4588\cite{N4588}) supports adapters that can, using a
 natural syntax, suspend the caller for the duration of an asynchronous network
 call. For instance, using Boost.Coroutine2:
 \cppf{coro}
+It is important to realize that in these examples, the symbol \cpp{yield} is
+neither a keyword nor a macro, but simply the name of an ordinary C++ object.
+
 The same example recast using Boost.Fiber:
 \cppf{fiber}
 Libraries based on \ectx will similarly interoperate cleanly with the proposed
-standard Networking Library\cite{P0112}.\\
+standard Networking Library\cite{N4588}.\\
 \newline
 At C++Now 2016\cite{boostcon} and CppCon 2016\cite{cppcon}, Nat Goodspeed
-presented the Fiber library and described potential use cases.
+presented the Fiber library and described some use cases.
