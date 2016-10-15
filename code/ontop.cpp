@@ -1,6 +1,6 @@
 // f1() is the toplevel context function:
 // it returns only std::execution_context<args...>
-std::execution_context<int> f1(std::execution_context<int> ctx,int data) {
+std::execution_context<int> f1(std::execution_context<int>&& ctx,int data) {
     std::cout << "f1: entered first time: " << data << std::endl; // (b)
     std::tie(ctx,data) = // (g)
         ctx(data+1); // (c)
@@ -15,13 +15,13 @@ std::execution_context<int> f1(std::execution_context<int> ctx,int data) {
 // though its parameter list is very like that of a toplevel context function,
 // it must return std::tuple<std::execution_context<args...>, args...>
 std::tuple<std::execution_context<int>,int>
-f2(std::execution_context<int> ctx,int data) {
+f2(std::execution_context<int>&& ctx,int data) {
     std::cout << "f2: entered: " << data << std::endl; // (m)
     return std::make_tuple(std::move(ctx),-1); // (n)
 }
 
 int data=0;
-std::execution_context< int > ctx(f1);
+std::execution_context<int> ctx(f1);
 std::tie(ctx,data) = // (d)
     ctx(data+1); // (a)
 std::cout << "f1: returned first time: " << data << std::endl; // (e)
