@@ -20,10 +20,10 @@ public:
     execution_context&
     operator=(execution_context&& other) noexcept;
 
-    execution_context(const execution_context& other) noexcept = delete;
+    execution_context(const execution_context& other)=delete;
 
     execution_context&
-    operator=(const execution_context& other) noexcept = delete;
+    operator=(const execution_context& other)=delete;
 
     std::tuple<execution_context, Args ...>
     operator()(Args ...args);
