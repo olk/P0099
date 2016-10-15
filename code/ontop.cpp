@@ -21,7 +21,7 @@ f2(std::execution_context<int> ctx,int data) {
 }
 
 int data=0;
-ctx::execution_context< int > ctx(f1);
+std::execution_context< int > ctx(f1);
 std::tie(ctx,data) = // (d)
     ctx(data+1); // (a)
 std::cout << "f1: returned first time: " << data << std::endl; // (e)
