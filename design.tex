@@ -216,7 +216,9 @@ leaves it in either of two ways:
   stack entries in that context (such as \cpp{f()}'s) as well, back to a
   matching \cpp{catch} clause.
   \item If \cpp{g()} returns, its return value becomes the value returned
-  by \cpp{f()}'s suspended \cpp{mainctx.operator()()} call.
+  by \cpp{f()}'s suspended \cpp{mainctx.operator()()} call. This is
+  why \cpp{g()}'s return type must be the same as that of \op, rather than
+  that of an ordinary toplevel context function.
 \end{enumerate}
 
 Consider the following example:
@@ -240,11 +242,16 @@ own \cpp{ctx} variable, switching back to the main context.
 
 
 \uabschnitt{Stack destruction}
-On construction of \cpp{execution\_context} a stack is allocated. If the
-context-function returns the stack will be destructed. If the context-function
-has not yet returned and the destructor of an valid \cpp{execution\_context}
-instance (e.g. \cpp{execution\_context::operator bool()} returns true) is
-called, the stack will be destructed too.
+On construction of \cpp{execution\_context} a stack is allocated. If the toplevel
+context-function returns, the stack will be destroyed. If the context-function
+has not yet returned and the destructor of a valid \cpp{execution\_context}
+instance (\cpp{execution\_context::operator bool()} returns \cpp{true}) is
+called, the stack will be unwound and destroyed.\footnote{An implementation is
+free to unwind the stack without throwing an exception. However, if an
+exception is thrown, it should be named \cpp{std::execution\_context\_unwind}.
+Portable consumer code \emph{must} permit \cpp{std::execution\_context\_unwind}
+exceptions to propagate, even if all other exceptions are caught
+with \cpp{catch (...)}.}
 
 
 \uabschnitt{API}
