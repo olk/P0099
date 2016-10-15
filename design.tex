@@ -350,14 +350,14 @@ constructs new execution context\\
 
     \midrule
 
-    \cpp{template<typename StackAlloc, typename Fn, typename ... Args>}\\
+    \cpp{template<typename StackAlloc, typename Fn, typename ...Params>}\\
     \cpp{execution\_context(std::allocator\_arg\_t, StackAlloc salloc,}\\
-    \cpp{                   Fn&& fn, Args&& ... args)} & (2)\\
+    \cpp{                   Fn&& fn, Params&& ...params)} & (2)\\
 
     \midrule
 
-    \cpp{template<typename Fn, typename ... Args>}\\
-    \cpp{explicit execution\_context(Fn&& fn, Args&& ... args)} & (3)\\
+    \cpp{template<typename Fn, typename ...Params>}\\
+    \cpp{explicit execution\_context(Fn&& fn, Params&& ...params)} & (3)\\
 
     \midrule
 
@@ -444,7 +444,7 @@ resume context of execution\\
 \begin{tabular}{ l l }
     \midrule
 
-    \cpp{std::tuple<execution\_context, Args ...> operator()(Args ... args)} & (1)\\
+    \cpp{std::tuple<execution\_context, Args ...> operator()(Args ...args)} & (1)\\
 
     \midrule
 
@@ -454,7 +454,7 @@ resume context of execution\\
 
     \cpp{template<typename Fn>}\\
     \cpp{std::tuple<execution\_context, Args ...>}\\
-    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn, Args ... args)} & (3)\\
+    \cpp{operator()(invoke\_ontop\_arg\_t, Fn&& fn, Args ...args)} & (3)\\
 
     \midrule
 
