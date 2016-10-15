@@ -31,8 +31,8 @@ instance. Only when \op is called on some \emph{other} \ectx instance is the
 state of the running execution context captured in a synthesized \ectx
 instance.
 
-As mentioned in the section below on stack
-destruction, \cpp{\~execution\_context<>()} on a suspended (not terminated)
+As mentioned in the \nameref{subpara:destructor}
+section, \cpp{\~execution\_context<>()} on a suspended (not terminated)
 instance destroys the stack managed by that instance. Thus, the stack must be
 managed by only one \ectx instance.\footnote{An earlier design used reference
 counting, but that subverts the intended role of this facility as an extremely
@@ -42,9 +42,13 @@ Because of the symmetric context switching (only one operation transfers
 control), the target execution context must be explicitly specified.
 
 
-\uabschnitt{std::execution\_context<void>}
-With \cpp{execution\_context<void>} no data will be transferred, only the
-context switch is executed.
+\uabschnitt{\ectxvoid}
+\label{subsec:ectxvoid}
+With \ectxvoid no data will be transferred, only the context switch is
+executed.
+
+The function or lambda passed to the constructor of
+a \ectxvoid must accept a single \ectxvoid parameter and return \ectxvoid.
 \cppf{passing_void}
 \cpp{ctx1()} resumes \cpp{ctx1}, that is, control enters the lambda passed to
 the constructor of \cpp{ctx1}. Argument \cpp{ctx2} represents the previous
@@ -55,10 +59,14 @@ from \cpp{ctx1()}.\\
 
 
 \uabschnitt{Passing data}
-When you construct a \ectx with template arguments other than \cpp{void}, the
-function or lambda that initializes that instance must accept parameters\\
-\cpp{(std::execution\_context<args...>, args...)}, where \cpp{args...} here
-represents any list of arguments other than \cpp{void}.
+\label{subsec:ectxdata}
+You may pass data between contexts by constructing a \ectx with template
+arguments other than \cpp{void}. For purposes of discussion,
+consider \ectxargs (where \cpp{args...} here represents any list of type
+template arguments other than \cpp{void}). The function or lambda that
+initializes that instance must accept parameters \ectxargsargsargs.
+
+It must return \cpp{std::execution\_context<args...>}.
 
 The initial \ectx argument is synthesized by \op. All other arguments must be
 passed explicitly to \op.
@@ -70,10 +78,9 @@ That function or lambda switches context back to the original context by
 calling the passed\\
 \ectxop, passing appropriate arguments.
 
-A \cpp{std::tuple<std::execution\_context<args...>, args...>} is returned by
-the \emph{original} context's call to \op. The returned \ectx is a synthesized
-instance representing the context that just suspended. The rest of the
-\cpp{args...} are as passed by that context to \op.
+A \ectxargstup is returned by the \emph{original} context's call to \op. The
+returned \ectx is a synthesized instance representing the context that just
+suspended. The rest of the \cpp{args...} are as passed by that context to \op.
 
 So, for instance:
 \cppf{passing_single}
@@ -149,12 +156,10 @@ only valid to resume that
 
 
 \uabschnitt{Termination}
-When you explicitly construct a particular \cpp{std::execution\_context<args...>}
-specialization, passing its constructor a function or lambda, that callable
-must accept that same\\
-\cpp{std::execution\_context<args...>} specialization as
-its first parameter. It must return that
-same \cpp{std::execution\_context<args...>} specialization as well.
+When you explicitly construct a particular \ectxargs specialization, passing
+its constructor a function or lambda, that callable must accept that same\\
+\ectxargs specialization as its first parameter. It must return that
+same \ectxargs specialization as well.
 
 When that toplevel callable returns a \ectx instance, the running context is
 voluntarily terminated. Control switches to the context indicated by the
@@ -162,7 +167,7 @@ returned \ectx instance.
 
 If the toplevel callable returns the same \ectx instance it was originally
 passed (or rather, the most recently updated instance returned from the
-original instance's \op), control returns to the context that originally
+previous instance's \op), control returns to the context that most recently
 resumed the running callable. However, the callable may return (switch to)
 any reachable valid \ectx instance with the correct type signature.
 
@@ -187,14 +192,13 @@ pass to\\
 The function passed in this case must accept as parameters the \ectx
 specialization for that context plus any arguments specified by that
 specialization. It must return a tuple of that \ectx specialization plus the
-same set of arguments.\footnote{But in the case
-of \cpp{std::execution\_context<void>}, the return type is
-simply\\\cpp{std::execution\_context<void>}.}
+same set of arguments.\footnote{But in the case of \ectxvoid, the return type
+is simply \ectxvoid.}
 
-For purposes of discussion, consider two \cpp{std::execution\_context<void>}
+For purposes of discussion, consider two \ectxvoid
 instances: \cpp{mainctx} and \cpp{fctx}. Suppose that code running
 on the program's main context instantiates \cpp{fctx} with function\\
-\cpp{f(std::execution\_context<void> mainctx)} and calls \cpp{fctx()}, thereby
+\cpp{f(}\ectxvoid\cpp{\ mainctx)} and calls \cpp{fctx()}, thereby
 entering \cpp{f()}. This is the point at which \cpp{mainctx} is synthesized
 and passed into \cpp{f()}.
 
@@ -205,7 +209,7 @@ suspended in the call to \cpp{mainctx.operator()()}.
 At this point the main context calls \cpp{fctx(std::invoke\_ontop\_arg, g);}
 where \cpp{g()} is declared as:
 \newline
-\cpp{std::execution\_context<void> g(std::execution\_context<void> gmctx);}
+\ectxvoid\cpp{\ g(}\ectxvoid\cpp{\ gmctx);}
 \newline
 \cpp{g()} is entered in the context of \cpp{f()}. It is as if \cpp{f()}'s call
 to \cpp{mainctx.operator()()} directly called \cpp{g()}.
@@ -250,16 +254,16 @@ own \cpp{ctx} variable, switching back to the main context.
 
 
 \uabschnitt{Stack destruction}
-On construction of \cpp{execution\_context} a stack is allocated. If the toplevel
-context-function returns, the stack will be destroyed. If the context-function
-has not yet returned and the destructor of a valid \cpp{execution\_context}
-instance (\cpp{execution\_context::operator bool()} returns \cpp{true}) is
-called, the stack will be unwound and destroyed.\footnote{An implementation is
-free to unwind the stack without throwing an exception. However, if an
-exception is thrown, it should be named \cpp{std::execution\_context\_unwind}.
-Portable consumer code \emph{must} permit \cpp{std::execution\_context\_unwind}
-exceptions to propagate, even if all other exceptions are caught
-with \cpp{catch (...)}.}
+On construction of \cpp{execution\_context} a stack is allocated. If the
+toplevel context-function returns, the stack will be destroyed. If the
+context-function has not yet returned and the \nameref{subpara:destructor} of
+a valid \cpp{execution\_context} instance (\cpp{execution\_context::operator
+bool()} returns \cpp{true}) is called, the stack will be unwound and
+destroyed.\footnote{An implementation is free to unwind the stack without
+throwing an exception. However, if an exception is thrown, it should be
+named \cpp{std::execution\_context\_unwind}. Portable consumer
+code \emph{must} permit \cpp{std::execution\_context\_unwind} exceptions to
+propagate, even if all other exceptions are caught with \cpp{catch (...)}.}
 
 The stack on which \cpp{main()}, as well as the stack on which the
 \emph{thread-function} passed to \cpp{std::thread}'s constructor is executed,
@@ -281,14 +285,14 @@ constructs new execution context\\
 
     \midrule
 
-    \cpp{template<typename StackAlloc, typename Fn, typename ...Params>}\\
-    \cpp{execution\_context(std::allocator\_arg\_t, StackAlloc salloc,}\\
-    \cpp{                   Fn&& fn, Params&& ...params)} & (2)\\
+    \cpp{template<typename Fn, typename ...Params>}\\
+    \cpp{explicit execution\_context(Fn&& fn, Params&& ...params)} & (2)\\
 
     \midrule
 
-    \cpp{template<typename Fn, typename ...Params>}\\
-    \cpp{explicit execution\_context(Fn&& fn, Params&& ...params)} & (3)\\
+    \cpp{template<typename StackAlloc, typename Fn, typename ...Params>}\\
+    \cpp{execution\_context(std::allocator\_arg\_t, StackAlloc salloc,}\\
+    \cpp{                   Fn&& fn, Params&& ...params)} & (3)\\
 
     \midrule
 
@@ -302,14 +306,19 @@ constructs new execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] this constructor represents \emph{not-a-context}
-    \item[2)] this constructor takes (e.g.) a lambda as argument, stack is
-              constructed using \emph{salloc}
-    \item[3)] takes (e.g.) lambda as argument,
+    \item[1)] This constructor instantiates a \ectx which
+              is \emph{not-a-context}. Its \op returns \cpp{false};
+              its \cpp{operator\!()} returns \cpp{true}.
+    \item[2)] takes a callable (function, lambda, object with \op) as
+              argument. The callable must have signature as described
+              in \nameref{subsec:ectxvoid} or \nameref{subsec:ectxdata}. The
               stack is constructed using either \cpp{fixedsize}
-              or \cpp{segmented}. An implementation may infer which of these
-              best suits the code in \cpp{fn}. If it cannot
-              infer, \cpp{fixedsize} will be used.
+              or \cpp{segmented} (see \nameref{subsec:stackalloc}). An
+              implementation may infer which of these best suits the code
+              in \cpp{fn}. If it cannot infer, \cpp{fixedsize} will be used.
+    \item[3)] takes a callable as argument, requirements as for 2). The stack
+              is constructed using \emph{salloc}
+              (see \nameref{subsec:stackalloc}).
     \item[4)] moves underlying capture record to new \ectx
     \item[5)] copy constructor deleted
 \end{description}
@@ -322,6 +331,7 @@ When an \ectx is constructed using either of the constructors accepting
 \ectx instance.\\
 
 \subparagraph*{(destructor)}
+\label{subpara:destructor}
 destroys an execution context\\
 
 \begin{tabular}{ l l }
@@ -489,6 +499,7 @@ test if suspended context might be resumed on another thread\\
 
 
 \uabschnitt{Stack allocators}
+\label{subsec:stackalloc}
 are used to create stacks. Stack allocators might implement arbitrary stack
 strategies. For instance, a stack allocator might append a guard page at the
 end of the stack or cache stacks for reuse or create stacks that grow on

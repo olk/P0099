@@ -48,6 +48,11 @@
 \newcommand{\await}{\cpp{co\_await}}
 \newcommand{\channel}{\cpp{channel<>}}
 \newcommand{\ectx}{\cpp{std::execution\_context<>}}
+\newcommand{\ectxvoid}{\cpp{std::execution\_context<void>}}
+\newcommand{\ectxargs}{\cpp{std::execution\_context<args...>}}
+\newcommand{\ectxargsargs}{\ectxargs\cpp{, args...}}
+\newcommand{\ectxargsargsargs}{\cpp{(}\ectxargsargs\cpp{)}}
+\newcommand{\ectxargstup}{\cpp{std::tuple<}\ectxargsargs\cpp{>}}
 \newcommand{\op}{\cpp{operator()()}}
 \newcommand{\ectxop}{\ectx\cpp{::}\op}
 \newcommand{\excpt}{\cpp{std::exception\_ptr}}
