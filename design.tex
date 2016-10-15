@@ -1,73 +1,163 @@
 \abschnitt{Design}
 Class \ectx provides a {\bfseries small, basic API} on which to build {\bfseries
 higher-level APIs} such as stackful coroutines (N3985\cite{N3985}) and user-mode
-threads (cooperative multitasking).
+threads (such as Boost.Fiber\cite{bfiber}).
 
 
-\uabschnitt{Suspend-on-call}
-\cpp{execution\_context<>::operator()} preserves the CPU register
-set\footnote{defined by ABI's calling convention}: the content of those
-registers is pushed at the end of the stack of the current context (e.g. current
-stack-pointer). Then \ectxop swaps the stack-pointer of the context associated
-with \cpp{*this} and pops the CPU register set from the stack.
-Because the context state is preserved on context' stack, \ectx needs only to
-manage internally the stack-pointer.
+\uabschnitt{Suspend-by-call}
+\ectxop preserves the CPU register set\footnote{defined by ABI's calling
+convention}: the content of those registers is pushed at the end of the stack
+of the current context (at the current stack-pointer). Then \op restores the
+stack-pointer register stored in \cpp{*this} and pops the CPU register set
+from the newly-restored stack.
+Because the context state is preserved on the context's stack, a \ectx
+instance need only store the stack-pointer register.
 
 
 \uabschnitt{Call semantics}
-The stack-pointer of the suspended context, that contains the preserved CPU
-register set, is used to synthesize a new instance of \ectx that is passed to
-the resumed context (as first argument of the entry-function or as a return
-value of \ectxop).
-While entring \cpp{execution\_context<>::operator()}, \cpp{*this} gets
-invalidated, e.g. the internal pointer, that has had used to store the stack
-pointer, is set to \cpp{nullptr}.
-This is necessary in order to:
-\begin{itemize}
-    \item   only one instance of \ectx can represent the execution context
-    \item   deallocate the allocated stack using RAII
-\end{itemize}
+When \ectxop is called, a new instance of \ectx is synthesized representing
+the current state of the running context (e.g. the stack-pointer). This new
+instance is passed to the resumed context. On initial entry, it is passed as
+the first argument to the top-level function. On every subsequent resumption,
+it is returned by the suspended \op call.
+
+On completion of a successful context switch, the
+\ectx instance on which \op was called is invalidated. The data member from
+which the stack pointer was just restored is set to \cpp{nullptr}.
+
+At most one instance of \ectx can represent a given execution context. The
+currently-running execution context is not represented by \emph{any} \ectx
+instance. Only when \op is called on some \emph{other} \ectx instance is the
+state of the running execution context captured in a synthesized \ectx
+instance.
+
+As mentioned in the section below on stack
+destruction, \cpp{\~execution\_context<>()} on a suspended (not terminated)
+instance destroys the stack managed by that instance. Thus, the stack must be
+managed by only one \ectx instance.\footnote{An earlier design used reference
+counting, but that subverts the intended role of this facility as an extremely
+fast substrate for higher-level libraries.}
 
 Because of the symmetric context switching (only one operation transfers
 control), the target execution context must be explicitly specified.
 
-
-\uabschnitt{Passing data}
+\uabschnitt{std::execution\_context<void>}
 With \cpp{execution\_context<void>} no data will be transferred, only the
 context switch is executed.
 \cppf{passing_void}
-\cpp{ctx1()} resumes \cpp{ctx1}, e.g. the lambda passed at the constructor of
-\cpp{ctx1} is entered. Argument \cpp{ctx2} represents the context that has been
-suspended with the invocation of \cpp{ctx1()}. When the lambda returns
-\cpp{ctx2}, context \cpp{ctx1} will be terminated while the context represented
-by \cpp{ctx2} is resumed, hence the control of execution returns from
-\cpp{ctx1()}.\\
-\newline
-The arguments passed to \cpp{execution\_context::operator()}, in one context, is
-passed as the last arguments of the context-function if the context is started
-for the first time. In all following invocations of
-\cpp{execution\_context::operator()} the arguments passed to
-\cpp{execution\_context::operator()}, in one context, is returned by
-\cpp{execution\_context::operator()} in the other context.
+\cpp{ctx1()} resumes \cpp{ctx1}, that is, control enters the lambda passed to
+the constructor of \cpp{ctx1}. Argument \cpp{ctx2} represents the previous
+context: the context that was suspended by the call to \cpp{ctx1()}. When the
+lambda returns \cpp{ctx2}, context \cpp{ctx1} will be terminated while the
+context represented by \cpp{ctx2} is resumed, hence control returns
+from \cpp{ctx1()}.\\
+
+\uabschnitt{Passing data}
+When you construct a \ectx with template arguments other than \cpp{void}, the
+function or lambda that initializes that instance must accept parameters\\
+\cpp{(std::execution\_context<args...>, args...)}, where \cpp{args...} here
+represents any list of arguments other than \cpp{void}.
+
+The initial \ectx argument is synthesized by \op. All other arguments must be
+passed explicitly to \op.
+
+The first call to \op with those arguments populates the parameter list for
+the newly-entered function or lambda.
+
+That function or lambda switches context back to the original context by
+calling the passed\\
+\ectxop, passing appropriate arguments.
+
+The \emph{original} context's call to \op returns
+a \cpp{std::tuple<std::execution\_context<args...>, args...>}. The
+returned \ectx is a synthesized instance representing the context that just
+suspended. The rest of the \cpp{args...} are as passed by that context to \op.
+
+So, for instance:
 \cppf{passing_single}
-\cpp{ctx1(i)} enters the lambda in context \cpp{ctx1} with argument \cpp{j=1}.
-The expression \cpp{ctx2(j+1)} resumes the context represented by \cpp{ctx2} and
-transfers back an integer of \cpp{j+1}. On return of \cpp{ctx1(i)}, the variable
-\cpp{i} contains the value of \cpp{j+1}.\\
+The \cpp{ctx1(i)} call at (a) enters the lambda in context \cpp{ctx1} with
+argument \cpp{j=1}, as shown by the output at (b). The
+expression \cpp{ctx2(j+1)} at (c) resumes the original context (represented
+within the lambda by \cpp{ctx2}) and transfers back an integer of \cpp{j+1}.
+On return from \cpp{ctx1(i)}, the assignment at (d) sets \cpp{i} to \cpp{j+1},
+or 2.
+
+The assignment at (d) illustrates a recommended idiom: since the call to \op
+at (a) has invalidated \cpp{ctx1}, it should be replaced by the
+newly-synthesized \ectx instance returned by \op.
+
+To continue the example:
+\cppf{passing_single_continued}
+The call to \cpp{ctx1(i)} at (e) (the \emph{updated} \cpp{ctx1}) resumes
+the \cpp{ctx1} lambda, returning from the \cpp{ctx2()} call at (c) and
+executing the assignment at (f). Here, too, we replace the \ectx
+instance \cpp{ctx2} invalidated by the \op call at (c) with the new instance
+returned by that same \op call. Moreover, we replace \cpp{j} with the value
+passed by the call at (e).
+
+Finally the lambda returns (the updated) \cpp{ctx2} at (g), terminating its
+context.
+
+Since the updated \cpp{ctx2} represents the context suspended by the call at
+(e), control returns to the assignment at (h). Once again we replace the
+invalidated \cpp{ctx1} with the one returned by \op.
+
+However, since context \cpp{ctx1} has now terminated, the updated \cpp{ctx1}
+is \emph{not-a-context}. Its \cpp{operator bool()} returns \cpp{false};
+its \cpp{operator\!()} returns \cpp{true}.
+
+This is important, since in that case the values of any remaining fields of
+the returned \cpp{std::tuple} are indeterminate.
+
+It may seem tricky to keep track of which \ectx instance is currently
+``live,'' representing the state of the suspended context. Please bear in
+mind that this facility is intended as a high-performance foundation for
+higher-level libraries. It is not intended to be directly consumed by
+applications.\\
 \newline
-If more than one argument has to be transferred, the signature of the
-context-function is simply extended.
+We can extend the example to multiple arguments.
 \cppf{passing_multiple}
+\op accepts the parameters specified by \ectx's template parameters. It
+returns a \cpp{std::tuple} of that \ectx specialization, prepended to those
+types.
 
 
-\uabschnitt{Top-level functions}
+\uabschnitt{Top-level thread functions}
 \main as well as the \emph{entry-function} of a thread can be represented by an
-execution context.
+execution context. That \ectx instance is synthesized when the running context
+suspends, and is passed into the newly-resumed context.
+
+
+\uabschnitt{\ectx and std::thread}
+The context represented by a \ectx instance is necessarily suspended. It is
+valid to resume a \ectx instance on any thread -- \emph{except} that you must
+not attempt to resume a \ectx instance representing \main, or
+the \emph{entry-function} of some other \cpp{std::thread}, on any thread other
+than its own.
+
+\ectx provides a method to test for this.
+If \cpp{std::execution\_context<>::any\_thread()} returns \cpp{false}, it is
+only valid to resume that \ectx instance on the thread on which it was
+initially launched.
 
 
 \uabschnitt{Termination}
-The toplevel context function has to return the context which is resumed after
-the current context has terminated.
+When you explicitly construct a particular \cpp{std::execution\_context<args...>}
+specialization, passing its constructor a function or lambda, that callable
+must accept that same\\
+\cpp{std::execution\_context<args...>} specialization as
+its first parameter. It must return that
+same \cpp{std::execution\_context<args...>} specialization as well.
+
+When that toplevel callable returns a \ectx instance, the running context is
+voluntarily terminated. Control switches to the context indicated by the
+returned \ectx instance.
+
+If the toplevel callable returns the same \ectx instance it was originally
+passed (or rather, the most recently updated instance returned from the
+original instance's \op), control returns to the context that originally
+resumed the running callable. However, the callable may return (switch to)
+any reachable valid \ectx instance with the correct type signature.
 
 
 \uabschnitt{Exceptions}
@@ -75,32 +165,104 @@ If an uncaught exception escapes from the toplevel context function,
 \cpp{std::terminate} is called.
 
 
-\uabschnitt{Invoking a function on top of a context}
-Sometimes it is useful to invoke a new function (for instance trigger unwinding
-the stack) on top of a resumed context. For this purpose
-\cpp{execution\_context::operator()} with first argument \cpp{invoke\_ontop\_arg}
-has to be used. The function passed as argument must return a tuple of
-\cpp{execution\_context} and arguments.
+\uabschnitt{Executing function on top of a context}
+Sometimes it is useful to execute a new function (for instance, to trigger
+unwinding the stack) on top of a suspended context. For this purpose you may
+pass to \ectxop:
+
+\begin{itemize}
+  \item the special argument \cpp{invoke\_ontop\_arg}
+  \item the function to execute
+  \item any additional arguments required by the \ectx specialization.
+\end{itemize}
+
+The function passed in this case must accept as parameters the \ectx
+specialization for that context plus any arguments specified by that
+specialization. It must return a tuple of that \ectx specialization plus the
+same set of arguments.\footnote{But in the case
+of \cpp{std::execution\_context<void>}, the return type is
+simply \cpp{std::execution\_context<void>}.}
+
+For purposes of discussion, consider two \cpp{std::execution\_context<void>}
+instances: \cpp{mainctx} and \cpp{fctx}. Suppose that code running
+on the program's main context instantiates \cpp{fctx} with function\\
+\cpp{f(std::execution\_context<void> mainctx)} and calls \cpp{fctx()}, thereby
+entering \cpp{f()}. This is the point at which \cpp{mainctx} is synthesized
+and passed into \cpp{f()}.
+
+Suppose further that after doing some work, \cpp{f()} calls \cpp{mainctx()},
+thereby switching context back to the main context. \cpp{f()} remains
+suspended in the call to \cpp{mainctx.operator()()}.
+
+At this point the main context calls \cpp{fctx(std::invoke\_ontop\_arg, g);}
+where \cpp{g()} is declared as:
+\newline
+\cpp{std::execution\_context<void> g(std::execution\_context<void> gmctx);}
+\newline
+\cpp{g()} is entered in the context of \cpp{f()}. It is as if \cpp{f()}'s call
+to \cpp{mainctx.operator()()} directly called \cpp{g()}.
+
+However, as usual, the \cpp{fctx.operator()()} call synthesizes a \ectx
+instance representing the main context and passes it to \cpp{g()}
+as \cpp{gmctx}.
+
+Function \cpp{g()} has the same range of possibilities as any function called
+on \cpp{f()}'s context. It can context-switch back to the main context, or to
+any other reachable context. Its special invocation only matters when control
+leaves it in either of two ways:
+
+\begin{enumerate}
+  \item If \cpp{g()} throws an exception, that exception unwinds all previous
+  stack entries in that context (such as \cpp{f()}'s) as well, back to a
+  matching \cpp{catch} clause.
+  \item If \cpp{g()} returns, its return value becomes the value returned
+  by \cpp{f()}'s suspended \cpp{mainctx.operator()()} call. This is
+  why \cpp{g()}'s return type must be the same as that of \op, rather than
+  that of an ordinary toplevel context function.
+\end{enumerate}
+
+Consider the following example:
+
 \cppf{ontop}
-The expression \cpp{ctx(invoke\_ontop\_arg,f2,data+1)} executes \cpp{f2()} on
-top of context \cpp{ctx}, e.g. an additional stack frame is allocated on top of
-the context stack (in front of \cpp{f1()}). \cpp{f2()} returns argument -1 that
-will returned by the second invocation of \cpp{ctx(data+1)} in \cpp{f1()}.
+
+Control passes from (a) to (b) to (c), and so on.
+
+The \cpp{ctx(std::invoke\_ontop\_arg, f2, data+1)} call at (l) passes control
+to \cpp{f2()} on the context originally created for \cpp{f1()}.
+
+The \cpp{return} statement at (n) causes the \op call at (i) to return,
+executing the assignment at (o). The \cpp{std::tuple} returned by \cpp{f2()}
+is directly returned to that assignment at (o).
+
+So in this example, the call at (l) synthesizes a \ectx instance representing
+the main context and passes it to \cpp{f2()} as \cpp{ctx}. \cpp{f2()} returns
+that \cpp{ctx} instance, which is received by \cpp{f1()} and assigned
+to \emph{its} \cpp{ctx} variable. Finally, \cpp{f1()} returns its
+own \cpp{ctx} variable, switching back to the main context.
 
 
 \uabschnitt{Stack destruction}
-On construction of \cpp{execution\_context} a stack is allocated. If the
-context-function returns the stack will be destructed. If the context-function
-has not yet returned and the destructor of an valid \cpp{execution\_context}
-instance (e.g. \cpp{execution\_context::operator bool()} returns true) is
-called, the stack will be destructed too.
-OS-created stacks, like on entry of \cpp{main()} or thread-function are not 
-deallocated by a stack allocator.
+On construction of \cpp{execution\_context} a stack is allocated. If the toplevel
+context-function returns, the stack will be destroyed. If the context-function
+has not yet returned and the destructor of a valid \cpp{execution\_context}
+instance (\cpp{execution\_context::operator bool()} returns \cpp{true}) is
+called, the stack will be unwound and destroyed.\footnote{An implementation is
+free to unwind the stack without throwing an exception. However, if an
+exception is thrown, it should be named \cpp{std::execution\_context\_unwind}.
+Portable consumer code \emph{must} permit \cpp{std::execution\_context\_unwind}
+exceptions to propagate, even if all other exceptions are caught
+with \cpp{catch (...)}.}
+
+The stack on which \cpp{main()} is executed, as well as the stack on which
+the \emph{thread-function} passed to \cpp{std::thread}'s constructor is
+executed, is allocated by the operating system. Such stacks are recognized by\\
+\ectx, and are not deallocated by its destructor.
 
 \uabschnitt{Stack allocators}
 are used to create stacks. Stack allocators might implement arbitrary stack
-strategies. For instance append a guard page at the end of the stack or
-cache stacks or create on demand growing stacks.
+strategies. For instance, a stack allocator might append a guard page at the
+end of the stack or cache stacks for reuse or create stacks that grow on
+demand.
 
 \paragraph*{\emph{protected\_fixedsize}}
 Constructs a linear stack of specified size,

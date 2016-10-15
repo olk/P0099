@@ -4,8 +4,7 @@ public:
     execution_context() noexcept;
 
     template<typename Fn,
-             typename ... Params,
-             typename=detail::disable_overload<execution_context, Fn>
+             typename ... Params
     >
     execution_context(Fn&& fn, Params&& ... params);
 

@@ -1,6 +1,6 @@
-std::execution_context<void> ctx1([](std::execution_context<void> && ctx2){
-            std::printf("inside ctx1\n");
-            return ctx2();
+std::execution_context<void> ctx1([](std::execution_context<void> ctx2){
+            std::cout << "inside ctx1" << std::endl;
+            return ctx2;
         });
 ctx1();
 

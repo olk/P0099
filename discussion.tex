@@ -48,7 +48,7 @@ required. This is sufficient in the case of generators, but in the context of
 cooperative multitasking it is inefficient.\\
 \newline
 The proposed stackful execution context (\ectx) provides only one operation to
-resume/suspend the context (\ectxop). Control is directly transferred from one
+resume/suspend the context (\op). Control is directly transferred from one
 execution context to another (symmetric control transfer) - no jump back to
 the caller. In addition to supporting generators, this enables an efficient
 implementation of cooperative multitasking: {\bfseries no additional context
@@ -69,11 +69,6 @@ selectable).
 \cppf{simple}
 Instance \cpp{l1} represents the execution context of \main.
 
-
-\uabschnitt{Passing data}
-\cpp{execution\_context} provides only one (symmetric) resume/suspend operation.
-Passing parameter between context', as for instance back and forth, is
-straightforward.
 
 \uabschnitt{Stack strategies}
 For stackful coroutines two strategies are typical: a contiguous, fixed-size
