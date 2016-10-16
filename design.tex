@@ -112,8 +112,8 @@ Since the updated \cpp{ctx2} represents the context suspended by the call at
 invalidated \cpp{ctx1} with the one returned by \op.
 
 However, since context \cpp{ctx1} has now terminated, the updated \cpp{ctx1}
-is \emph{not-a-context}. Its \opbool returns \cpp{false};
-its \cpp{operator\!()} returns \cpp{true}.
+is invalid. Its \opbool returns \cpp{false}; its \cpp{operator\!()}
+returns \cpp{true}.
 
 This is important, since in that case the values of any remaining fields of
 the returned \cpp{std::tuple} are indeterminate.
@@ -138,16 +138,16 @@ execution context. That \ectx instance is synthesized when the running context
 suspends, and is passed into the newly-resumed context.
 \cppf{simple}
 The \cpp{ctx1()} call at (a) enters the lambda in context ctx1.\\
-The \ectx \cpp{ctx2} at (b) represents the execution context of \main.\\
+The \ectx\ \cpp{ctx2} at (b) represents the execution context of \main.\\
 Returning \cpp{ctx2} at (c) resumes the original context (switch back to
 \main).
 
 
 \uabschnitt{\ectx and std::thread}
-The \ectx instance representing a context necessarily suspended.\\
-It is
-valid to resume a \ectx instance on any thread -- \emph{except} that you must
-not attempt to resume a \ectx instance representing \main, or
+Any execution context represented by a valid\\
+\ectx instance is necessarily suspended.\\
+It is valid to resume a \ectx instance on any thread -- \emph{except} that you
+must not attempt to resume a \ectx instance representing \main, or
 the \emph{entry-function} of some other \cpp{std::thread}, on any thread other
 than its own.
 \ectx provides a method to test for this.
@@ -177,6 +177,7 @@ any reachable valid \ectx instance with the correct type signature.
 
 
 \uabschnitt{Exceptions}
+\label{subsec:exceptions}
 If an uncaught exception escapes from the toplevel context function,
 \cpp{std::terminate} is called.
 
@@ -230,7 +231,9 @@ leaves it in either of two ways:
 \begin{enumerate}
   \item If \cpp{g()} throws an exception, that exception unwinds all previous
   stack entries in that context (such as \cpp{f()}'s) as well, back to a
-  matching \cpp{catch} clause (or calls \cpp{std::terminate} if not catched).
+  matching \cpp{catch} clause.\footnote{As stated
+  in \nameref{subsec:exceptions}, if there is no matching \cpp{catch} clause
+  in that context, \cpp{std::terminate()} is called.}
   \item If \cpp{g()} returns, its return value becomes the value returned
   by \cpp{f()}'s suspended \cpp{mctx.operator()()} call. This is
   why \cpp{g()}'s return type must be the same as that of \op, rather than
@@ -262,18 +265,52 @@ own \cpp{ctx} variable, switching back to the main context.
 On construction of \cpp{execution\_context} a stack is allocated. If the
 toplevel context-function returns, the stack will be destroyed. If the
 context-function has not yet returned and the \nameref{subpara:destructor} of
-a valid \cpp{execution\_context} instance (\cpp{execution\_context::operator
-bool()} returns \cpp{true}) is called, the stack will be unwound and
+a valid \cpp{execution\_context} instance (\opbool
+returns \cpp{true}) is called, the stack will be unwound and
 destroyed.\footnote{An implementation is free to unwind the stack without
 throwing an exception. However, if an exception is thrown, it should be
 named \cpp{std::execution\_context\_unwind}. Portable consumer
 code \emph{must} permit \cpp{std::execution\_context\_unwind} exceptions to
 propagate, even if all other exceptions are caught with \cpp{catch (...)}.}
 
-The stack on which \cpp{main()}, as well as the stack on which the
-\emph{thread-function} passed to \cpp{std::thread}'s constructor is executed,
-is allocated by the operating system. Such stacks are recognized by\\
-\ectx, and are not deallocated by its destructor.
+The stack on which \cpp{main()} is executed, as well as the stack implicitly
+created by \cpp{std::thread}'s constructor, is allocated by the operating
+system. Such stacks are recognized by \ectx, and are not deallocated by its
+destructor.
+
+\uabschnitt{Stack allocators}
+\label{subsec:stackalloc}
+are used to create stacks.\footnote{This concept, along with the \ectx
+constructor accepting \cpp{std::allocator\_arg\_t}, is an optional part of the
+proposal. It might be that implementations can reliably infer the optimal
+stack representation.} Stack allocators might implement arbitrary stack
+strategies. For instance, a stack allocator might append a guard page at the
+end of the stack, or cache stacks for reuse, or create stacks that grow on
+demand.\\
+Because stack allocators are provided by the implementation, and are only used
+as parameters of\\
+\ectx's constructor, the StackAllocator concept is an implementation detail,
+used only by the internal mechanisms of the \ectx implementation. Different
+implementations might use different StackAllocator concepts.\\
+However, when an implementation provides a stack allocator matching one of
+the descriptions below, it should use the specified name.\\
+Possible types of stack allocators:
+\begin{itemize}
+    \item \cpp{protected\_fixedsize}: The constructor accepts a \cpp{size\_t}
+        parameter. This stack allocator constructs a contiguous stack of
+        specified size, appending a guard page at the end to protect against
+        overflow. If the guard page is accessed (read or write operation), a
+        segmentation fault/access violation is generated by the operating
+        system.
+    \item \cpp{fixedsize}: The constructor accepts a \cpp{size\_t} parameter.
+        This stack allocator constructs a contiguous stack of specified size.
+        In contrast to \cpp{protected\_fixedsize}, it does not append a guard
+        page. The memory is simply managed by \cpp{std::malloc()}
+        and \cpp{std::free()}, avoiding kernel involvement.
+    \item \cpp{segmented}: The constructor accepts a \cpp{size\_t} parameter.
+        This stack allocator creates a segmented stack with the specified
+        initial size, which grows on demand.
+\end{itemize}
 
 \newpage
 \uabschnitt{API}
@@ -311,9 +348,8 @@ constructs new execution context\\
 \end{tabular}
 
 \begin{description}
-    \item[1)] This constructor instantiates a \ectx which
-              is \emph{not-a-context}. Its \opbool returns \cpp{false};
-              its \cpp{operator\!()} returns \cpp{true}.
+    \item[1)] This constructor instantiates an invalid \ectx. Its \opbool
+              returns \cpp{false}; its \cpp{operator\!()} returns \cpp{true}.
     \item[2)] takes a callable (function, lambda, object with \op) as
               argument. The callable must have signature as described
               in \nameref{subsec:ectxvoid} or \nameref{subsec:ectxdata}. The
@@ -321,19 +357,19 @@ constructs new execution context\\
               or \cpp{segmented} (see \nameref{subsec:stackalloc}). An
               implementation may infer which of these best suits the code
               in \cpp{fn}. If it cannot infer, \cpp{fixedsize} will be used.
-    \item[3)] takes a callable as argument, requirements as for 2). The stack
+    \item[3)] takes a callable as argument, requirements as for (2). The stack
               is constructed using \emph{salloc}
               (see \nameref{subsec:stackalloc}).\footnote{This constructor,
               along with the \nameref{subsec:stackalloc} section, is an
               optional part of the proposal. It might be that implementations
               can reliably infer the optimal stack representation.}
-    \item[4)] moves underlying capture record to new \ectx
+    \item[4)] moves underlying state to new \ectx
     \item[5)] copy constructor deleted
 \end{description}
 
 {\bfseries Notes}
 \newline
-When an \ectx is constructed using either of the constructors accepting
+When a \ectx is constructed using either of the constructors accepting
 \cpp{fn}, control is \emph{not} immediately passed to \cpp{fn}. Resuming
 (entering) \cpp{fn} is performed by calling \cpp{operator()()} on the new
 \ectx instance.\\
@@ -361,7 +397,7 @@ destroys an execution context\\
 \end{description}
 
 \subparagraph*{operator=}
-copies/moves the context object\\
+moves the context object\\
 
 \begin{tabular}{ l l }
     \midrule
@@ -437,6 +473,10 @@ resume context of execution\\
                     are constructed into a \ectxargstup and returned by
                     that suspended \op call. \\
                     See section \nameref{subsec:ectxdata}.\\
+    \item[fn]       The \cpp{fn} passed to (3) must accept \ectxargsargs. It
+                    must return \ectxargstup.\\
+                    The \cpp{fn} passed to (4) must accept \ectxvoid.\\
+                    It must return \ectxvoid.\\
 \end{description}
 
 {\bfseries Return value}
@@ -486,8 +526,9 @@ resume context of execution\\
 \newline
 The \emph{prologue} preserves the execution context of the calling context as
 well as stack parts like \emph{parameter list} and \emph{return
-address}.\footnote{required only by some x86 ABIs} Those data are restored by
-the \emph{epilogue} if the calling context is resumed.
+address}.\footnote{required only by some x86 ABIs}
+Those data are restored by the \emph{epilogue} if the calling context is
+resumed.
 \newline
 A suspended \cpp{execution\_context} can be destroyed. Its resources will be
 cleaned up at that time.
@@ -589,44 +630,69 @@ test whether suspended context may be resumed on a different thread\\
 {\bfseries Notes}
 \newline
 As stated in \nameref{subsec:main}, a \ectx instance can represent the initial
-context on which the operating system runs \main, or (for an
-explicitly-launched thread) the thread-function passed to \cpp{std::thread}'s
-constructor.
+context on which the operating system runs \main, or the context created by
+the operating system for a new \cpp{std::thread}.
 
 It is not permitted to attempt to resume such a \ectx instance on any thread
 other than its original thread. \cpp{any\_thread()} allows consumer code to
 distinguish this case.
 
-\uabschnitt{Stack allocators}
-\label{subsec:stackalloc}
-are used to create stacks.\footnote{This concept, along with the \ectx
-constructor accepting \cpp{std::allocator\_arg\_t}, is an optional part of the
-proposal. It might be that implementations can reliably infer the optimal
-stack representation.} Stack allocators might implement arbitrary stack
-strategies. For instance, a stack allocator might append a guard page at the
-end of the stack, or cache stacks for reuse, or create stacks that grow on
-demand.\\
-Because stack allocators are provided by the implementation, and are only used
-as parameters of\\
-\ectx's constructor, the StackAllocator concept is an implementation detail,
-used only by the internal mechanisms of the \ectx implementation. Different
-implementations might use different StackAllocator concepts.\\
-However, when an implementation provides a stack allocator matching one of
-the descriptions below, it should use the specified name.\\
-Possible types of stack allocators:
-\begin{itemize}
-    \item \cpp{protected\_fixedsize}: The constructor accepts a \cpp{size\_t}
-        parameter. This stack allocator constructs a contiguous stack of
-        specified size, appending a guard page at the end to protect against
-        overflow. If the guard page is accessed (read or write operation), a
-        segmentation fault/access violation is generated by the operating
-        system.
-    \item \cpp{fixedsize}: The constructor accepts a \cpp{size\_t} parameter.
-        This stack allocator constructs a contiguous stack of specified size.
-        In contrast to \cpp{protected\_fixedsize}, it does not append a guard
-        page. The memory is simply managed by \cpp{std::malloc()}
-        and \cpp{std::free()}, avoiding kernel involvement.
-    \item \cpp{segmented}: The constructor accepts a \cpp{size\_t} parameter.
-        This stack allocator creates a segmented stack with the specified
-        initial size, which grows on demand.
-\end{itemize}
+\subparagraph*{(comparisons)}
+establish an arbitrary total ordering for \ectx instances\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{bool operator==(const execution\_context& other) const noexcept} & (1)\\
+
+    \midrule
+
+    \cpp{bool operator\!=(const execution\_context& other) const noexcept} & (1)\\
+
+    \midrule
+
+    \cpp{bool operator<(const execution\_context& other) const noexcept} & (2)\\
+
+    \midrule
+
+    \cpp{bool operator>(const execution\_context& other) const noexcept} & (2)\\
+
+    \midrule
+
+    \cpp{bool operator<=(const execution\_context& other) const noexcept} & (2)\\
+
+    \midrule
+
+    \cpp{bool operator>=(const execution\_context& other) const noexcept} & (2)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] Every invalid \ectx instance compares equal to every other
+              invalid instance. But because the running context is never
+              represented by a valid \ectx instance, and because every
+              suspended context is represented by exactly one valid
+              instance, \emph{no valid instance can ever compare equal to any
+              other valid instance.}
+    \item[2)] These comparisons establish an arbitrary total ordering of \ectx
+              instances, for example to store in ordered containers. (However,
+              key lookup is meaningless, since you cannot construct a search
+              key that would compare equal to any entry.) There is no
+              significance to the relative order of two instances.
+\end{description}
+
+\subparagraph*{swap}
+swaps two \ectx instances\\
+
+\begin{tabular}{ l l }
+    \midrule
+
+    \cpp{void swap(execution\_context& other) noexcept} & (1)\\
+
+    \midrule
+\end{tabular}
+
+\begin{description}
+    \item[1)] Exchanges the state of \cpp{*this} with \cpp{other}.
+\end{description}
