@@ -462,19 +462,19 @@ resume context of execution\\
 
 {\bfseries Parameters}
 \begin{description}
-    \item[... args] If the toplevel context-function represented
-                    by \cpp{*this} has not yet been entered, the arguments
-                    you pass are passed to the context-function as its
-                    parameters, following the \ectx first parameter. \\
-                    If the context represented by \cpp{*this} suspended by
-                    calling \op, the arguments you pass
-                    are constructed into a \ectxargstup and returned by
-                    that suspended \op call. \\
-                    See section \nameref{subsec:ectxdata}.\\
-    \item[fn]       The \cpp{fn} passed to (3) must accept \ectxargsargs. It
-                    must return \ectxargstup.\\
-                    The \cpp{fn} passed to (4) must accept \ectxvoid.\\
-                    It must return \ectxvoid.\\
+    \item[...args] If the toplevel context-function represented
+                   by \cpp{*this} has not yet been entered, the arguments
+                   you pass are passed to the context-function as its
+                   parameters, following the \ectx first parameter. \\
+                   If the context represented by \cpp{*this} suspended by
+                   calling \op, the arguments you pass
+                   are constructed into a \ectxargstup and returned by
+                   that suspended \op call. \\
+                   See section \nameref{subsec:ectxdata}.\\
+    \item[fn]      The \cpp{fn} passed to (3) must accept \ectxargsargs. It
+                   must return \ectxargstup.\\
+                   The \cpp{fn} passed to (4) must accept \ectxvoid.\\
+                   It must return \ectxvoid.\\
 \end{description}
 
 {\bfseries Return value}
