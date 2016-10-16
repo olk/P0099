@@ -7,10 +7,9 @@ cooperative multitasking (aka fibers/user-land threads/green threads).\\
 The most important features are:
 \begin{itemize}
     \item first-class object that can be stored in variables or containers
-    \item symmetric transfer of execution control, i.e. suspend-by-call -
-          enables a richer set of control flows than asymmetric transfer of
-          control (i.e. suspend-by-return as described in P0057\cite{P0057}
-          et al.)
+    \item symmetric API, in which the target context is explicit - enables a
+          richer set of control flows than asymmetric API, in which a
+          subordinate context can only switch back to its invoker
     \item benefits of traditional stack management retained
     \item ordinary function calls and returns not affected
     \item working implementation in Boost.Context\cite{bcontext}
