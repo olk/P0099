@@ -195,14 +195,14 @@ pass to\\
 
 The function passed in this case must accept as parameters the \ectx
 specialization for that context plus any arguments specified by that
-specialization. It must return a tuple of that \ectx specialization plus the
-same set of arguments.\footnote{But in the case of \ectxvoid, the return type
-is simply\\\ectxvoid.}
+specialization. It must return the same set of arguments as the \ectx
+specialization. \footnote{But in the case of \ectxvoid, the return
+type is simply \cpp{void}.}\\
 
 For purposes of discussion, consider two \ectxvoid
 instances: \cpp{mctx} and \cpp{fctx}. Suppose that code running
 on the program's main context instantiates \cpp{fctx} with function\\
-\cpp{f(}\ectxvoid\cpp{&& mctx)} and calls \cpp{fctx()}, thereby
+\cpp{f()} and calls \cpp{fctx()}, thereby
 entering \cpp{f()}. This is the point at which \cpp{mctx} is synthesized
 and passed into \cpp{f()}.
 
@@ -211,20 +211,12 @@ thereby switching context back to the main context. \cpp{f()} remains
 suspended in the call to \cpp{mctx.operator()()}.
 
 At this point the main context calls \cpp{fctx(std::invoke\_ontop\_arg, g);}
-where \cpp{g()} is declared as:
-\newline
-\ectxvoid\cpp{\ g(}\ectxvoid\cpp{\ gmctx);}
-\newline
-\cpp{g()} is entered in the context of \cpp{f()}. It is as if \cpp{f()}'s call
-to \cpp{mctx.operator()()} directly called \cpp{g()}.
-
-However, as usual, the \cpp{fctx.operator()()} call synthesizes a \ectx
-instance representing the main context and passes it to \cpp{g()}
-as \cpp{gmctx}.
+where \cpp{g()} is declared as\\
+\cpp{void g();} \cpp{g()} is entered in the context of \cpp{f()}. It is as if
+\cpp{f()}'s call to \cpp{mctx.operator()()} directly called \cpp{g()}.
 
 Function \cpp{g()} has the same range of possibilities as any function called
-on \cpp{f()}'s context. It can context-switch back to the main context, or to
-any other reachable context. Its special invocation only matters when control
+on \cpp{f()}'s context. Its special invocation only matters when control
 leaves it in either of two ways:
 
 \begin{enumerate}
@@ -249,14 +241,13 @@ The \cpp{ctx(std::invoke\_ontop\_arg, f2, data+1)} call at (l) passes control
 to \cpp{f2()} on the context originally created for \cpp{f1()}.
 
 The \cpp{return} statement at (n) causes the \op call at (i) to return,
-executing the assignment at (o). The \cpp{std::tuple} returned by \cpp{f2()}
+executing the assignment at (o). The \cpp{int} returned by \cpp{f2()}
 is directly returned to that assignment at (o).
 
 So in this example, the call at (l) synthesizes a \ectx instance representing
-the main context and passes it to \cpp{f2()} as \cpp{ctx}. \cpp{f2()} returns
-that \cpp{ctx} instance, which is received by \cpp{f1()} and assigned
-to \emph{its} \cpp{ctx} variable. Finally, \cpp{f1()} returns its
-own \cpp{ctx} variable, switching back to the main context.
+the main context and updates \cpp{mctx} internally. \cpp{f2()} returns its
+return value \emph{-1}. Finally, \cpp{f1()} returns its own \cpp{ctx}
+variable, switching back to the main context.
 
 
 \uabschnitt{Stack destruction}
@@ -471,10 +462,10 @@ resume context of execution\\
                    are constructed into a \ectxargstup and returned by
                    that suspended \op call. \\
                    See section \nameref{subsec:ectxdata}.\\
-    \item[fn]      The \cpp{fn} passed to (3) must accept \ectxargsargs. It
-                   must return \ectxargstup.\\
-                   The \cpp{fn} passed to (4) must accept \ectxvoid.\\
-                   It must return \ectxvoid.\\
+    \item[fn]      The \cpp{fn} passed to (3) must accept \cpp{Args...}. It
+                   must return \cpp{std::tuple<Args...>} or simply \cpp{Arg} in
+                   the case of a single argument.\\
+                   The \cpp{fn} passed to (4) must accept and return \cpp{void}.\\
 \end{description}
 
 {\bfseries Return value}

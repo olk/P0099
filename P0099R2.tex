@@ -1,0 +1,84 @@
+%//////////////////////////////////////////////////////////////////////////////
+
+\documentclass[paper=A4,pagesize,DIV=15]{scrartcl}
+
+\usepackage[T1]{fontenc}
+\usepackage[latin1]{inputenc}
+\usepackage[british]{babel}
+
+%\usepackage{fixltx2e}
+\usepackage{ellipsis}
+\usepackage{ragged2e}
+\usepackage[final]{microtype}
+
+\usepackage{palatino}
+
+\usepackage{overcite}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{listings}
+\usepackage{perpage}
+\usepackage{rotating}
+\usepackage{svg}
+\usepackage{tikz}
+\usetikzlibrary{arrows,automata}
+\usepackage{xcolor}
+\usepackage{xspace}
+\usepackage[colorlinks=true,
+            urlcolor=blue,
+            pdftex,
+            pdfsubject  = {},
+            pdfauthor   = {Oliver Kowalke, Nat Goodspeed},
+            pdfkeywords = {C++,execution,context,coroutine,fiber,P0099},
+            pdftitle    = {A low-level API for stackful context switching}]{hyperref}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\input{commands}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\begin{document}
+\small
+\begin{tabbing}
+    Document number: \= P0099R2\\
+    Supersedes:      \> P0099R1\\
+    Date:            \> 2016-12-15\\
+    Reply-to:        \> Oliver Kowalke (oliver.kowalke@gmail.com), Nat Goodspeed (nat@lindenlab.com)\\
+    Audience:        \> SG1\\
+\end{tabbing}
+
+\section*{A low-level API for stackful context switching}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\tableofcontents
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\paragraph*{Revision History}
+This document supersedes P0099R1.\\
+\newline
+Changes since P0099R1:
+
+\begin{itemize}
+    \item change signature required by functions invoked on top of a resumed execution context.
+\end{itemize}
+
+\newpage
+
+\input{abstract}
+\input{motivation}
+\input{definitions}
+\input{discussion}
+\input{design}
+\input{appendix_a}
+\input{appendix_b}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\input{references}
+
+%//////////////////////////////////////////////////////////////////////////////
+
+\end{document}

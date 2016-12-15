@@ -13,11 +13,11 @@ std::execution_context<int> f1(std::execution_context<int>&& ctx,int data) {
 
 // f2() is an invoke_ontop_arg function:
 // though its parameter list is very like that of a toplevel context function,
-// it must return std::tuple<std::execution_context<args...>, args...>
-std::tuple<std::execution_context<int>,int>
-f2(std::execution_context<int>&& ctx,int data) {
+// it must return std::tuple< args...> or a single type
+int
+f2(int data) {
     std::cout << "f2: entered: " << data << std::endl; // (m)
-    return std::make_tuple(std::move(ctx),-1); // (n)
+    return -1; // (n)
 }
 
 int data=0;
